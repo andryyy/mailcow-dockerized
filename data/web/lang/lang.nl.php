@@ -272,7 +272,7 @@ $lang['mailbox']['tls_policy_maps_info'] = 'Deze opties worden boven het versleu
 $lang['mailbox']['tls_enforce_in'] = 'Forceer inkomende versleuteling';
 $lang['mailbox']['tls_enforce_out'] = 'Forceer uitgaande versleuteling';
 $lang['mailbox']['tls_map_dest'] = 'Bestemming';
-$lang['mailbox']['tls_map_dest_info'] = 'Voorbeeld: example.org, .example.org, mail@example.org, [mail.example.org]:25';
+$lang['mailbox']['tls_map_dest_info'] = 'Voorbeeld: example.org, .example.org, [mail.example.org]:25';
 $lang['mailbox']['tls_map_policy'] = 'Beleid';
 $lang['mailbox']['tls_map_parameters'] = 'Parameters';
 $lang['mailbox']['tls_map_parameters_info'] = 'Voorbeeld: protocols=!SSLv2 ciphers=medium exclude=3DES';
@@ -710,7 +710,7 @@ $lang['admin']['help_text'] = "Hulpteksten onder inlogvenster (HTML toegestaan)"
 $lang['admin']['title_name'] = '"Mailcow" (website-titel)';
 $lang['admin']['main_name'] = '"Mailcow"';
 $lang['admin']['apps_name'] = '"Mailcow-apps"';
-$lang['admin']['ui_impress'] = 'Footer-vermelding (HTML toegestaan)';
+$lang['admin']['ui_footer'] = 'Footer-vermelding (HTML toegestaan)';
 
 $lang['admin']['customize'] = "Uiterlijk";
 $lang['admin']['change_logo'] = "Logo";

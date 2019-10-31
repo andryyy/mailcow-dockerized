@@ -2,12 +2,12 @@ version: '2.1'
 services:
 
     unbound-mailcow:
-      image: mailcow/unbound:1.8
+      image: mailcow/unbound:1.9
       build: ./data/Dockerfiles/unbound
-      command: /usr/sbin/unbound
       environment:
         - TZ=${TZ}
       volumes:
+        - ./data/hooks/dovecot:/hooks
         - ./data/conf/unbound/unbound.conf:/etc/unbound/unbound.conf:ro
       restart: always
       tty: true
@@ -52,7 +52,7 @@ services:
             - redis
 
     clamd-mailcow:
-      image: mailcow/clamd:1.29
+      image: mailcow/clamd:1.30
       build: ./data/Dockerfiles/clamd
       restart: always
       dns:
@@ -68,7 +68,7 @@ services:
             - clamd
 
     rspamd-mailcow:
-      image: mailcow/rspamd:1.46
+      image: mailcow/rspamd:1.48
       build: ./data/Dockerfiles/rspamd
       stop_grace_period: 30s
       depends_on:
@@ -77,6 +77,7 @@ services:
       environment:
         - TZ=${TZ}
       volumes:
+        - ./data/hooks/dovecot:/hooks
         - ./data/conf/rspamd/custom/:/etc/rspamd/custom
         - ./data/conf/rspamd/override.d/:/etc/rspamd/override.d
         - ./data/conf/rspamd/local.d/:/etc/rspamd/local.d
@@ -95,12 +96,13 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.48
+      image: mailcow/phpfpm:1.49
       build: ./data/Dockerfiles/phpfpm
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
         - redis-mailcow
       volumes:
+        - ./data/hooks/dovecot:/hooks
         - ./data/web:/web:rw
         - ./data/conf/rspamd/dynmaps:/dynmaps:ro
         - rspamd-vol-1:/var/lib/rspamd
@@ -171,13 +173,14 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.89
+      image: mailcow/dovecot:1.91
       build: ./data/Dockerfiles/dovecot
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       cap_add:
         - NET_BIND_SERVICE
       volumes:
+        - ./data/hooks/dovecot:/hooks
         - ./data/conf/dovecot:/etc/dovecot
         - ./data/assets/ssl:/etc/ssl/mail/:ro
         - ./data/conf/sogo/:/etc/sogo/
@@ -278,6 +281,7 @@ services:
         envsubst < /etc/nginx/conf.d/templates/sogo.template > /etc/nginx/conf.d/sogo.active &&
         envsubst < /etc/nginx/conf.d/templates/sogo_eas.template > /etc/nginx/conf.d/sogo_eas.active &&
         . /etc/nginx/conf.d/templates/sogo.auth_request.template.sh > /etc/nginx/conf.d/sogo_proxy_auth.active &&
+        . /etc/nginx/conf.d/templates/sites.template.sh > /etc/nginx/conf.d/sites.active &&
         nginx -qt &&
         until ping phpfpm -c1 > /dev/null; do sleep 1; done &&
         until ping sogo -c1 > /dev/null; do sleep 1; done &&
@@ -310,7 +314,7 @@ services:
     acme-mailcow:
       depends_on:
         - nginx-mailcow
-      image: mailcow/acme:1.61
+      image: mailcow/acme:1.62
       build: ./data/Dockerfiles/acme
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
@@ -322,6 +326,7 @@ services:
         - DBUSER=${DBUSER}
         - DBPASS=${DBPASS}
         - SKIP_LETS_ENCRYPT=${SKIP_LETS_ENCRYPT:-n}
+        - ENABLE_SSL_SNI=${ENABLE_SSL_SNI:-n}
         - SKIP_ECDSA_CERT=${SKIP_ECDSA_CERT:-y}
         - SKIP_IP_CHECK=${SKIP_IP_CHECK:-n}
         - SKIP_HTTP_VERIFICATION=${SKIP_HTTP_VERIFICATION:-n}
@@ -340,7 +345,7 @@ services:
             - acme
 
     netfilter-mailcow:
-      image: mailcow/netfilter:1.29
+      image: mailcow/netfilter:1.30
       build: ./data/Dockerfiles/netfilter
       stop_grace_period: 30s
       depends_on:
@@ -362,7 +367,7 @@ services:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.59
+      image: mailcow/watchdog:1.61
       # Debug
       #command: /watchdog.sh
       build: ./data/Dockerfiles/watchdog
@@ -395,7 +400,7 @@ services:
             - watchdog
 
     dockerapi-mailcow:
-      image: mailcow/dockerapi:1.34
+      image: mailcow/dockerapi:1.35
       restart: always
       build: ./data/Dockerfiles/dockerapi
       oom_kill_disable: true
@@ -412,7 +417,7 @@ services:
             - dockerapi
 
     solr-mailcow:
-      image: mailcow/solr:1.6
+      image: mailcow/solr:1.7
       build: ./data/Dockerfiles/solr
       restart: always
       volumes:
@@ -429,7 +434,7 @@ services:
             - solr
 
     olefy-mailcow:
-      image: mailcow/olefy:1.1
+      image: mailcow/olefy:1.2
       restart: always
       build: ./data/Dockerfiles/olefy
       environment:

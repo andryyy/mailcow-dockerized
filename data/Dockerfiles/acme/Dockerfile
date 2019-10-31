@@ -17,7 +17,12 @@ RUN apk upgrade --no-cache \
   && python3 -m pip install --upgrade pip \
   && python3 -m pip install acme-tiny
 
-COPY docker-entrypoint.sh /srv/docker-entrypoint.sh
+COPY acme.sh /srv/acme.sh
+COPY functions.sh /srv/functions.sh
+COPY obtain-certificate.sh /srv/obtain-certificate.sh
+COPY reload-configurations.sh /srv/reload-configurations.sh
 COPY expand6.sh /srv/expand6.sh
 
-CMD ["/sbin/tini", "-g", "--", "/srv/docker-entrypoint.sh"]
+RUN chmod +x /srv/*.sh
+
+CMD ["/sbin/tini", "-g", "--", "/srv/acme.sh"]

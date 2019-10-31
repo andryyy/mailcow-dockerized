@@ -191,6 +191,11 @@ ADDITIONAL_SAN=
 
 SKIP_LETS_ENCRYPT=n
 
+# Create seperate certificates for all domains - y/n
+# this will allow adding more than 100 domains, but some email clients will not be able to connect with alternative hostnames
+# see https://wiki.dovecot.org/SSL/SNIClientSupport
+ENABLE_SSL_SNI=n
+
 # Skip issuing Let's Encrypt ECDSA certificates - y/n
 
 SKIP_ECDSA_CERT=n

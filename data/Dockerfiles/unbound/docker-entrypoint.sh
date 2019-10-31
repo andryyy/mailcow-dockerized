@@ -8,4 +8,13 @@ echo "Receiving anchor key..."
 echo "Receiving root hints..."
 curl -#o /etc/unbound/root.hints https://www.internic.net/domain/named.cache
 /usr/sbin/unbound-control-setup
+
+# Run hooks
+for file in /hooks/*; do
+  if [ -x "${file}" ]; then
+    echo "Running hook ${file}"
+    "${file}"
+  fi
+done
+
 exec "$@"

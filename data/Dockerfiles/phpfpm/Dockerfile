@@ -85,4 +85,5 @@ RUN apk add -U --no-cache autoconf \
 COPY ./docker-entrypoint.sh /
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
+
 CMD ["php-fpm"]

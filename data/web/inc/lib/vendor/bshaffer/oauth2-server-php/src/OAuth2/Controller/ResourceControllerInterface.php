@@ -13,7 +13,7 @@ use OAuth2\ResponseInterface;
  * @code
  *     if (!$resourceController->verifyResourceRequest(OAuth2\Request::createFromGlobals(), $response = new OAuth2\Response())) {
  *         $response->send(); // authorization failed
- *         die();
+ *         exit();
  *     }
  *     return json_encode($resource); // valid token!  Send the stuff!
  * @endcode

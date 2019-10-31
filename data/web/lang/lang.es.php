@@ -119,7 +119,7 @@ $lang['user']['tls_enforce_out'] = 'Aplicar TLS saliente';
 $lang['mailbox']['tls_enforce_in'] = 'Aplicar TLS entrante';
 $lang['mailbox']['tls_enforce_out'] = 'Aplicar TLS saliente';
 $lang['mailbox']['tls_map_dest'] = 'Destino';
-$lang['mailbox']['tls_map_dest_info'] = 'Ejemplos: example.org, .example.org, mail@example.org, [mail.example.org]:25';
+$lang['mailbox']['tls_map_dest_info'] = 'Ejemplos: example.org, .example.org, [mail.example.org]:25';
 $lang['mailbox']['tls_map_policy'] = 'Póliza';
 $lang['mailbox']['tls_map_parameters'] = 'Parametros';
 $lang['mailbox']['tls_map_parameters_info'] = 'Vacío o parametros, por ejemplo: protocols=!SSLv2 ciphers=medium exclude=3DES';

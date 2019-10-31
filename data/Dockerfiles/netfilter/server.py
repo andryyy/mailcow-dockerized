@@ -35,7 +35,8 @@ RULES[3] = '-login: Aborted login \(tried to use disallowed .+\): user=.+, rip=(
 RULES[4] = 'SOGo.+ Login from \'([0-9a-f\.:]+)\' for user .+ might not have worked'
 RULES[5] = 'mailcow UI: Invalid password for .+ by ([0-9a-f\.:]+)'
 RULES[6] = '([0-9a-f\.:]+) \"GET \/SOGo\/.* HTTP.+\" 403 .+'
-#RULES[7] = '-login: Aborted login \(no auth .+\): user=.+, rip=([0-9a-f\.:]+), lip.+'
+RULES[7] = 'Rspamd UI: Invalid password by ([0-9a-f\.:]+)'
+#RULES[8] = '-login: Aborted login \(no auth .+\): user=.+, rip=([0-9a-f\.:]+), lip.+'
 
 WHITELIST = []
 BLACKLIST= []

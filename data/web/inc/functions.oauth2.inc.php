@@ -4,9 +4,10 @@ function oauth2($_action, $_type, $_data = null) {
 	global $redis;
 	global $lang;
 	if ($_SESSION['mailcow_cc_role'] != "admin") {
-		$_SESSION['return'] = array(
+		$_SESSION['return'][] = array(
 			'type' => 'danger',
-			'msg' => sprintf($lang['danger']['access_denied'])
+      'log' => array(__FUNCTION__, $_action, $_type, $_data),
+			'msg' => 'access_denied'
 		);
 		return false;
 	}
@@ -14,30 +15,26 @@ function oauth2($_action, $_type, $_data = null) {
     case 'add':
       switch ($_type) {
         case 'client':
-          $client_id = $_data['client_id'];
-          $client_secret = $_data['client_secret'];
+          $client_id = bin2hex(random_bytes(6));
+          $client_secret = bin2hex(random_bytes(12));
           $redirect_uri = $_data['redirect_uri'];
+          $scope = 'profile';
+          // For future use
           // $grant_type = isset($_data['grant_type']) ? $_data['grant_type'] : 'authorization_code';
           // $scope = isset($_data['scope']) ? $_data['scope'] : 'profile';
-          if ($grant_type != "authorization_code" && $grant_type != "password") {
-            $_SESSION['return'] = array(
-              'type' => 'danger',
-              'msg' => sprintf($lang['danger']['access_denied'])
-            );
-            return false;
-          }
-          // For future use
+          // if ($grant_type != "authorization_code" && $grant_type != "password") {
+            // $_SESSION['return'][] = array(
+              // 'type' => 'danger',
+              // 'log' => array(__FUNCTION__, $_action, $_type, $_data),
+              // 'msg' => 'access_denied'
+            // );
+            // return false;
+          // }
           if ($scope != "profile") {
-            $_SESSION['return'] = array(
+            $_SESSION['return'][] = array(
               'type' => 'danger',
-              'msg' => sprintf($lang['danger']['access_denied'])
-            );
-            return false;
-          }
-          if (!ctype_alnum($client_id) || !ctype_alnum($client_secret)) {
-            $_SESSION['return'] = array(
-              'type' => 'danger',
-              'msg' => sprintf($lang['danger']['access_denied'])
+              'log' => array(__FUNCTION__, $_action, $_type, $_data),
+              'msg' => 'Invalid scope'
             );
             return false;
           }
@@ -46,21 +43,24 @@ function oauth2($_action, $_type, $_data = null) {
           $stmt->execute(array(':client_id' => $client_id));
           $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
           if ($num_results != 0) {
-            $_SESSION['return'] = array(
+            $_SESSION['return'][] = array(
               'type' => 'danger',
+              'log' => array(__FUNCTION__, $_action, $_type, $_data),
               'msg' => 'Client ID exists'
             );
             return false;
           }
-          $stmt = $pdo->prepare("INSERT INTO `oauth_clients` (`client_id`, `client_secret` ,`redirect_uri`)
-            VALUES (:client_id, :client_secret, :redirect_uri)");
+          $stmt = $pdo->prepare("INSERT INTO `oauth_clients` (`client_id`, `client_secret`, `redirect_uri`, `scope`)
+            VALUES (:client_id, :client_secret, :redirect_uri, :scope)");
           $stmt->execute(array(
             ':client_id' => $client_id,
             ':client_secret' => $client_secret,
-            ':redirect_uri' => $redirect_uri
+            ':redirect_uri' => $redirect_uri,
+            ':scope' => $scope
           ));
-          $_SESSION['return'] = array(
+          $_SESSION['return'][] = array(
             'type' => 'success',
+            'log' => array(__FUNCTION__, $_action, $_type, $_data),
             'msg' => 'Added client access'
           );
         break;
@@ -73,47 +73,73 @@ function oauth2($_action, $_type, $_data = null) {
           foreach ($ids as $id) {
             $is_now = oauth2('details', 'client', $id);
             if (!empty($is_now)) {
-              $client_id      = (!empty($_data['client_id'])) ? $_data['client_id'] : $is_now['client_id'];
-              $client_secret  = (!empty($_data['client_secret'])) ? $_data['client_secret'] : $is_now['client_secret'];
-              $redirect_uri   = (!empty($_data['redirect_uri'])) ? $_data['redirect_uri'] : $is_now['redirect_uri'];
+              $redirect_uri = (!empty($_data['redirect_uri'])) ? $_data['redirect_uri'] : $is_now['redirect_uri'];
             }
             else {
-              $_SESSION['return'] = array(
+              $_SESSION['return'][] = array(
                 'type' => 'danger',
-                'msg' => sprintf($lang['danger']['access_denied'])
+                'log' => array(__FUNCTION__, $_action, $_type, $_data),
+                'msg' => 'access_denied'
               );
               return false;
             }
-            if (!ctype_alnum($client_id) || !ctype_alnum($client_secret)) {
-              $_SESSION['return'] = array(
-                'type' => 'danger',
-                'msg' => 'Client ID and secret must be alphanumeric'
+            if (isset($_data['revoke_tokens'])) {
+              $stmt = $pdo->prepare("DELETE FROM `oauth_access_tokens`
+                WHERE `client_id` IN (
+                  SELECT `client_id` FROM `oauth_clients` WHERE `id` = :id
+                )");
+              $stmt->execute(array(
+                ':id' => $id
+              ));
+              $stmt = $pdo->prepare("DELETE FROM `oauth_refresh_tokens`
+                WHERE `client_id` IN (
+                  SELECT `client_id` FROM `oauth_clients` WHERE `id` = :id
+                )");
+              $stmt->execute(array(
+                ':id' => $id
+              ));
+              $_SESSION['return'][] = array(
+                'type' => 'success',
+                'log' => array(__FUNCTION__, $_action, $_type, $_data),
+                'msg' => array('object_modified', htmlspecialchars($id))
               );
-              return false;
+              continue;
+            }
+            if (isset($_data['renew_secret'])) {
+              $client_secret = bin2hex(random_bytes(12));
+              $stmt = $pdo->prepare("UPDATE `oauth_clients` SET `client_secret` = :client_secret WHERE  `id` = :id");
+              $stmt->execute(array(
+                ':client_secret' => $client_secret,
+                ':id' => $id
+              ));
+              $_SESSION['return'][] = array(
+                'type' => 'success',
+                'log' => array(__FUNCTION__, $_action, $_type, $_data),
+                'msg' => array('object_modified', htmlspecialchars($id))
+              );
+              continue;
             }
             if (empty($redirect_uri)) {
-              $_SESSION['return'] = array(
+              $_SESSION['return'][] = array(
                 'type' => 'danger',
+                'log' => array(__FUNCTION__, $_action, $_type, $_data),
                 'msg' => 'Redirect/Callback URL cannot be empty'
               );
-              return false;
+              continue;
             }
             $stmt = $pdo->prepare("UPDATE `oauth_clients` SET
-              `client_id` = :client_id,
-              `client_secret` = :client_secret,
               `redirect_uri` = :redirect_uri
                 WHERE `id` = :id");
             $stmt->execute(array(
               ':id' => $id,
-              ':client_id' => $client_id,
-              ':client_secret' => $client_secret,
               ':redirect_uri' => $redirect_uri
             ));
+            $_SESSION['return'][] = array(
+              'type' => 'success',
+              'log' => array(__FUNCTION__, $_action, $_type, $_data),
+              'msg' => array('object_modified', htmlspecialchars($id))
+            );
           }
-          $_SESSION['return'] = array(
-            'type' => 'success',
-            'msg' => sprintf($lang['success']['object_modified'], htmlspecialchars(implode(', ', $ids)))
-          );
         break;
       }
     break;
@@ -123,39 +149,45 @@ function oauth2($_action, $_type, $_data = null) {
           (array)$ids = $_data['id'];
           foreach ($ids as $id) {
             if (!is_numeric($id)) {
-              $_SESSION['return'] = array(
+              $_SESSION['return'][] = array(
                 'type' => 'danger',
-                'msg' => sprintf($lang['danger']['access_denied'])
+                'log' => array(__FUNCTION__, $_action, $_type, $_data),
+                'msg' => 'access_denied'
               );
-              return false;
+              continue;
             }
-            $stmt = $pdo->prepare("DELETE FROM `oauth_clients` WHERE `id` = :id");
+            $stmt = $pdo->prepare("DELETE FROM `oauth_clients`
+              WHERE `id` = :id");
             $stmt->execute(array(
               ':id' => $id
             ));
           }
-          $_SESSION['return'] = array(
+          $_SESSION['return'][] = array(
             'type' => 'success',
-            'msg' => sprintf($lang['success']['items_deleted'], implode(', ', $ids))
+            'log' => array(__FUNCTION__, $_action, $_type, $_data),
+            'msg' => array('items_deleted', htmlspecialchars($id))
           );
         break;
         case 'access_token':
           (array)$access_tokens = $_data['access_token'];
           foreach ($access_tokens as $access_token) {
             if (!ctype_alnum($access_token)) {
-              $_SESSION['return'] = array(
+              $_SESSION['return'][] = array(
                 'type' => 'danger',
-                'msg' => sprintf($lang['danger']['access_denied'])
+                'log' => array(__FUNCTION__, $_action, $_type, $_data),
+                'msg' => 'access_denied'
               );
               return false;
             }
-            $stmt = $pdo->prepare("DELETE FROM `oauth_access_tokens` WHERE `access_token` = :access_token");
+            $stmt = $pdo->prepare("DELETE FROM `oauth_access_tokens`
+              WHERE `access_token` = :access_token");
             $stmt->execute(array(
               ':access_token' => $access_token
             ));
           }
-          $_SESSION['return'] = array(
+          $_SESSION['return'][] = array(
             'type' => 'success',
+            'log' => array(__FUNCTION__, $_action, $_type, $_data),
             'msg' => sprintf($lang['success']['items_deleted'], implode(', ', $access_tokens))
           );
         break;
@@ -163,9 +195,10 @@ function oauth2($_action, $_type, $_data = null) {
           (array)$refresh_tokens = $_data['refresh_token'];
           foreach ($refresh_tokens as $refresh_token) {
             if (!ctype_alnum($refresh_token)) {
-              $_SESSION['return'] = array(
+              $_SESSION['return'][] = array(
                 'type' => 'danger',
-                'msg' => sprintf($lang['danger']['access_denied'])
+                'log' => array(__FUNCTION__, $_action, $_type, $_data),
+                'msg' => 'access_denied'
               );
               return false;
             }
@@ -174,8 +207,9 @@ function oauth2($_action, $_type, $_data = null) {
               ':refresh_token' => $refresh_token
             ));
           }
-          $_SESSION['return'] = array(
+          $_SESSION['return'][] = array(
             'type' => 'success',
+            'log' => array(__FUNCTION__, $_action, $_type, $_data),
             'msg' => sprintf($lang['success']['items_deleted'], implode(', ', $refresh_tokens))
           );
         break;

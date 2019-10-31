@@ -432,6 +432,53 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         <?php
         }
     }
+    elseif (isset($_GET['oauth2client']) &&
+      is_numeric($_GET["oauth2client"]) &&
+      !empty($_GET["oauth2client"])) {
+        $oauth2client = $_GET["oauth2client"];
+        $result = oauth2('details', 'client', $oauth2client);
+        if (!empty($result)) {
+        ?>
+          <h4>OAuth2</h4>
+          <form data-id="oauth2client" class="form-horizontal" role="form" method="post">
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="client_id"><?=$lang['edit']['client_id'];?></label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="client_id" id="client_id" value="<?=htmlspecialchars($result['client_id']);?>" disabled>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="client_secret"><?=$lang['edit']['client_secret'];?></label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="client_secret" id="client_secret" value="<?=htmlspecialchars($result['client_secret']);?>" disabled>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="scope"><?=$lang['edit']['scope'];?></label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="scope" id="scope" value="<?=htmlspecialchars($result['scope']);?>" disabled>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="redirect_uri"><?=$lang['edit']['redirect_uri'];?></label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="redirect_uri" id="redirect_uri" value="<?=htmlspecialchars($result['redirect_uri']);?>">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-default" data-action="edit_selected" data-id="oauth2client" data-item="<?=$oauth2client;?>" data-api-url='edit/oauth2-client' data-api-attr='{}' href="#"><?=$lang['admin']['save'];?></button>
+              </div>
+            </div>
+          </form>
+          <?php
+        }
+        else {
+        ?>
+          <div class="alert alert-info" role="alert"><?=$lang['info']['no_action'];?></div>
+        <?php
+        }
+    }
     elseif (isset($_GET['aliasdomain']) &&
       is_valid_domain_name(html_entity_decode(rawurldecode($_GET["aliasdomain"]))) &&
       !empty($_GET["aliasdomain"])) {
@@ -666,7 +713,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
               </div>
             </div>
           </div>
-          <div class="form-group">
+          <div data-acl="<?=$_SESSION['acl']['sogo_access'];?>" class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
               <div class="checkbox">
               <label><input type="checkbox" value="1" name="sogo_access" <?=($result['attributes']['sogo_access']=="1") ? "checked" : null;?>> <?=$lang['edit']['sogo_access'];?></label>

@@ -17,7 +17,7 @@ $lang['footer']['restarting_container'] = 'Restartuje se kontejner, může to ch
 $lang['footer']['restart_container_info'] = '<b>Důležité:</b> Šetrný restart může chvíli trvat, prosím čekejte...';
 
 $lang['footer']['confirm_delete'] = 'Potvdit smazání';
-$lang['footer']['delete_these_items'] = 'Prosím potvrďte vaše změny objektu id:';
+$lang['footer']['delete_these_items'] = 'Prosím potvrďte změny objektu id:';
 $lang['footer']['delete_now'] = 'Smazat';
 $lang['footer']['cancel'] = 'Zrušit';
 
@@ -28,7 +28,7 @@ $lang['danger']['transport_dest_exists'] = 'Transportní cíl "%s" již existuje
 $lang['danger']['unlimited_quota_acl'] = "Neomeznou kvótu nepovoluje seznam oprávnění ACL";
 $lang['danger']['mysql_error'] = "Chyba MySQL: %s";
 $lang['danger']['redis_error'] = "Chyba Redis: %s";
-$lang['danger']['unknown_tfa_method'] = "Neznámá TFA metoda";
+$lang['danger']['unknown_tfa_method'] = "Neznámá 2FA metoda";
 $lang['danger']['totp_verification_failed'] = "TOTP ověření selhalo";
 $lang['success']['verified_totp_login'] = "TOTP přihlášení ověřeno";
 $lang['danger']['u2f_verification_failed'] = "U2F ověření selhalo: %s";
@@ -46,7 +46,8 @@ $lang['success']['rspamd_ui_pw_set'] = "Heslo k Rspamd UI nastaveno";
 $lang['success']['queue_command_success'] = "Příkaz pro frontu úspěšně dokončen";
 $lang['danger']['unknown'] = "Došlo k neznámé chybě";
 $lang['danger']['malformed_username'] = "Neplatné uživatelské jméno";
-$lang['info']['awaiting_tfa_confirmation'] = "Čeká se na potvrzení TFA";
+$lang['info']['awaiting_tfa_confirmation'] = "Čeká se na potvrzení 2FA";
+$lang['info']['session_expires'] = "Relace vyprší za 15 vteřin";
 $lang['success']['logged_in_as'] = "Přihlášen jako %s";
 $lang['danger']['login_failed'] = "Přihlášení selhalo";
 $lang['danger']['set_acl_failed'] = "Chyba při nastavení ACL";
@@ -75,9 +76,9 @@ $lang['danger']['private_key_error'] = "Chyba soukroméhop klíče: %s";
 $lang['danger']['map_content_empty'] = "Obsah mapování nesmí být prázdný";
 $lang['success']['settings_map_added'] = "Přidána položka mapování nastavení";
 $lang['danger']['settings_map_invalid'] = "Položka mapování nastavení ID %s je špatná";
-$lang['danger']['settings_map_removed'] = "Položka mapování nastavení: %s smazána";
+$lang['success']['settings_map_removed'] = "Položka mapování nastavení: %s smazána";
 $lang['danger']['invalid_host'] = "Zadán neplatný hostitel: %s";
-$lang['danger']['relayhost_invalid'] = "Nadřazený SMTP server (Relayhost) %s je neplatný";
+$lang['danger']['relayhost_invalid'] = "Položky %s je neplatná";
 $lang['success']['saved_settings'] = "Nastavení uložena";
 $lang['success']['db_init_complete'] = "Inicializace databáze dokončena";
 
@@ -116,7 +117,7 @@ $lang['success']['resource_modified'] = "Změny poštovní schránky %s uloženy
 $lang['success']['object_modified'] = "Změny objektu %s uloženy";
 $lang['success']['f2b_modified'] = "Změny parametrů Fail2ban uloženy";
 $lang['danger']['targetd_not_found'] = "Cílová doména %s nenalezena";
-$lang['danger']['targetd_relay_domain'] = "Cílová doména %s je přesměrovaná";
+$lang['danger']['targetd_relay_domain'] = "Cílová doména %s je předávaná";
 $lang['success']['aliasd_added'] = "Přidán doménový alias %s";
 $lang['success']['aliasd_modified'] = "Změny aliasu domény %s uloženy";
 $lang['success']['domain_modified'] = "Změny domény %s uloženy";
@@ -187,7 +188,7 @@ $lang['user']['shared_aliases_desc'] = 'Na sdílené aliasy se neuplatňuje uži
 $lang['user']['direct_aliases'] = 'Přímé aliasy';
 $lang['user']['direct_aliases_desc'] = 'Na přímé aliasy se uplatňuje filtr spamu a nastavení pravidel TLS';
 $lang['user']['is_catch_all'] = 'Catch-all pro doménu/y';
-$lang['user']['aliases_also_send_as'] = 'Smí odesílat tako jako uživatel';
+$lang['user']['aliases_also_send_as'] = 'Smí odesílat také jako uživatel';
 $lang['user']['aliases_send_as_all'] = 'Nekontrolovat přístup odesílatele pro následující doménu(y) a jejich aliasy domény:';
 $lang['user']['alias_create_random'] = 'Generovat náhodný alias';
 $lang['user']['alias_extend_all'] = 'Prodloužit aliasy o 1 hodinu';
@@ -208,7 +209,7 @@ $lang['admin']['spamfilter'] = 'Filtr spamu';
 $lang['user']['spamfilter_wl'] = 'Seznam povolených adres (whitelist)';
 $lang['user']['spamfilter_wl_desc'] = 'Povolené emailové adresy <b>nebudou nikdy klasifikovány jako spam</b>. Lze použít zástupné znaky (*). Filtr se použije pouze na přímé aliasy (s jednou cílovou poštovní schránkou), s výjimkou aliasů typu catch-all a samotné poštovní schránky.';
 $lang['user']['spamfilter_bl'] = 'Seznam zakázaných adres (blacklist)';
-$lang['user']['spamfilter_bl_desc'] = 'Zakázané emailové adresy <b>budou vždy klasifikovány jako spam a odmítnuté</b>. Lze použít zástupné znaky (*). Filtr se použije pouze na přímé aliasy (s jednou cílovou poštovní schránkou), s výjimkou aliasů typu catch-all a samotné poštovní schránky.';
+$lang['user']['spamfilter_bl_desc'] = 'Zakázané emailové adresy <b>budou vždy klasifikovány jako spam a odmítnuty</b>. Lze použít zástupné znaky (*). Filtr se použije pouze na přímé aliasy (s jednou cílovou poštovní schránkou), s výjimkou aliasů typu catch-all a samotné poštovní schránky.';
 $lang['user']['spamfilter_behavior'] = 'Hodnocení';
 $lang['user']['spamfilter_table_rule'] = 'Pravidlo';
 $lang['user']['spamfilter_table_action'] = 'Akce';
@@ -225,7 +226,7 @@ $lang['user']['waiting'] = "Čekání";
 $lang['user']['status'] = "Stav";
 $lang['user']['running'] = "Běží";
 
-$lang['user']['tls_policy_warning'] = '<strong>Varování:</strong> Pokud se rozhodnete vynutit šifrovaný přenos pošty, může dojít ke ztrátě e-mailů.<br>Zprávy, které nesplňují tuto politiku, budou poštovním systémem odmítnuty.<br>Tato volba ovlivňuje vaši primární e-mailovou adresu (přihlašovací jméno), všechny adresy odvozené z doménových aliasů i aliasy, jež mají tuto poštovní chránku jako cíl.';
+$lang['user']['tls_policy_warning'] = '<strong>Varování:</strong> Pokud se rozhodnete vynutit šifrovaný přenos pošty, může dojít ke ztrátě e-mailů.<br>Zprávy, které nesplňují tuto politiku, budou poštovním systémem odmítnuty.<br>Tato volba ovlivňuje primární e-mailovou adresu (přihlašovací jméno), všechny adresy odvozené z doménových aliasů i aliasy, jež mají tuto poštovní chránku jako cíl.';
 $lang['user']['tls_policy'] = 'Politika šifrování';
 $lang['user']['tls_enforce_in'] = 'Vynutit TLS pro příchozí poštu ';
 $lang['user']['tls_enforce_out'] = 'Vynutit TLS pro odchozí poštu';
@@ -259,11 +260,11 @@ $lang['user']['edit'] = 'Upravit';
 $lang['user']['remove'] = 'Smazat';
 $lang['user']['create_syncjob'] = 'Vytvořit novou synchronizační úlohu';
 
-$lang['start']['mailcow_apps_detail'] = 'Použijte aplikace pro přístup k vašim e-mailům, kalendáři, kontaktům atd.';
+$lang['start']['mailcow_apps_detail'] = 'Použijte aplikace pro přístup k e-mailům, kalendáři, kontaktům atd.';
 $lang['start']['mailcow_panel_detail'] = '<b>Správci domén</b> mohou vytvářet, upravovat nebo mazat schránky a aliasy, upravovat parametry domén a zobrazovat další informace o svých přidělených doménách.<br>
 <b>Uživatelé</b> mohou vytvářet dočasné aliasy (spam aliases), měnit svá hesla a nastavovat filtr spamu.';
-$lang['start']['imap_smtp_server_auth_info'] = 'Použijte vaši celou e-mailovou adresu a zvolte způsob ověřování PLAIN.<br>
-Vaše přihlašovací údaje budou zašifrovány na straně serveru.';
+$lang['start']['imap_smtp_server_auth_info'] = 'Použijte celou e-mailovou adresu a zvolte způsob ověření PLAIN.<br>
+Přihlašovací údaje budou zašifrovány na straně serveru.';
 $lang['start']['help'] = 'Zobrazit/skrýt panel nápovědy';
 $lang['header']['mailcow_settings'] = 'Nastavení';
 $lang['header']['administration'] = 'Hlavní nastavení';
@@ -272,21 +273,21 @@ $lang['header']['user_settings'] = 'Uživatelská nastavení';
 $lang['header']['quarantine'] = "Karanténa";
 $lang['header']['debug'] = "Systémové informace";
 $lang['quarantine']['disabled_by_config'] = "Funkce karanténa je momentálně vypnuta v nastavení systému.";
-$lang['mailbox']['tls_policy_maps'] = 'Mapování TLS pravidel';
+$lang['mailbox']['tls_policy_maps'] = 'Mapy TLS pravidel';
 $lang['mailbox']['tls_policy_maps_long'] = 'Přepisování pravidel odchozího TLS';
-$lang['mailbox']['tls_policy_maps_info'] = 'Tato mapa přepisuje pravidla odchozího TLS na transportech nezávisle na TLS nastavení uživatele.<br>
+$lang['mailbox']['tls_policy_maps_info'] = 'Tato mapa přepisuje pravidla odchozích TLS nezávisle na TLS nastavení uživatele.<br>
   Pro více informací prosím prostudujte <a href="http://www.postfix.org/postconf.5.html#smtp_tls_policy_maps" target="_blank">dokumentaci k "smtp_tls_policy_maps"</a>.';
 $lang['mailbox']['tls_enforce_in'] = 'Vynutit TLS pro příchozí';
 $lang['mailbox']['tls_enforce_out'] = 'Vynutit TLS pro odchozí';
 $lang['mailbox']['tls_map_dest'] = 'Cíl';
-$lang['mailbox']['tls_map_dest_info'] = 'Příklady: example.org, .example.org, mail@example.org, [mail.example.org]:25';
+$lang['mailbox']['tls_map_dest_info'] = 'Příklady: example.org, .example.org, [mail.example.org]:25';
 $lang['mailbox']['tls_map_policy'] = 'Pravidlo';
 $lang['mailbox']['tls_map_parameters'] = 'Parametry';
 $lang['mailbox']['tls_map_parameters_info'] = 'Prázdné nebo parametry, například: protocols=!SSLv2 ciphers=medium exclude=3DES';
-$lang['mailbox']['booking_0'] = 'Vždy ukazovat jako volný';
-$lang['mailbox']['booking_lt0'] = 'Neomezený, ale po rezervaci se ukazuje jako zabraný';
-$lang['mailbox']['booking_custom'] = 'Pevný limit na určitý počet rezervací';
-$lang['mailbox']['booking_0_short'] = 'Vždy volný';
+$lang['mailbox']['booking_0'] = 'Vždy volno';
+$lang['mailbox']['booking_lt0'] = 'Neomezeno, ale po rezervaci se ukazuje jako obsazené';
+$lang['mailbox']['booking_custom'] = 'Omezeno na pevný počet rezervací';
+$lang['mailbox']['booking_0_short'] = 'Vždy volno';
 $lang['mailbox']['booking_lt0_short'] = 'Volný limit';
 $lang['mailbox']['booking_custom_short'] = 'Pevný limit';
 $lang['mailbox']['domain'] = 'Doména';
@@ -302,7 +303,7 @@ $lang['admin']['domain_s'] = 'Doména/y';
 $lang['mailbox']['mailboxes'] = 'Poštovní schránky';
 $lang['mailbox']['mailbox'] = 'Poštovní schránka';
 $lang['mailbox']['resources'] = 'Zdroje';
-$lang['mailbox']['mailbox_quota'] = 'Max. velikost poštovní schránky';
+$lang['mailbox']['mailbox_quota'] = 'Max. velikost schránky';
 $lang['mailbox']['domain_quota'] = 'Kvóta';
 $lang['mailbox']['active'] = 'Aktivní';
 $lang['mailbox']['action'] = 'Akce';
@@ -316,7 +317,7 @@ $lang['mailbox']['filter_table'] = 'Tabulka filtrů';
 $lang['mailbox']['yes'] = '&#10003;';
 $lang['mailbox']['no'] = '&#10005;';
 $lang['mailbox']['in_use'] = 'Obsazeno (%)';
-$lang['mailbox']['msg_num'] = 'Zpráva #';
+$lang['mailbox']['msg_num'] = 'Počet zpráv';
 $lang['mailbox']['remove'] = 'Smazat';
 $lang['mailbox']['edit'] = 'Upravit';
 $lang['mailbox']['no_record'] = 'Žádný záznam pro objekt %s';
@@ -343,15 +344,15 @@ Každý filtr bude proveden v daném pořadí. Ani chyba při vykonávání skri
 $lang['info']['no_action'] = 'Žádná použitelná akce';
 
 
+$lang['edit']['sogo_visible'] = 'Alias dostupný v SOGo';
+$lang['edit']['sogo_visible_info'] = 'Tato volba určuje objekty, jež lze zobrazit v SOGo (sdílené nebo nesdílené aliasy, jež ukazuje alespoň na jednu schránku).';
+$lang['mailbox']['sogo_visible'] = 'Alias dostupný v SOGo';
+$lang['mailbox']['sogo_visible_y'] = 'Zobrazit alias v SOGo';
+$lang['mailbox']['sogo_visible_n'] = 'Skrýt alias v SOGo';
 $lang['edit']['syncjob'] = 'Upravit synchronizační úlohu';
-$lang['edit']['client_id'] = 'ID klienta';
-$lang['edit']['client_secret'] = 'Client secret';
-$lang['edit']['scope'] = 'Rozsah';
-$lang['edit']['grant_types'] = 'Typy udělení';
-$lang['edit']['redirect_uri'] = 'URL pro přesměrování/callback';
 $lang['edit']['hostname'] = 'Jméno hostitele';
 $lang['edit']['encryption'] = 'Šifrování';
-$lang['edit']['maxage'] = 'Maximální stáří zpráv ve dnech, které budou staženy ze vzdáleného umístění<br><small>(0 = ignorovat stáří)</small>';
+$lang['edit']['maxage'] = 'Maximální stáří stahovaných zpráv, ve dnech<br><small>(0 = ignorovat stáří)</small>';
 $lang['edit']['maxbytespersecond'] = 'Max. bajtů za sekundu <br><small>(0 = neomezeno)</small>';
 $lang['edit']['automap'] = 'Pokusit se automaticky mapovat složky ("Sent items", "Sent" => "Sent" atd.)';
 $lang['edit']['skipcrossduplicates'] = 'Přeskočit duplicitní zprávy ("první přijde, první mele")';
@@ -364,7 +365,7 @@ $lang['edit']['save'] = 'Uložit změny';
 $lang['edit']['username'] = 'Uživatelské jméno';
 $lang['edit']['max_mailboxes'] = 'Max. počet poštovních schránek';
 $lang['edit']['title'] = 'Úprava objektu';
-$lang['edit']['target_address'] = 'Cílová adresa/y <small>(odělené čárkou)</small>';
+$lang['edit']['target_address'] = 'Cílová adresa/y<br /> <small>(oddělte čárkou)</small>';
 $lang['edit']['active'] = 'Aktivní';
 $lang['edit']['gal'] = 'Globální seznam adres';
 $lang['add']['gal'] = 'Globální seznam adres';
@@ -388,9 +389,9 @@ $lang['edit']['max_aliases'] = 'Max. počet aliasů';
 $lang['edit']['max_quota'] = 'Max. kvóta poštovní schránky (MiB)';
 $lang['edit']['domain_quota'] = 'Kvóta domény';
 $lang['edit']['backup_mx_options'] = 'Možnosti záložního MX';
-$lang['edit']['relay_domain'] = 'Přesměrování domény';
-$lang['edit']['relay_all'] = 'Přesměrování všech příjemců';
-$lang['edit']['relay_all_info'] = '<small>Pokud se rozhodnete <b>nepřesměrovat</b> všechny příjemce, musíte přidat prázdnou poštovní schránku pro každého příjemce, který se má přesměrovávat.</small>';
+$lang['edit']['relay_domain'] = 'Předávání domény';
+$lang['edit']['relay_all'] = 'Předávání všech příjemců';
+$lang['edit']['relay_all_info'] = '<small>Pokud se rozhodnete <b>nepředávat</b> všechny příjemce, musíte přidat prázdnou poštovní schránku pro každého příjemce, který se má předávat.</small>';
 $lang['edit']['full_name'] = 'Celé jméno';
 $lang['edit']['quota_mb'] = 'Kvóta (MiB)';
 $lang['edit']['sender_acl'] = 'Povolit odesílání jako';
@@ -402,7 +403,7 @@ $lang['edit']['dont_check_sender_acl'] = "Vypnout kontrolu odesílatele pro dom�
 $lang['edit']['multiple_bookings'] = 'Vícenásobné rezervace';
 $lang['edit']['kind'] = 'Druh';
 $lang['edit']['resource'] = 'Zdroj';
-$lang['edit']['relayhost'] = 'Přeposílání závislé na odesílateli';
+$lang['edit']['relayhost'] = 'Předávání podle odesílatele';
 $lang['edit']['public_comment'] = 'Veřejný komentář';
 $lang['mailbox']['public_comment'] = 'Veřejný komentář';
 $lang['edit']['private_comment'] = 'Soukromý komentář';
@@ -426,15 +427,16 @@ $lang['acl']['alias_domains'] = 'Přidat doménové aliasy';
 $lang['acl']['login_as'] = 'Přihlásit se jako uživatel poštovní schránky';
 $lang['acl']['bcc_maps'] = 'BCC mapy';
 $lang['acl']['filters'] = 'Filtry';
-$lang['acl']['ratelimit'] = 'Omezování provozu';
+$lang['acl']['ratelimit'] = 'Omezení provozu';
 $lang['acl']['recipient_maps'] = 'Mapy příjemců';
 $lang['acl']['unlimited_quota'] = 'Neomezené kvóty pro poštovní schránky';
 $lang['acl']['extend_sender_acl'] = 'Povolit rozšíření ACL odesílatele o externí adresy';
 $lang['acl']['prohibited'] = 'Zakázáno z důvodu ACL';
+$lang['acl']['sogo_access'] = 'Povolit správu přístupu do SOGo';
 
 $lang['edit']['extended_sender_acl'] = 'Externí adresy odesílatele';
 $lang['edit']['extended_sender_acl_info'] = 'Je dobré importovat DKIM klíč domény, pokud existuje.<br>
-  Nezapoměňte přidat tento server do příslušného záznamu SPF TXT.<br>
+  Nezapomeňte přidat tento server do příslušného záznamu SPF TXT.<br>
   Je-li na tomto serveru vytvořena doména nebo doménový alias, který se shoduje s externí adresou, je tato externí adresa smazána.<br>
   Použije formát @domain.tld, chcete-li odesílat jako *@domain.tld.';
 $lang['edit']['sender_acl_info'] = 'Má-li uživatel schránky A dovoleno odesílat jako uživatel schránky B, nezobrazuje se adresa odesílatele B v seznamu "Od" v SOGo automaticky.<br>
@@ -489,9 +491,9 @@ $lang['add']['max_mailboxes'] = 'Max. počet poštovních schránek';
 $lang['add']['mailbox_quota_m'] = 'Max. kvóta poštovní schránky (MiB)';
 $lang['add']['domain_quota_m'] = 'Celková kvóta domény (MiB)';
 $lang['add']['backup_mx_options'] = 'Možnosti záložního MX';
-$lang['add']['relay_all'] = 'Přesměrování všech příjemců';
-$lang['add']['relay_domain'] = 'Přesměrování domény';
-$lang['add']['relay_all_info'] = '<small>Pokud se rozhodnete <b>nepřesměrovat</b> všechny příjemce, musíte přidat prázdnou poštovní schránku pro každého příjemce, který se má přesměrovávat.</small>';
+$lang['add']['relay_all'] = 'Předávání všech příjemců';
+$lang['add']['relay_domain'] = 'Předávání domény';
+$lang['add']['relay_all_info'] = '<small>Pokud se rozhodnete <b>nepředávat</b> všechny příjemce, musíte přidat prázdnou poštovní schránku pro každého příjemce, který se má předávat.</small>';
 $lang['add']['alias_address'] = 'Adresa/y aliasů';
 $lang['add']['alias_address_info'] = '<small>Kompletní emailová adresa/y, nebo @example.com pro zachycení všech zpráv pro doménu (oddělené čárkami). <b>Pouze domény v systému mailcow</b>.</small>';
 $lang['add']['alias_domain_info'] = '<small>Platné názvy domén (oddělené čárkami).</small>';
@@ -508,7 +510,7 @@ $lang['add']['select_domain'] = 'Nejdříve vyberte doménu';
 $lang['add']['password'] = 'Heslo';
 $lang['add']['password_repeat'] = 'Potvrzení nového hesla (opakujte)';
 $lang['add']['restart_sogo_hint'] = 'Po přidání nové domény je nutné restartovat SOGo kontejner!';
-$lang['add']['goto_null'] = 'Tiše odmítat poštu';
+$lang['add']['goto_null'] = 'Tiše zahazovat poštu';
 $lang['add']['goto_ham'] = 'Učit se jako <span class="text-success"><b>ham</b></span>';
 $lang['add']['goto_spam'] = 'Učit se jako <span class="text-danger"><b>spam</b></span>';
 $lang['add']['validation_success'] = 'Úspěšně ověřeno';
@@ -532,23 +534,27 @@ $lang['login']['password'] = 'Heslo';
 $lang['login']['login'] = 'Přihlásit';
 $lang['login']['delayed'] = 'Přihlášení zpožděno o %s sekund.';
 
-$lang['tfa']['tfa'] = "Dvoufaktorové ověřování";
-$lang['tfa']['set_tfa'] = "Nastavení způsobu dvoufaktorového ověřování";
-$lang['tfa']['yubi_otp'] = "Yubico OTP ověřování";
-$lang['tfa']['key_id'] = "Identifikátor vašeho YubiKey";
-$lang['tfa']['key_id_totp'] = "Identifikátor vašeho klíče";
-$lang['tfa']['api_register'] = 'mailcow používá Yubico Cloud API. Prosím získejte API klíč pro vaše Yubico <a href="https://upgrade.yubico.com/getapikey/" target="_blank">ZDE</a>';
-$lang['tfa']['u2f'] = "U2F ověřování";
+$lang['tfa']['tfa'] = "Dvoufaktorové ověření";
+$lang['tfa']['set_tfa'] = "Nastavení způsobu dvoufaktorového ověření";
+$lang['tfa']['yubi_otp'] = "Yubico OTP ověření";
+$lang['tfa']['key_id'] = "Identifikátor YubiKey";
+$lang['tfa']['init_u2f'] = "Probíhá inicializace, čekejte...";
+$lang['tfa']['start_u2f_validation'] = "Zahájit inicializaci";
+$lang['tfa']['reload_retry'] = "- (znovu načtěte stránku, opakuje-li se chyba)";
+$lang['tfa']['key_id_totp'] = "Identifikátor klíče";
+$lang['tfa']['error_code'] = "Kód chyby";
+$lang['tfa']['api_register'] = 'mailcow používá Yubico Cloud API. Prosím získejte API klíč pro své Yubico <a href="https://upgrade.yubico.com/getapikey/" target="_blank">ZDE</a>';
+$lang['tfa']['u2f'] = "U2F ověření";
 $lang['tfa']['none'] = "Deaktivovat";
-$lang['tfa']['delete_tfa'] = "Zakázat TFA";
-$lang['tfa']['disable_tfa'] = "Zakázat TFA do příštího úspěšného přihlášení";
+$lang['tfa']['delete_tfa'] = "Zakázat 2FA";
+$lang['tfa']['disable_tfa'] = "Zakázat 2FA do příštího úspěšného přihlášení";
 $lang['tfa']['confirm'] = "Potvrdit";
 $lang['tfa']['totp'] = "Časově založené OTP (Google Authenticator, Authy apod.)";
 $lang['tfa']['select'] = "Prosím vyberte...";
 $lang['tfa']['waiting_usb_auth'] = "<i>Čeká se na USB zařízení...</i><br><br>Prosím stiskněte tlačítko na svém U2F USB zařízení.";
 $lang['tfa']['waiting_usb_register'] = "<i>Čeká se na USB zařízení...</i><br><br>Prosím zadejte své heslo výše a potvrďte U2F registraci stiskem tlačítka na svém U2F USB zařízení.";
-$lang['tfa']['scan_qr_code'] = "Prosím načtěte následující kód svou aplikací na ověřování nebo zadejte kód ručně.";
-$lang['tfa']['enter_qr_code'] = "Váš kód TOTP, pokud vaše zařízení neumí číst QR kódy";
+$lang['tfa']['scan_qr_code'] = "Prosím načtěte následující kód svou aplikací na ověření nebo zadejte kód ručně.";
+$lang['tfa']['enter_qr_code'] = "Kód TOTP, pokud zařízení neumí číst QR kódy";
 $lang['tfa']['confirm_totp_token'] = "Prosím potvrďte změny zadáním vygenerovaného tokenu";
 
 $lang['admin']['rspamd-com_settings'] = '<a href="https://rspamd.com/doc/configuration/settings.html#settings-structure" target="_blank">Rspamd dokumentace</a>
@@ -567,14 +573,14 @@ $lang['admin']['dkim_to'] = 'Komu';
 $lang['admin']['dkim_from_title'] = 'Zdrojová doména, z níž se budou kopírovat data';
 $lang['admin']['dkim_to_title'] = 'Cílová doména/y - bude přepsáno';
 $lang['admin']['f2b_parameters'] = 'Nastavení Fail2ban';
-$lang['admin']['f2b_ban_time'] = 'Čas blokování (s)';
+$lang['admin']['f2b_ban_time'] = 'Doba blokování (s)';
 $lang['admin']['f2b_max_attempts'] = 'Max. pokusů';
 $lang['admin']['f2b_retry_window'] = 'Časový horizont pro maximum pokusů (s)';
 $lang['admin']['f2b_netban_ipv4'] = 'Rozsah IPv4 podsítě k zablokování (8-32)';
 $lang['admin']['f2b_netban_ipv6'] = 'Rozsah IPv6 podsítě k zablokování (8-128)';
 $lang['admin']['f2b_whitelist'] = 'Sítě/hostitelé na whitelistu';
 $lang['admin']['f2b_blacklist'] = 'Sítě/hostitelé na blacklistu';
-$lang['admin']['f2b_list_info'] = 'Síť nebo hostitelé na blacklistu budou mít vždy větší váhu než položky na whitelistu. Záznamy z blacklistu jsou vytvářeny při startu kontejneru.';
+$lang['admin']['f2b_list_info'] = 'Síť nebo hostitelé na blacklistu mají vždy větší váhu než položky na whitelistu. Blacklist se sestavuje vždy při startu kontejneru.';
 $lang['admin']['search_domain_da'] = 'Hledat domény';
 $lang['admin']['r_inactive'] = 'Neaktivní omezení';
 $lang['admin']['r_active'] = 'Aktivní omezení';
@@ -647,37 +653,68 @@ $lang['admin']['rate_name'] = 'Název';
 $lang['admin']['refresh'] = 'Obnovit';
 $lang['admin']['to_top'] = 'Zpět na začátek';
 $lang['admin']['in_use_by'] = 'Používáno';
-$lang['admin']['forwarding_hosts'] = 'Přeposílající hostitelé';
-$lang['admin']['forwarding_hosts_hint'] = 'Příchozí zprávy od zde uvedených hostitelů jsou bezpodmínečně přijaty. Tito hostitelé nebudou kontrolováni na DNSBL, ani podrobeni greylistingu. Spam od těchto hostitelů se nikdy neodmítá, ale občas může skončit ve složce se spamem. Nejčastěji se používají pro poštovní servery, jež jsou nastaveny, aby předávaly příchozí e-maily na tento poštovní server mailcow.';
+$lang['admin']['forwarding_hosts'] = 'Předávající hostitelé';
+$lang['admin']['forwarding_hosts_hint'] = 'Příchozí zprávy od zde uvedených hostitelů jsou bezpodmínečně přijaty. U těchto hostitelů se nekontroluje DNSBL a nepoužije greylisting. Spam od těchto hostitelů se nikdy neodmítá, ale občas může skončit ve složce se spamem. Nejčastěji se zde uvádějí poštovní servery, jež předávají příchozí e-maily na tento poštovní server.';
 $lang['admin']['forwarding_hosts_add_hint'] = 'Lze zadat IPv4/IPv6 adresy, sítě ve formátu CIDR, názvy hostitelů (budou převedeny na IP adresy) nebo názvy domén (budou převedeny na IP pomocí SPF záznamů, příp. MX záznamů).';
-$lang['admin']['relayhosts_hint'] = 'Zde definujte transporty závislé na odesílateli, jež pak můžete použít v nastavení domény.<br>
+$lang['admin']['relayhosts_hint'] = 'Zde definujte transporty podle odesílatele, jež pak můžete použít v nastavení domény.<br>
 Protokol transportu je vždy "smtp:". Bere se v potaz uživatelské nastavení odchozího TLS.';
-$lang['admin']['transports_hint'] = '→ Položka transportní mapy <b>přebíjí</b> transportní mapu závislou na odesílateli</b>.<br>
+$lang['admin']['transports_hint'] = '→ Položka transportní mapy <b>přebíjí</b> transportní mapu podle odesílatele</b>.<br>
 → Uživatelské nastavení odchozího TLS se ignoruje a lze je výhradně vynutit mapováním TLS pravidel.<br>
 → Protokol transportu je vždy "smtp:".<br>
 → Adresy, jež odpovídají výrazu "/localhost$/", se vždy předají přes "local:", takže nejsou zahrnuty do definice cíle "*".<br>
 → Pro stanovení přihlašovacích údajů dalšího skoku, např. "[host]:25", bude Postfix <b>vždy</b> hledat nejdříve "host" a teprve pak "[host]:25". Kvůli tomu nelze použít současně "host" a "[host]:25"';
-$lang['admin']['add_relayhost_hint'] = 'Pozor: jakékoliv přihlašovací údaje budou uloženy jako prostý text.';
-$lang['admin']['add_transports_hint'] = 'Pozor: jakékoliv přihlašovací údaje budou uloženy jako prostý text.';
+$lang['admin']['add_relayhost_hint'] = 'Pozor: přihlašovací údaje se ukládají jako prostý text.';
+$lang['admin']['add_transports_hint'] = 'Pozor: přihlašovací údaje se ukládají jako prostý text.';
 $lang['admin']['host'] = 'Hostitel';
 $lang['admin']['source'] = 'Zdroj';
 $lang['admin']['add_forwarding_host'] = 'Přidat předávajícího hostitele';
-$lang['admin']['add_relayhost'] = 'Přidat transport závislý na odesílateli';
+$lang['admin']['add_relayhost'] = 'Přidat transport podle odesílatele';
 $lang['admin']['add_transport'] = 'Přidat transport';
-$lang['admin']['relayhosts'] = 'Transporty závislé na odesílateli';
-$lang['admin']['transport_maps'] = 'Mapy transportů';
+$lang['admin']['relayhosts'] = 'Transporty podle odesílatele';
+$lang['admin']['transport_maps'] = 'Transportní mapy';
 $lang['admin']['routing'] = 'Směrování';
-$lang['admin']['credentials_transport_warning'] = '<b>Upozornění</b>: Přidání položky do mapy transportů aktualizuje také přihlašovací údaje všech záznamů s odpovídajícím skokem.';
+$lang['admin']['credentials_transport_warning'] = '<b>Upozornění</b>: Přidání položky do transportní mapy aktualizuje také přihlašovací údaje všech záznamů s odpovídajícím skokem.';
 
 $lang['admin']['destination'] = 'Cíl';
 $lang['admin']['nexthop'] = 'Další skok';
+
+$lang['admin']['oauth2_info'] = 'Implementace OAuth2 podporuje přidělení typu "Authorization Code" a vydává tokeny k obnovení.<br>
+Server vydává tokeny k obnovení automaticky, jakmile byl předchozí token použit.<br><br>
+→ Výchozím rozsahem je <i>profil</i>. Ověření přes OAuth2 mohou využít jen uživatelé poštovních schránek. Je-li rozsah vynechán, použije se <i>profil</i>.<br>
+→ Klient je povinen uvést parametr <i>state</i> spolu s požadavkem na ověření.<br><br>
+Cesty API pro požadavky na ověření OAuth2: <br>
+<ul>
+  <li>Koncový bod pro ověření: <code>/oauth/authorize</code></li>
+  <li>Koncový bod pro token: <code>/oauth/token</code></li>
+  <li>Stránka zdroje:  <code>/oauth/profile</code></li>
+</ul>
+Dojde-li ke znovuvytvoření tajného klíče klienta, nedojde ke zneplatnění stávajícíh ověřovacích kódů, nebude však už možné obnovit jejich token.<br><br>
+Odvoláním klientského tokenů okamžitě ukončíte všechny aktivní relace a klienti se budou muset znovu přihlásit.';
+
+$lang['admin']['oauth2_client_id'] = "ID klienta";
+$lang['admin']['oauth2_client_secret'] = "Tajný klíč klienta";
+$lang['admin']['oauth2_redirect_uri'] = "URI přesměrování";
+$lang['admin']['oauth2_revoke_tokens'] = 'Odvolat všechny klientské tokeny';
+$lang['admin']['oauth2_renew_secret'] = 'Vytvořit nový tajný klíč';
+$lang['edit']['client_id'] = 'ID klienta';
+$lang['edit']['client_secret'] = 'Tajný klíč klienta';
+$lang['edit']['scope'] = 'Rozsah';
+$lang['edit']['grant_types'] = 'Typy přidělení';
+$lang['edit']['redirect_uri'] = 'URL přesměrování/odvolání';
+$lang['oauth2']['scope_ask_permission'] = 'Aplikace požádala o následující oprávnění';
+$lang['oauth2']['profile'] = 'Profil';
+$lang['oauth2']['profile_desc'] = 'Zobrazit osobní údaje: uživ. jméno, jméno, datum vytvoření a úpravy, stav';
+$lang['oauth2']['permit'] = 'Ověřit aplikaci';
+$lang['oauth2']['authorize_app'] = 'Ověřit aplikaci';
+$lang['oauth2']['deny'] = 'Zamítnout';
+$lang['oauth2']['access_denied'] = 'K udělení přístupu se přihlašte jako vlastník poštovních schránky.';
 
 $lang['success']['forwarding_host_removed'] = "Předávající hostitel %s odebrán";
 $lang['success']['forwarding_host_added'] = "Předávající hostitel %s přidán";
 $lang['success']['relayhost_removed'] = "Položka %s odebrána";
 $lang['success']['relayhost_added'] = "Položky %s přidána";
 $lang['diagnostics']['dns_records'] = 'DNS záznamy';
-$lang['diagnostics']['dns_records_24hours'] = 'Upozornění: Změnám v systému DNS může trvat až 24 hodin, než se na této stránce správně zobrazí jejich aktuální stav. Na této stránce můžete snadno zjistit, jak nastavit DNS záznamy a zda jsou všechny záznamy správně uloženy.';
+$lang['diagnostics']['dns_records_24hours'] = 'Upozornění: Změnám v systému DNS může trvat až 24 hodin, než se zde správně zobrazí jejich aktuální stav. Můžete zde snadno zjistit, jak nastavit DNS záznamy a zda jsou všechny záznamy správně uloženy.';
 $lang['diagnostics']['dns_records_name'] = 'Název';
 $lang['diagnostics']['dns_records_type'] = 'Typ';
 $lang['diagnostics']['dns_records_data'] = 'Správný záznam';
@@ -687,7 +724,7 @@ $lang['diagnostics']['cname_from_a'] = 'Hodnota odvozena z A/AAAA záznamu. Lze 
 
 $lang['admin']['relay_from'] = 'Adresa "Od:"';
 $lang['admin']['relay_run'] = "Provést test";
-$lang['admin']['api_allow_from'] = "Povolit přístup k API z těchto IP adres (oddělené čárkou nebo novým řádkem)";
+$lang['admin']['api_allow_from'] = "Povolit přístup k API z těchto IP adres (oddělte čárkou nebo řádkem)";
 $lang['admin']['api_key'] = "API klíč";
 $lang['admin']['activate_api'] = "Zapnout API";
 $lang['admin']['regen_api_key'] = "Generovat API klíč";
@@ -704,6 +741,7 @@ $lang['admin']['active_rspamd_settings_map'] = "Aktivní nastavení";
 $lang['admin']['quota_notifications_info'] = "Upozornění na kvótu se uživateli odesílají při překročení 80 % a 95 % limitu.";
 $lang['admin']['quarantine_retention_size'] = "Počet zadržených zpráv na poštovní schránku<br />0 znamená <b>neaktivní</b>.";
 $lang['admin']['quarantine_max_size'] = "Maximální velikost v MiB (větší prvky budou smazány)<br />0 <b>neznamená</b> neomezeno.";
+$lang['admin']['quarantine_max_age'] = "Maximální stáří ve dnech<br><small>Hodnota musí být rovna nebo větší než 1 den.</small>";
 $lang['admin']['quarantine_exclude_domains'] = "Vyloučené domény a doménové aliasy";
 $lang['admin']['quarantine_release_format'] = "Formát propuštěných položek";
 $lang['admin']['quarantine_release_format_raw'] = "Nezměněný originál";
@@ -719,6 +757,7 @@ $lang['admin']['help_text'] = "Přepsat text nápovědy pod přihlašovacím for
 $lang['admin']['title_name'] = 'Titulek webu ("mailcow UI")';
 $lang['admin']['main_name'] = 'Název webu ("mailcow UI")';
 $lang['admin']['apps_name'] = 'Hlavička aplikací ("mailcow Apps")';
+$lang['admin']['ui_footer'] = 'Pata stránka (HTML povoleno)';
 
 $lang['admin']['customize'] = "Přizpůsobení";
 $lang['admin']['change_logo'] = "Změnit logo";
@@ -730,7 +769,7 @@ $lang['admin']['link'] = "Odkaz";
 $lang['admin']['remove_row'] = "Smazat řádek";
 $lang['admin']['add_row'] = "Přidat řádek";
 $lang['admin']['reset_default'] = "Obnovit výchozí nastavení";
-$lang['admin']['merged_vars_hint'] = 'Šedé řádky byly přidány z <code>vars.(local.)inc.php</code> a nelze je upravit.';
+$lang['admin']['merged_vars_hint'] = 'Šedé řádky byly přidány z <code>vars.(local.)inc.php</code> a zde je nelze upravit.';
 $lang['mailbox']['waiting'] = "Čekání";
 $lang['mailbox']['status'] = "Stav";
 $lang['mailbox']['running'] = "Běží";
@@ -758,6 +797,7 @@ $lang['quarantine']['learn_spam_delete'] = "Naučit jako spam a smazat";
 $lang['quarantine']['qinfo'] = 'Karanténní systém uloží odmítnutou poštu do databáze a odesílatel <em>nebude</em> informován o nedoručené poště.
   <br>"' . $lang['quarantine']['learn_spam_delete'] . '" naučí systém, že zpráva je spam, pomocí Bayes teorému a také vypočítá "fuzzy hashes" pro odmítnutí podobných zpráv v budoucnu.
   <br>Upozornění: Učení se vícera zpráv najednou může být v závislosti na výkonu systému časově náročné.';
+$lang['quarantine']['download_eml'] = "Stáhnout (.eml)";
 $lang['quarantine']['release'] = "Propustit";
 $lang['quarantine']['empty'] = 'Žádné výsledky';
 $lang['quarantine']['toggle_all'] = 'Označit vše';
@@ -771,6 +811,7 @@ $lang['quarantine']['sender'] = "Odesílatel";
 $lang['quarantine']['show_item'] = "Zobrazit položku";
 $lang['quarantine']['check_hash'] = "Hledat hash na serveru VT";
 $lang['quarantine']['qitem'] = "Položka v karanténě";
+$lang['quarantine']['rspamd_result'] = "Skóre Rspamd";
 $lang['quarantine']['subj'] = "Předmět";
 $lang['quarantine']['recipients'] = "Příjemci";
 $lang['quarantine']['text_plain_content'] = "Obsah (text/plain)";
@@ -789,6 +830,8 @@ $lang['danger']['spam_learn_error'] = "Chyba při učení spamu: %s";
 $lang['success']['qlearn_spam'] = "Zpráva ID %s naučena jako spam a smazána";
 
 $lang['debug']['system_containers'] = 'Systém a kontejnery';
+$lang['debug']['started_on'] = 'Spuštěno';
+$lang['debug']['jvm_memory_solr'] = 'Spotřeba paměti JVM';
 $lang['debug']['solr_status'] = 'Stav Solr';
 $lang['debug']['solr_dead'] = 'Solr se spouští, je vypnutý nebo spadl.';
 $lang['debug']['logs'] = 'Logy';
@@ -831,8 +874,8 @@ $lang['mailbox']['bcc_to_sender'] = "Přepnout na mapu odesílatelů";
 $lang['mailbox']['bcc_to_rcpt'] = "Přepnout na mapu příjemců";
 $lang['mailbox']['add_bcc_entry'] = "Přidat BCC mapu";
 $lang['mailbox']['add_tls_policy_map'] = "Přidat mapu TLS pravidel";
-$lang['mailbox']['bcc_info'] = "Mapa BCC se používá pro tiché předávání kopií všech zpráv na jinou adresu. Mapa příjemců se používá, pokud je místní cíl příjemcem zprávy.<br/>
-  Mapa odesílatelů podléhá stejnému principu. Místní cíl nebude informován o neúspěšném doručení.";
+$lang['mailbox']['bcc_info'] = "Mapa BCC se používá pro tiché předávání kopií všech zpráv na jinou adresu. Mapa příjemců se použije, pokud je místní cíl příjemcem zprávy.<br/>
+  Mapa odesílatelů podléhá obdobnému principu. Místní cíl nebude informován o neúspěšném doručení.";
 $lang['mailbox']['address_rewriting'] = 'Přepisování adres';
 $lang['mailbox']['recipient_maps'] = 'Mapy příjemců';
 $lang['mailbox']['recipient_map'] = 'Mapa příjemce';
@@ -852,14 +895,6 @@ $lang['success']['tls_policy_map_entry_deleted'] = 'Položka mapy TLS pravidel I
 $lang['mailbox']['add_recipient_map_entry'] = 'Přidat mapu příjemce';
 $lang['danger']['tls_policy_map_parameter_invalid'] = "Parametr pravidel TLS je neplatný";
 $lang['danger']['temp_error'] = "Dočasná chyba";
-
-$lang['oauth2']['scope_ask_permission'] = 'Aplikace požádala o následující oprávnění';
-$lang['oauth2']['profile'] = 'Profil';
-$lang['oauth2']['profile_desc'] = 'Zobrazení osobních informací: uživatelské jméno, celé jméno, vytvořeno, upraveno, aktivní';
-$lang['oauth2']['permit'] = 'Ověření aplikace';
-$lang['oauth2']['authorize_app'] = 'Ověření aplikace';
-$lang['oauth2']['deny'] = 'Zakázáno';
-$lang['oauth2']['access_denied'] = 'Pro povolení přístupu přes OAuth2 se přihlaste jako vlastník poštovní schránky.';
 
 $lang['admin']['sys_mails'] = 'Systémové zprávy';
 $lang['admin']['subject'] = 'Předmět';
@@ -887,8 +922,8 @@ $lang['mailbox']['mailbox_defquota'] = 'Výchozí velikost schránky';
 $lang['admin']['api_info'] = 'API je stále ve vývoji.';
 
 $lang['admin']['guid_and_license'] = 'GUID a licence';
-$lang['admin']['guid'] = 'GUID - unique instance ID';
-$lang['admin']['license_info'] = 'Vlastnit licenci není povinné, ale pomáhá to v dalšímu vývoji.<br><a href="https://www.servercow.de/mailcow?lang=en#sal" target="_blank" alt="SAL order">Registrujte si svoje GUID zde</a>, nebo si <a href="https://www.servercow.de/mailcow?lang=en#support" target="_blank" alt="Support order">zaplaťte podporu pro svou instalaci mailcow.</a>';
+$lang['admin']['guid'] = 'GUID - unikátní ID licence';
+$lang['admin']['license_info'] = 'Licence není povinná, pomůžete však dalšímu vývoji.<br><a href="https://www.servercow.de/mailcow?lang=en#sal" target="_blank" alt="SAL order">Registrujte si své GUID</a>, nebo si <a href="https://www.servercow.de/mailcow?lang=en#support" target="_blank" alt="Support order">zaplaťte podporu pro svou instalaci mailcow.</a>';
 $lang['admin']['validate_license_now'] = 'Ověřit GUID na licenčním serveru';
 
 $lang['admin']['customer_id'] = 'ID zákazníka';
@@ -898,7 +933,7 @@ $lang['admin']['lookup_mx'] = 'Ověřit cíl proti MX záznamu (.outlook.com bud
 $lang['edit']['mbox_rl_info'] = 'Toto omezení provozu se vyhodnocuje podle přihlašovacího jména SASL, porovnává se s jakoukoliv adresou "od" použitou přihlášeným uživatelem. Omezení provozu poštovní schránku má prioritu před omezením provozu domény.';
 
 $lang['add']['relayhost_wrapped_tls_info'] = '<b>Nepoužívejte</b> prosím porty s aktivním protokolem TLS (většinou port 465).<br>
-Používejte porty bez TLS a pak pošlete příkaz STARTTLS. Pravidlo k vynucení užití TLS lze vytvořit pomocí mapy TLS pravidel".';
+Používejte porty bez TLS a pak pošlete příkaz STARTTLS. Pravidlo k vynucení užití TLS lze vytvořit pomocí mapy TLS pravidel.';
 
 $lang['admin']['transport_dest_format'] = 'Formát: example.org, .example.org, *, box@example.org (vícero položek lze oddělit čárkou)';
 

@@ -105,13 +105,15 @@ class mailcowPdo extends OAuth2\Storage\Pdo {
 $oauth2_scope_storage = new OAuth2\Storage\Memory(array('default_scope' => 'profile', 'supported_scopes' => array('profile')));
 $oauth2_storage = new mailcowPdo(array('dsn' => $dsn, 'username' => $database_user, 'password' => $database_pass));
 $oauth2_server = new OAuth2\Server($oauth2_storage, array(
-    'always_issue_new_refresh_token' => true,
-    'refresh_token_lifetime'         => 2678400,
+    'refresh_token_lifetime'         => $REFRESH_TOKEN_LIFETIME,
+    'access_lifetime'                => $ACCESS_TOKEN_LIFETIME,
 ));
 $oauth2_server->setScopeUtil(new OAuth2\Scope($oauth2_scope_storage));
 $oauth2_server->addGrantType(new OAuth2\GrantType\AuthorizationCode($oauth2_storage));
 $oauth2_server->addGrantType(new OAuth2\GrantType\UserCredentials($oauth2_storage));
-$oauth2_server->addGrantType(new OAuth2\GrantType\RefreshToken($oauth2_storage));
+$oauth2_server->addGrantType(new OAuth2\GrantType\RefreshToken($oauth2_storage, array(
+    'always_issue_new_refresh_token' => true
+)));
 
 function exception_handler($e) {
     if ($e instanceof PDOException) {

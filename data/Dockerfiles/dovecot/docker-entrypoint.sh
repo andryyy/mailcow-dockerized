@@ -142,6 +142,27 @@ if [[ $(stat -c %U /var/attachments) != "vmail" ]] ; then chown -R vmail:vmail /
 # Cleanup random user maildirs
 rm -rf /var/vmail/mailcow.local/*
 
+# create sni configuration
+echo "" > /etc/dovecot/sni.conf
+for cert_dir in /etc/ssl/mail/*/ ; do
+  if [[ ! -f ${cert_dir}domains ]] || [[ ! -f ${cert_dir}cert.pem ]] || [[ ! -f ${cert_dir}key.pem ]]; then
+    continue
+  fi
+  domains=($(cat ${cert_dir}domains))
+  for domain in ${domains[@]}; do
+    echo 'local_name '${domain}' {' >> /etc/dovecot/sni.conf;
+    echo '  ssl_cert = <'${cert_dir}'cert.pem' >> /etc/dovecot/sni.conf;
+    echo '  ssl_key = <'${cert_dir}'key.pem' >> /etc/dovecot/sni.conf;
+    if [[ -f ${cert_dir}ecdsa-cert.pem && -f ${cert_dir}ecdsa-key.pem ]]; then
+      echo '  ssl_alt_cert = <'${cert_dir}'ecdsa-cert.pem' >> /etc/dovecot/sni.conf;
+      echo '  ssl_alt_key = <'${cert_dir}'ecdsa-key.pem' >> /etc/dovecot/sni.conf;
+    else
+      echo '  ssl_alt_cert = <'${cert_dir}'cert.pem' >> /etc/dovecot/sni.conf;
+      echo '  ssl_alt_key = <'${cert_dir}'key.pem' >> /etc/dovecot/sni.conf;
+    fi
+    echo '}' >> /etc/dovecot/sni.conf;
+  done
+done
 
 # Create random master for SOGo sieve features
 RAND_USER=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 16 | head -n 1)
@@ -259,5 +280,13 @@ fi
 
 # Collect SA rules once now
 /usr/local/bin/sa-rules.sh
+
+# Run hooks
+for file in /hooks/*; do
+  if [ -x "${file}" ]; then
+    echo "Running hook ${file}"
+    "${file}"
+  fi
+done
 
 exec "$@"

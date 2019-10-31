@@ -129,6 +129,10 @@ $DOCKER_TIMEOUT = 60;
 // Anonymize IPs logged via UI
 $ANONYMIZE_IPS = true;
 
+// OAuth2 settings
+$REFRESH_TOKEN_LIFETIME = 2678400;
+$ACCESS_TOKEN_LIFETIME = 86400;
+
 // MAILBOX_DEFAULT_ATTRIBUTES define default attributes for new mailboxes
 // These settings will not change existing mailboxes
 

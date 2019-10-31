@@ -92,6 +92,29 @@ jQuery(function($){
         $('#qid_detail_text').text(data.text_plain);
         $('#qid_detail_text_from_html').text(data.text_html);
 
+        $('#qid_detail_score').text(data.score);
+        $('#qid_detail_symbols').html('');
+        if (typeof data.symbols !== 'undefined') {
+          data.symbols.sort(function (a, b) {
+            if (a.score === 0) return 1
+            if (b.score === 0) return -1
+            if (b.score < 0 && a.score < 0) {
+              return a.score - b.score
+            }
+            if (b.score > 0 && a.score > 0) {
+              return b.score - a.score
+            }
+            return b.score - a.score
+          })
+          $.each(data.symbols, function (index, value) {
+            var highlightClass = ''
+            if (value.score > 0) highlightClass = 'negative'
+            else if (value.score < 0) highlightClass = 'positive'
+            else highlightClass = 'neutral'
+            $('#qid_detail_symbols').append('<span class="rspamd-symbol ' + highlightClass + '" title="' + (value.options ? value.options.join(', ') : '') + '">' + value.name + ' (<span class="score">' + value.score + '</span>)</span>');
+          });
+        }
+
         $('#qid_detail_recipients').html('');
         if (typeof data.recipients !== 'undefined') {
           $.each(data.recipients, function(index, value) {

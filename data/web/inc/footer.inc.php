@@ -175,11 +175,11 @@ $(document).ready(function() {
 });
 </script>
 <?php
-if (!empty($UI_TEXTS['ui_impress'])):
+if (!empty($UI_TEXTS['ui_footer'])):
 ?>
   <div class="container" style="margin-bottom:20px;color:#959595;">
   <hr>
-    <?=$UI_TEXTS['ui_impress'];?>
+    <?=$UI_TEXTS['ui_footer'];?>
   </div>
 <?php
 endif;

@@ -518,7 +518,7 @@ rspamd_checks() {
 From: watchdog@localhost
 
 Empty
-' | usr/bin/curl -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/scan | jq -rc .required_score)
+' | usr/bin/curl -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/scan | jq -rc .default.required_score)
     if [[ ${SCORE} != "9999" ]]; then
       echo "Rspamd settings check failed" 2>> /tmp/rspamd-mailcow 1>&2
       err_count=$(( ${err_count} + 1))
@@ -549,7 +549,7 @@ olefy_checks() {
     touch /tmp/olefy-mailcow; echo "$(tail -50 /tmp/olefy-mailcow)" > /tmp/olefy-mailcow
     host_ip=$(get_container_ip olefy-mailcow)
     err_c_cur=${err_count}
-    /usr/lib/nagios/plugins/check_tcp -4 -H ${host_ip} -p 10055 2>> /tmp/olefy-mailcow 1>&2; err_count=$(( ${err_count} + $? ))
+    /usr/lib/nagios/plugins/check_tcp -4 -H ${host_ip} -p 10055 -s "PING\n" 2>> /tmp/olefy-mailcow 1>&2; err_count=$(( ${err_count} + $? ))
     [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
     [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
     progress "Olefy" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
@@ -719,17 +719,17 @@ PID=$!
 echo "Spawned fail2ban_checks with PID ${PID}"
 BACKGROUND_TASKS+=(${PID})
 
-#(
-#while true; do
-#  if ! olefy_checks; then
-#    log_msg "Olefy hit error limit"
-#    echo olefy-mailcow > /tmp/com_pipe
-#  fi
-#done
-#) &
-#PID=$!
-#echo "Spawned olefy_checks with PID ${PID}"
-#BACKGROUND_TASKS+=(${PID})
+(
+while true; do
+  if ! olefy_checks; then
+    log_msg "Olefy hit error limit"
+    echo olefy-mailcow > /tmp/com_pipe
+  fi
+done
+) &
+PID=$!
+echo "Spawned olefy_checks with PID ${PID}"
+BACKGROUND_TASKS+=(${PID})
 
 (
 while true; do

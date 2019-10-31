@@ -43,7 +43,7 @@ jQuery(function($){
     var current_page = JSON.parse(localStorage.getItem('current_page'));
   }
   function table_admin_ready(ft, name) {
-    heading = ft.$el.parents('.tab-pane').find('.panel-heading')
+    heading = ft.$el.parents('.panel').find('.panel-heading')
     var ft_paging = ft.use(FooTable.Paging)
     $(heading).children('.table-lines').text(function(){
       return ft_paging.totalRows;
@@ -74,6 +74,33 @@ jQuery(function($){
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
       "state": {"enabled": true},
       "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "sorting": {"enabled": true},
+      "toggleSelector": "table tbody span.footable-toggle"
+    });
+  }
+  function draw_oauth2_clients() {
+    ft_oauth2clientstable = FooTable.init('#oauth2clientstable', {
+      "columns": [
+        {"name":"chkbox","title":"","style":{"maxWidth":"40px","width":"40px"},"filterable": false,"sortable": false,"type":"html"},
+        {"name":"id","type":"text","title":"ID","style":{"width":"50px"}},
+        {"name":"client_id","type":"text","title":lang.oauth2_client_id,"style":{"width":"200px"}},
+        {"name":"client_secret","title":lang.oauth2_client_secret,"breakpoints":"xs sm md","style":{"width":"200px"}},
+        {"name":"redirect_uri","title":lang.oauth2_redirect_uri, "type": "text"},
+        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
+      ],
+      "rows": $.ajax({
+        dataType: 'json',
+        url: '/api/v1/get/oauth2-client/all',
+        jsonp: false,
+        error: function () {
+          console.log('Cannot draw oauth2 clients table');
+        },
+        success: function (data) {
+          return process_table_data(data, 'oauth2clientstable');
+        }
+      }),
+      "empty": lang.empty,
+      "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
       "sorting": {"enabled": true},
       "toggleSelector": "table tbody span.footable-toggle"
     });
@@ -267,6 +294,16 @@ jQuery(function($){
         }
         item.chkbox = '<input type="checkbox" data-id="fwdhosts" name="multi_select" value="' + item.host + '" />';
       });
+    } else if (table == 'oauth2clientstable') {
+      $.each(data, function (i, item) {
+        item.action = '<div class="btn-group">' +
+          '<a href="/edit.php?oauth2client=' + encodeURI(item.id) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>' +
+          '<a href="#" data-action="delete_selected" data-id="single-oauth2-client" data-api-url="delete/oauth2-client" data-item="' + encodeURI(item.id) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
+          '</div>';
+        item.scope = "profile";
+        item.grant_types = 'refresh_token password authorization_code';
+        item.chkbox = '<input type="checkbox" data-id="oauth2_clients" name="multi_select" value="' + item.id + '" />';
+      });
     } else if (table == 'domainadminstable') {
       $.each(data, function (i, item) {
         item.selected_domains = escapeHtml(item.selected_domains);
@@ -299,6 +336,7 @@ jQuery(function($){
   draw_admins();
   draw_fwd_hosts();
   draw_relayhosts();
+  draw_oauth2_clients();
   draw_transport_maps();
   draw_queue();
   // Relayhost

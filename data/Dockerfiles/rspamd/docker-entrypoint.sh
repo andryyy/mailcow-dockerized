@@ -34,4 +34,12 @@ chown -R _rspamd:_rspamd /var/lib/rspamd \
   /etc/rspamd/rspamd.conf.override \
   /etc/rspamd/plugins.d
 
+# Run hooks
+for file in /hooks/*; do
+  if [ -x "${file}" ]; then
+    echo "Running hook ${file}"
+    "${file}"
+  fi
+done
+
 exec "$@"

@@ -23,12 +23,12 @@ if (isset($_GET['domain'])) {
     }
     else {
       echo "No such domain in context";
-      die();
+      exit();
     }
   }
   else {
     echo "Invalid domain name";
-    die();
+    exit();
   }
 }
 
@@ -102,11 +102,11 @@ if ($_SESSION['mailcow_cc_role'] == "admin") {
       $mailcow_hostname
     );
   }
-  
+
   $services = [
     [$autodiscover_config['smtp']['server'], 25, 1],
   ];
-  
+
   if (!in_array($domain, $alias_domains)) {
     $services[] = [$mailcow_hostname,                       $https_port,                             null];
     $services[] = [$autodiscover_config['pop3']['server'],  $autodiscover_config['pop3']['tlsport'], 1];
@@ -117,7 +117,7 @@ if ($_SESSION['mailcow_cc_role'] == "admin") {
     $services[] = [$autodiscover_config['pop3']['server'],  $autodiscover_config['pop3']['port'],    null];
     $services[] = [$autodiscover_config['sieve']['server'], $autodiscover_config['sieve']['port'],   1];
   }
-  
+
   foreach($services as list($server,$port,$starttls)) {
     foreach(['aRSA','aECDSA'] as $ciphers) {
       $digest = generate_tlsa_digest($server, $port, $starttls, $ciphers);
@@ -371,7 +371,7 @@ foreach ($records as $record) {
             }
           }
         }
-        
+
         $state = state_nomatch;
         if ($current[$data_field[$current['type']]] == $record[2]) {
           $state = state_good;
@@ -385,7 +385,7 @@ foreach ($records as $record) {
     ($state == state_missing || $state == state_nomatch)) {
       $state = state_optional;
   }
-  
+
   if ($state == state_nomatch) {
     $state = array();
     foreach ($currents as $current) {
@@ -410,6 +410,6 @@ foreach ($records as $record) {
 <?php
 } else {
   echo "Session invalid";
-  die();
+  exit();
 }
 ?>

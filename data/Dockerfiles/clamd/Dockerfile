@@ -55,7 +55,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && adduser --system --no-create-home --home /var/lib/clamav --uid 700 --gid 700 --disabled-login clamav \
   && rm -rf /tmp/* /var/tmp/*
 
-COPY bootstrap.sh ./
+COPY clamd.sh ./
 COPY tini /sbin/tini
 
-CMD ["/sbin/tini", "-g", "--", "/bootstrap.sh"]
+CMD ["/sbin/tini", "-g", "--", "/clamd.sh"]

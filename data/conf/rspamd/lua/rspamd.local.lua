@@ -23,7 +23,7 @@ rspamd_config:register_symbol({
     local redis_params = rspamd_parse_redis_server('keep_spam')
     local ip = task:get_from_ip()
 
-    if not ip:is_valid() then
+    if ip == nil or not ip:is_valid() then
       return false
     end
 
@@ -174,6 +174,7 @@ rspamd_config:register_symbol({
     end
     return true
   end,
+  flags = 'empty',
   priority = 20
 })
 

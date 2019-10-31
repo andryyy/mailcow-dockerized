@@ -16,7 +16,7 @@ $lang['footer']['delete_these_items'] = 'Sind Sie sicher, dass die Änderungen a
 $lang['footer']['delete_now'] = 'Jetzt löschen';
 $lang['footer']['cancel'] = 'Abbrechen';
 
-$lang['footer']['hibp_nok'] = 'Übereinstimmung gefunden! Dieses Passwort ist potentiell gefährlich!';
+$lang['footer']['hibp_nok'] = 'Übereinstimmung gefunden! Dieses Passwort ist potenziell gefährlich!';
 $lang['footer']['hibp_ok'] = 'Keine Übereinstimmung gefunden.';
 
 $lang['danger']['transport_dest_exists'] = 'Transport Maps Ziel "%s" existiert bereits';
@@ -65,7 +65,7 @@ $lang['danger']['bcc_empty'] = "BCC Ziel darf nicht leer sein";
 $lang['danger']['bcc_must_be_email'] = "BCC Ziel %s ist keine gültige E-Mail-Adresse";
 $lang['danger']['bcc_exists'] = "Ein BCC Map Eintrag %s existiert bereits als Typ %s";
 $lang['success']['bcc_saved'] = "BCC Map Eintrag wurde gespeichert";
-$lang['success']['bcc_edited'] = "BCC Map Eintrag %s wurde editiert";
+$lang['success']['bcc_edited'] = "BCC Map Eintrag %s wurde geändert";
 $lang['success']['bcc_deleted'] = "BCC Map Einträge gelöscht: %s";
 $lang['danger']['private_key_error'] = "Schlüsselfehler: %s";
 $lang['danger']['map_content_empty'] = "Inhalt darf nicht leer sein";
@@ -239,7 +239,7 @@ $lang['user']['eas_reset_help'] = 'In vielen Fällen kann ein ActiveSync Profil 
 
 $lang['user']['sogo_profile_reset'] = 'SOGo Profil zurücksetzen';
 $lang['user']['sogo_profile_reset_now'] = 'Profil jetzt zurücksetzen';
-$lang['user']['sogo_profile_reset_help'] = 'Das Profil wird inklusive <strong>aller</strong> Daten <b>unwiederbringlich gelöscht</b>.';
+$lang['user']['sogo_profile_reset_help'] = 'Das Profil wird inklusive <strong>aller</strong> Kalender- und Kontaktdaten <b>unwiederbringlich gelöscht</b>.';
 
 $lang['user']['encryption'] = 'Verschlüsselung';
 $lang['user']['username'] = 'Benutzername';
@@ -272,7 +272,7 @@ $lang['mailbox']['tls_policy_maps_info'] = 'Nachstehende Richtlinien erzwingen T
 $lang['mailbox']['tls_enforce_in'] = 'TLS eingehend erzwingen';
 $lang['mailbox']['tls_enforce_out'] = 'TLS ausgehend erzwingen';
 $lang['mailbox']['tls_map_dest'] = 'Ziel';
-$lang['mailbox']['tls_map_dest_info'] = 'Beispiele: example.org, .example.org, mail@example.org, [mail.example.org]:25';
+$lang['mailbox']['tls_map_dest_info'] = 'Beispiele: example.org, .example.org, [mail.example.org]:25';
 $lang['mailbox']['tls_map_policy'] = 'Richtlinie';
 $lang['mailbox']['tls_map_parameters'] = 'Parameter';
 $lang['mailbox']['tls_map_parameters_info'] = 'Leer oder Parameter, Beispiele: protocols=!SSLv2 ciphers=medium exclude=3DES';
@@ -357,8 +357,8 @@ $lang['edit']['target_address'] = 'Ziel-Adresse(n) <small>(getrennt durch Komma)
 $lang['edit']['active'] = 'Aktiv';
 $lang['add']['gal'] = 'Globales Adressbuch';
 $lang['edit']['gal'] = 'Globales Adressbuch';
-$lang['add']['gal_info'] = 'Das Globale Adressbuch enthält alle Objekte einer Domain und kann durch keinen Benutzer editiert werden. Die Verfügbarkeitsinformation in SOGo ist nur bei eingeschaltetem globalen Adressbuch ersichtlich! <b>Zum Anwenden einer Änderung muss SOGo neugestartet werden.</b>';
-$lang['edit']['gal_info'] = 'Das Globale Adressbuch enthält alle Objekte einer Domain und kann durch keinen Benutzer editiert werden. Die Verfügbarkeitsinformation in SOGo ist nur bei eingeschaltetem globalen Adressbuch ersichtlich <b>Zum Anwenden einer Änderung muss SOGo neugestartet werden.</b>';
+$lang['add']['gal_info'] = 'Das Globale Adressbuch enthält alle Objekte einer Domain und kann durch keinen Benutzer geändert werden. Die Verfügbarkeitsinformation in SOGo ist nur bei eingeschaltetem globalen Adressbuch ersichtlich! <b>Zum Anwenden einer Änderung muss SOGo neugestartet werden.</b>';
+$lang['edit']['gal_info'] = 'Das Globale Adressbuch enthält alle Objekte einer Domain und kann durch keinen Benutzer geändert werden. Die Verfügbarkeitsinformation in SOGo ist nur bei eingeschaltetem globalen Adressbuch ersichtlich <b>Zum Anwenden einer Änderung muss SOGo neugestartet werden.</b>';
 $lang['edit']['force_pw_update'] = 'Erzwinge Passwortänderung bei nächstem Login';
 $lang['edit']['force_pw_update_info'] = 'Dem Benutzer wird lediglich der Zugang zur mailcow UI ermöglicht.';
 $lang['edit']['sogo_access'] = 'SOGo Zugriffsrecht';
@@ -420,6 +420,7 @@ $lang['acl']['recipient_maps'] = 'Empfängerumschreibungen';
 $lang['acl']['unlimited_quota'] = 'Unendliche Quota für Mailboxen';
 $lang['acl']['extend_sender_acl'] = 'Eingabe externer Absenderadressen erlauben';
 $lang['acl']['prohibited'] = 'Untersagt durch Richtlinie';
+$lang['acl']['sogo_access'] = 'Verwalten des SOGo Zugriffsrechts erlauben';
 
 $lang['edit']['extended_sender_acl'] = 'Externe Absenderadressen';
 $lang['edit']['extended_sender_acl_info'] = 'Der DKIM Domainkey der externen Absenderdomain sollte in diesen Server importiert werden, falls vorhanden.<br>
@@ -591,7 +592,7 @@ $lang['admin']['rsetting_desc'] = 'Kurze Beschreibung';
 $lang['admin']['rsetting_content'] = 'Regelinhalt';
 $lang['admin']['rsetting_none'] = 'Keine Regel hinterlegt';
 $lang['admin']['rsetting_no_selection'] = 'Bitte eine Regel auswählen';
-$lang['admin']['rsettings_preset_1'] = 'Alles außer DKIM and Ratelimits für authentifizierte Benutzer deaktivieren"';
+$lang['admin']['rsettings_preset_1'] = 'Alles außer DKIM und Ratelimits für authentifizierte Benutzer deaktivieren"';
 $lang['admin']['rsettings_preset_2'] = 'Spam an Postmaster-Addressen nicht blockieren';
 $lang['admin']['rsettings_insert_preset'] = 'Beispiel "%s" laden';
 $lang['admin']['rsetting_add_rule'] = 'Regel hinzufügen';
@@ -642,7 +643,7 @@ $lang['admin']['transports_hint'] = '→ Transport Maps <b>überwiegen</b> sende
 → Die Authentifizierung wird anhand des "Next hop" Parameters ermittelt. Hierbei würde bei einem beispielhaften Wert "[host]:25" immer zuerst "host" abfragt und <b>erst im Anschluss</b> "[host]:25". Dieses Verhalten schließt die <b>gleichzeitige Verwendung</b> von Einträgen der Art "host" sowie "[host]:25" aus.';
 $lang['admin']['add_relayhost_hint'] = 'Bitte beachten Sie, dass Anmeldedaten unverschlüsselt gespeichert werden.<br>
   Angelegte Transporte dieser Art sind <b>senderabhängig</b> und müssen erst einer Domain zugewiesen werden, bevor sie als Transport verwendet werden.<br>
-  Diese Einstellungen entsprechen demach <i>nicht</i> dem "relayhost" Parameter in Postfix.';
+  Diese Einstellungen entsprechen demnach <i>nicht</i> dem "relayhost" Parameter in Postfix.';
 $lang['admin']['add_transports_hint'] = 'Bitte beachten Sie, dass Anmeldedaten unverschlüsselt gespeichert werden.';
 $lang['admin']['host'] = 'Host';
 $lang['admin']['source'] = 'Quelle';
@@ -661,9 +662,9 @@ $lang['admin']['api_allow_from'] = "IP-Adressen für Zugriff";
 $lang['admin']['api_key'] = "API-Key";
 $lang['admin']['activate_api'] = "API aktivieren";
 $lang['admin']['regen_api_key'] = "API-Key regenerieren";
-$lang['admin']['ban_list_info'] = "Übersicht ausgesperrter Netzwerke: <b>Netzwerk (verbleibende Banzeit) - [Aktionen]</b>.<br />IPs, die zum Unban eingereiht werden, verlassen die Liste aktiver Bans nach wenigen Sekunden.<br />Rote Labels sind Indikatoren für aktive Blacklisteinträge.";
+$lang['admin']['ban_list_info'] = "Übersicht ausgesperrter Netzwerke: <b>Netzwerk (verbleibende Banzeit) - [Aktionen]</b>.<br />IPs, die zum Entsperren eingereiht werden, verlassen die Liste aktiver Bans nach wenigen Sekunden.<br />Rote Labels sind Indikatoren für aktive Blacklisteinträge.";
 $lang['admin']['unban_pending'] = "ausstehend";
-$lang['admin']['queue_unban'] = "Unban einreihen";
+$lang['admin']['queue_unban'] = "Entsperren einreihen";
 $lang['admin']['no_active_bans'] = "Keine aktiven Bans";
 
 $lang['admin']['quota_notifications'] = "Quota Benachrichtigungen";
@@ -673,7 +674,7 @@ $lang['admin']['quarantine'] = "Quarantäne";
 $lang['admin']['active_rspamd_settings_map'] = "Derzeit aktive Settings Map";
 $lang['admin']['quota_notifications_info'] = "Quota Benachrichtigungen werden an Mailboxen versendet, die 80 respektive 95 Prozent der zur Verfügung stehenden Quota überschreiten.";
 $lang['admin']['quarantine_retention_size'] = "Rückhaltungen pro Mailbox:<br><small>0 bedeutet <b>inaktiv</b>.</small>";
-$lang['admin']['quarantine_max_size'] = "Maximale Größe in MiB (größere Elemente werden verworfen):<br><small>0 bedeutet <b>nicht</b> unlimitert.</small>";
+$lang['admin']['quarantine_max_size'] = "Maximale Größe in MiB (größere Elemente werden verworfen):<br><small>0 bedeutet <b>nicht</b> unlimitiert.</small>";
 $lang['admin']['quarantine_max_age'] = "Maximales Alter in Tagen<br><small>Wert muss größer oder gleich 1 Tag sein.</small>";
 $lang['admin']['quarantine_exclude_domains'] = "Domains und Alias-Domains ausschließen";
 $lang['admin']['quarantine_notification_sender'] = "Benachrichtigungs-E-Mail Absender";
@@ -711,7 +712,38 @@ $lang['admin']['help_text'] = "Hilfstext unter Login-Maske (HTML zulässig)";
 $lang['admin']['title_name'] = '"mailcow UI" Webseiten Titel';
 $lang['admin']['main_name'] = '"mailcow UI" Name';
 $lang['admin']['apps_name'] = '"mailcow Apps" Name';
-$lang['admin']['ui_impress'] = 'Impressum, Footer (HTML zulässig)';
+$lang['admin']['ui_footer'] = 'Footer (HTML zulässig)';
+$lang['admin']['oauth2_info'] = 'Die OAuth2 Implementierung unterstützt den Grant Type "Authorization Code" mit Refresh Tokens.<br>
+Der Server wird automatisch einen neuen Refresh Token ausstellen, sobald ein vorheriger Token gegen einen Access Token eingetauscht wurde.<br><br>
+→ Der Standard Scope lautet <i>profile</i>. Nur Mailbox-Benutzer können sich gegen OAuth2 authentifizieren. Wird kein Scope angegeben, verwendet das System per Standard <i>profile</i>.<br>
+→ Der <i>state</i> Parameter wird im Zuge des Autorisierungsprozesses benötigt.<br><br>
+Die Pfade für die OAuth2 API lauten wie folgt: <br>
+<ul>
+  <li>Authorization Endpoint: <code>/oauth/authorize</code></li>
+  <li>Token Endpoint: <code>/oauth/token</code></li>
+  <li>Resource Page:  <code>/oauth/profile</code></li>
+</ul>
+Die Regenerierung des Client Secrets wird vorhandene Authorization Codes nicht invalidieren, dennoch wird der Renew des Access Tokens durch einen Refresh Token nicht mehr gelingen.<br><br>
+Das Entfernen aller Client Tokens verursacht die umgehende Terminierung aller aktiven OAuth2 Sessions. Clients müssen sich erneut gegen die OAuth2 Anwendung authentifizieren.';
+
+$lang['admin']['oauth2_client_id'] = "Client ID";
+$lang['admin']['oauth2_client_secret'] = "Client Secret";
+$lang['admin']['oauth2_redirect_uri'] = "Redirect URI";
+$lang['admin']['oauth2_revoke_tokens'] = 'Alle Client Tokens entfernen';
+$lang['admin']['oauth2_renew_secret'] = 'Neues Client Secret generieren';
+$lang['edit']['client_id'] = 'Client ID';
+$lang['edit']['client_secret'] = 'Client Secret';
+$lang['edit']['scope'] = 'Scope';
+$lang['edit']['grant_types'] = 'Grant types';
+$lang['edit']['redirect_uri'] = 'Redirect/Callback URL';
+$lang['oauth2']['scope_ask_permission'] = 'Eine Anwendung hat um die folgenden Berechtigungen gebeten';
+$lang['oauth2']['profile'] = 'Profil';
+$lang['oauth2']['profile_desc'] = 'Persönliche Informationen anzeigen: Benutzername, Name, Erstellzeitpunkt, Änderungszeitpunkt, Status';
+$lang['oauth2']['permit'] = 'Anwendung autorisieren';
+$lang['oauth2']['authorize_app'] = 'Anwendung autorisieren';
+$lang['oauth2']['deny'] = 'Ablehnen';
+$lang['oauth2']['access_denied'] = 'Bitte als Mailbox-Nutzer einloggen, um den Zugriff via OAuth2 zu erlauben.';
+
 
 $lang['admin']['customize'] = "UI Anpassung";
 $lang['admin']['change_logo'] = "Logo ändern";
@@ -745,6 +777,7 @@ $lang['quarantine']['quarantine'] = "Quarantäne";
 $lang['quarantine']['qinfo'] = 'Das Quarantänesystem speichert abgelehnte Nachrichten in der Datenbank. Dem Sender wird <em>nicht</em> signalisiert, dass seine E-Mail zugestellt wurde.
   <br>"' . $lang['quarantine']['learn_spam_delete'] . '" lernt Nachrichten nach bayesscher Statistik als Spam und erstellt Fuzzy Hashes ausgehend von der jeweiligen Nachricht, um ähnliche Inhalte zukünftig zu unterbinden.
   <br>Der Prozess des Lernens kann abhängig vom System zeitintensiv sein.';
+$lang['quarantine']['download_eml'] = "Herunterladen (.eml)";
 $lang['quarantine']['release'] = "Freigeben";
 $lang['quarantine']['empty'] = 'Keine Einträge';
 $lang['quarantine']['toggle_all'] = 'Alle auswählen';
@@ -758,6 +791,7 @@ $lang['quarantine']['sender'] = "Sender";
 $lang['quarantine']['show_item'] = "Details";
 $lang['quarantine']['check_hash'] = "Checksumme auf VirusTotal suchen";
 $lang['quarantine']['qitem'] = "Quarantäneeintrag";
+$lang['quarantine']['rspamd_result'] = "Rspamd Ergebnis";
 $lang['quarantine']['subj'] = "Betreff";
 $lang['quarantine']['recipients'] = "Empfänger";
 $lang['quarantine']['text_plain_content'] = "Inhalt (text/plain)";
@@ -836,14 +870,6 @@ $lang['mailbox']['add_tls_policy_map'] = "TLS-Richtlinieneintrag hinzufügen";
 $lang['danger']['tls_policy_map_parameter_invalid'] = "Parameter ist ungültig";
 $lang['danger']['temp_error'] = "Temporärer Fehler";
 
-$lang['oauth2']['scope_ask_permission'] = 'Eine Anwendung hat um die folgenden Berechtigungen gebeten';
-$lang['oauth2']['profile'] = 'Profil';
-$lang['oauth2']['profile_desc'] = 'Persönliche Informationen anzeigen: Benutzername, Name, Erstellzeitpunkt, Änderungszeitpunkt, Status';
-$lang['oauth2']['permit'] = 'Anwendung authorisieren';
-$lang['oauth2']['authorize_app'] = 'Anwendung authorisieren';
-$lang['oauth2']['deny'] = 'Ablehnen';
-$lang['oauth2']['access_denied'] = 'Bitte als Mailbox-Nutzer einloggen, um den Zugriff via OAuth2 zu erlauben.';
-
 $lang['admin']['sys_mails'] = 'System-E-Mails';
 $lang['admin']['subject'] = 'Betreff';
 $lang['admin']['from'] = 'Absender';
@@ -858,7 +884,7 @@ $lang['admin']['send'] = 'Senden';
 $lang['warning']['ip_invalid'] = 'Ungültige IP übersprungen: %s';
 $lang['danger']['text_empty'] = 'Text darf nicht leer sein';
 $lang['danger']['subject_empty'] = 'Betreff darf nicht leer sein';
-$lang['danger']['from_invalid'] = 'From address must be a valid email address';
+$lang['danger']['from_invalid'] = 'Die Absenderadresse muss eine gültige E-Mail-Adresse sein';
 $lang['danger']['network_host_invalid'] = 'Netzwerk oder Host ungültig: %s';
 
 $lang['add']['mailbox_quota_def'] = 'Standard-Quota einer Mailbox';

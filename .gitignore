@@ -6,6 +6,8 @@ data/conf/dovecot/dovecot-master.userdb
 mailcow.conf
 mailcow.conf_backup
 data/conf/nginx/*.active
+data/conf/postfix/sni.map
+data/conf/postfix/sni.map.db
 data/conf/postfix/extra.cf
 data/conf/postfix/sql
 data/conf/postfix/allow_mailcow_local.regexp
@@ -14,6 +16,8 @@ data/conf/nextcloud-*.bak
 data/web/inc/vars.local.inc.php
 data/assets/ssl/*
 .vscode/*
+.idea
+*.iml
 data/web/.well-known/acme-challenge
 data/web/nextcloud*/
 data/conf/rspamd/local.d/*
@@ -26,11 +30,13 @@ data/conf/nginx/*.custom
 data/conf/nginx/*.bak
 data/conf/dovecot/acl_anyone
 data/conf/dovecot/mail_plugins*
+data/conf/dovecot/sni.conf
 data/conf/dovecot/sogo-sso.conf
 data/conf/dovecot/extra.conf
 data/conf/dovecot/shared_namespace.conf
 data/conf/rspamd/custom/*
 data/conf/portainer/
+data/hooks/
 data/gitea/
 data/gogs/
 data/conf/sogo/plist_ldap

@@ -301,6 +301,9 @@ function quarantine($_action, $_data = null) {
         if (!filter_var($_data['sender'], FILTER_VALIDATE_EMAIL)) {
           $sender = '';
         }
+        else {
+          $sender = $_data['sender'];
+        }
         $html = $_data['html_tmpl'];
         if ($max_age <= 0) {
           $max_age = 365;
@@ -678,7 +681,7 @@ function quarantine($_action, $_data = null) {
       if (!is_numeric($_data) || empty($_data)) {
         return false;
       }
-      $stmt = $pdo->prepare('SELECT `rcpt`, `symbols`, `msg`, `domain` FROM `quarantine` WHERE `id`= :id');
+      $stmt = $pdo->prepare('SELECT `rcpt`, `score`, `symbols`, `msg`, `domain` FROM `quarantine` WHERE `id`= :id');
       $stmt->execute(array(':id' => $_data));
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
       if (hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $row['rcpt'])) {

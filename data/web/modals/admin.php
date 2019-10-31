@@ -105,6 +105,32 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
     </div>
   </div>
 </div><!-- add domain admin modal -->
+<!-- add oauth2 client modal -->
+<div class="modal fade" id="addOAuth2ClientModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+        <h3 class="modal-title">OAuth2</h3>
+      </div>
+      <div class="modal-body">
+          <form class="form-horizontal" data-cached-form="true" data-id="add_oauth2_client" role="form" method="post">
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="redirect_uri"><?=$lang['admin']['oauth2_redirect_uri'];?>:</label>
+              <div class="col-sm-10">
+              <input type="text" class="form-control" name="redirect_uri" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-default" data-action="add_item" data-id="add_oauth2_client" data-api-url='add/oauth2-client' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <?=$lang['admin']['add'];?></button>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
+  </div>
+</div><!-- add domain admin modal -->
 <!-- add admin modal -->
 <div class="modal fade" id="addAdminModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">

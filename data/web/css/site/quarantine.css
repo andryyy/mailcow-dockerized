@@ -1,40 +1,49 @@
 table.footable>tbody>tr.footable-empty>td {
-  font-size:15px !important;
-  font-style:italic;
+  font-size: 15px !important;
+  font-style: italic;
 }
+
 .pagination a {
   text-decoration: none !important;
 }
+
 .panel panel-default {
   overflow: visible !important;
 }
+
 .table-responsive {
   overflow: visible !important;
 }
+
 @media screen and (max-width: 767px) {
   .table-responsive {
     overflow-x: scroll !important;
   }
 }
+
 .footer-add-item {
-  display:block;
+  display: block;
   text-align: center;
   font-style: italic;
   padding: 10px;
   background: #F5F5F5;
 }
+
 @media (min-width: 992px) {
   .container {
-      width: 80%;
+    width: 80%;
   }
 }
+
 .mass-actions-quarantine {
   user-select: none;
-  padding:10px 0 10px 10px;
+  padding: 10px 0 10px 10px;
 }
+
 .inputMissingAttr {
   border-color: #FF4136;
 }
+
 .dot-danger {
   height: 10px;
   width: 10px;
@@ -42,6 +51,7 @@ table.footable>tbody>tr.footable-empty>td {
   border-radius: 50%;
   display: inline-block;
 }
+
 .dot-neutral {
   height: 10px;
   width: 10px;
@@ -50,12 +60,52 @@ table.footable>tbody>tr.footable-empty>td {
   display: inline-block;
 }
 
+.modal#qidDetailModal p {
+  word-break: break-all;
+}
+
+span#qid_detail_score {
+  font-weight: 700;
+  margin-left: 5px;
+}
+
+span.rspamd-symbol {
+  display: inline-block;
+  margin: 2px 6px 2px 0px;
+  border-radius: 4px;
+  padding: 0px 7px;
+}
+
+span.rspamd-symbol.positive {
+  background: #4CAF50;
+  border: 1px solid #4CAF50;
+  color: white;
+}
+
+span.rspamd-symbol.negative {
+  background: #ff4136;
+  border: 1px solid #ff4136;
+  color: white;
+}
+
+span.rspamd-symbol.neutral {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+span.rspamd-symbol span.score {
+  font-weight: 700;
+}
+
 span.mail-address-item {
   background-color: #f5f5f5;
   border-radius: 4px;
   border: 1px solid #ccc;
   padding: 2px 7px;
   margin-right: 7px;
+  display: inline-block;
+  margin: 2px 6px 2px 0;
 }
 
 table tbody tr {

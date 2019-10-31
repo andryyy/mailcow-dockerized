@@ -1,7 +1,13 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
 
-if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == 'admin') {
+if (isset($_SESSION['mailcow_cc_role']) && isset($_SESSION['oauth2_request'])) {
+  $oauth2_request = $_SESSION['oauth2_request'];
+  unset($_SESSION['oauth2_request']);
+  header('Location: ' . $oauth2_request);
+  exit();
+}
+elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == 'admin') {
   header('Location: /admin');
   exit();
 }

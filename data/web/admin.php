@@ -178,6 +178,30 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
     </div>
 
     <div class="panel panel-default">
+    <div class="panel-heading">OAuth2 Apps</div>
+        <div class="panel-body">
+          <p><?=$lang['admin']['oauth2_info'];?></p>
+          <div class="table-responsive">
+            <table class="table table-striped" id="oauth2clientstable"></table>
+          </div>
+          <div class="mass-actions-admin">
+            <div class="btn-group">
+              <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="oauth2_clients" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
+              <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" href="#"><?=$lang['mailbox']['quick_actions'];?> <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a data-action="delete_selected" data-id="oauth2_clients" data-api-url='delete/oauth2-client' href="#"><?=$lang['mailbox']['remove'];?></a></li>
+                <li role="separator" class="divider"></li>
+                <li><a data-action="edit_selected" data-id="oauth2_clients" data-api-url='edit/oauth2-client' data-api-attr='{"revoke_tokens":"1"}' href="#"><?=$lang['admin']['oauth2_revoke_tokens'];?></a></li>
+                <li role="separator" class="divider"></li>
+                <li><a data-action="edit_selected" data-id="oauth2_clients" data-api-url='edit/oauth2-client' data-api-attr='{"renew_secret":"1"}' href="#"><?=$lang['admin']['oauth2_renew_secret'];?></a></li>
+              </ul>
+              <a class="btn btn-sm btn-success" data-id="add_oauth2_client" data-toggle="modal" data-target="#addOAuth2ClientModal" href="#"><span class="glyphicon glyphicon-plus"></span> Add OAuth2 client</a>
+            </div>
+          </div>
+        </div>
+    </div>
+  
+    <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title">Rspamd UI</h3>
       </div>
@@ -463,7 +487,7 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
           <button class="btn btn-sm btn-default" data-action="add_item" data-id="dkim" data-api-url='add/dkim' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-plus"></span> <?=$lang['admin']['add'];?></button>
         </form>
 
-        <legend data-target="#import_dkim" style="margin-top:40px;cursor:pointer" class="arrow-toggle"" unselectable="on" data-toggle="collapse">
+        <legend data-target="#import_dkim" style="margin-top:40px;cursor:pointer" class="arrow-toggle" unselectable="on" data-toggle="collapse">
           <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-menu-down"></span> <?=$lang['admin']['import_private_key'];?>
         </legend>
         <div id="import_dkim" class="collapse">
@@ -950,10 +974,8 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
             <button class="btn btn-sm btn-default" type="button" id="add_app_link_row"><?=$lang['admin']['add_row'];?></button>
           </div></p>
         </form>
-        <legend data-target="#ui_texts" style="cursor:pointer" class="arrow-toggle" unselectable="on" data-toggle="collapse">
-          <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-menu-down"></span> <?=$lang['admin']['ui_texts'];?>
-        </legend>
-        <div id="ui_texts" class="collapse" >
+        <legend data-target="#ui_texts" style="padding-top:20px" unselectable="on"><?=$lang['admin']['ui_texts'];?></legend>
+        <div id="ui_texts">
         <?php
         $ui_texts = customize('get', 'ui_texts');
         ?>
@@ -975,16 +997,16 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
               <textarea class="form-control" id="help_text" name="help_text" rows="7"><?=$ui_texts['help_text'];?></textarea>
             </div>
             <div class="form-group">
-              <label for="ui_impress"><?=$lang['admin']['ui_impress'];?>:</label>
-              <textarea class="form-control" id="ui_impress" name="ui_impress" rows="7"><?=$ui_texts['ui_impress'];?></textarea>
+              <label for="ui_footer"><?=$lang['admin']['ui_footer'];?>:</label>
+              <textarea class="form-control" id="ui_footer" name="ui_footer" rows="7"><?=$ui_texts['ui_footer'];?></textarea>
             </div>
             <button class="btn btn-default" data-action="edit_selected" data-item="ui" data-id="uitexts" data-api-url='edit/ui_texts' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-check"></span> <?=$lang['admin']['save'];?></button>
           </form>
         </div>
       </div>
     </div>
-  </div>
-  </div>
+    </div>
+    </div>
   </div>
 
   <div role="tabpanel" class="tab-pane" id="tab-sys-mails">
