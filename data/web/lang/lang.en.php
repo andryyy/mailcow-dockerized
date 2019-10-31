@@ -72,6 +72,8 @@ $lang['danger']['private_key_error'] = "Private key error: %s";
 $lang['danger']['map_content_empty'] = "Map content cannot be empty";
 $lang['success']['settings_map_added'] = "Added settings map entry";
 $lang['danger']['settings_map_invalid'] = "Settings map ID %s invalid";
+$lang['danger']['global_map_invalid'] = "Global map ID %s invalid";
+$lang['danger']['global_map_write_error'] = "Could not write global map ID %s: %s";
 $lang['success']['settings_map_removed'] = "Removed settings map ID %s";
 $lang['danger']['invalid_host'] = "Invalid host specified: %s";
 $lang['danger']['relayhost_invalid'] = "Map entry %s is invalid";
@@ -939,3 +941,10 @@ $lang['mailbox']['alias_domain_backupmx'] = 'Alias domain inactive for relay dom
 
 $lang['danger']['extra_acl_invalid'] = 'External sender address "%s" is invalid';
 $lang['danger']['extra_acl_invalid_domain'] = 'External sender "%s" uses an invalid domain';
+
+$lang['admin']['rspamd_global_filters_agree'] = "I will be careful!";
+$lang['admin']['rspamd_global_filters'] = 'Global filter maps';
+$lang['admin']['rspamd_global_filters_info'] = 'Global filter maps contain different kind of global black and whitelists. Their names explain their purpose. All content must contain valid regular expression in the format of "/pattern/options" (e.g. <code>/.+@domain\.tld/i</code>).<br>
+  Although rudimentary checks are being executed on each line of regex, Rspamds functionality can be broken, if it fails to read the syntax correctly.<br>
+  Rspamd will try to read the map content when changed. If you experience problems, <a href="" data-toggle="modal" data-container="rspamd-mailcow" data-target="#RestartContainer">restart Rspamd</a> to enforce a map reload.';
+

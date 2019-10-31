@@ -2,7 +2,7 @@
 bind_socket = "*:11445";
 allow_update = ["127.0.0.1", "::1"];
 # Number of processes to serve this storage (useful for read scaling)
-count = 2;
+count = 1;
 # Backend ("sqlite" or "redis" - default "sqlite")
 backend = "redis";
 # Hashes storage time (3 months)

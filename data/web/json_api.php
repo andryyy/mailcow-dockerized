@@ -1245,6 +1245,9 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
           case "alias":
             process_edit_return(mailbox('edit', 'alias', array_merge(array('id' => $items), $attr)));
           break;
+          case "rspamd-map":
+            process_edit_return(rspamd('edit', array_merge(array('map' => $items), $attr)));
+          break;
           case "app_links":
             process_edit_return(customize('edit', 'app_links', $attr));
           break;

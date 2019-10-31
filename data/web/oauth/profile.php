@@ -14,8 +14,10 @@ if (!empty($mailbox)) {
     echo json_encode(array(
       'success' => true,
       'username' => $token['user_id'],
+      'identifier' => $token['user_id'],
       'email' => (!empty($mailbox['username']) ? $mailbox['username'] : ''),
       'full_name' => (!empty($mailbox['name']) ? $mailbox['name'] : 'mailcow administrative user'),
+      'displayName' => (!empty($mailbox['name']) ? $mailbox['name'] : 'mailcow administrative user'),
       'created' => (!empty($mailbox['created']) ? $mailbox['created'] : ''),
       'modified' => (!empty($mailbox['modified']) ? $mailbox['modified'] : ''),
       'active' => (!empty($mailbox['active']) ? $mailbox['active'] : ''),

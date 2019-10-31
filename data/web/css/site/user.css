@@ -5,7 +5,7 @@ table.footable>tbody>tr.footable-empty>td {
 .pagination a {
   text-decoration: none !important;
 }
-.panel panel-default {
+.panel.panel-default {
   overflow: visible !important;
 }
 .table-responsive {
@@ -25,7 +25,7 @@ table.footable>tbody>tr.footable-empty>td {
 }
 .mass-actions-user {
   user-select: none;
-  padding:10px 0 10px 0;
+  padding:10px 0;
 }
 .inputMissingAttr {
   border-color: #FF4136;
@@ -33,7 +33,6 @@ table.footable>tbody>tr.footable-empty>td {
 #logText {
   white-space: pre-wrap;
   white-space: -moz-pre-wrap;
-  white-space: -pre-wrap;
   white-space: -o-pre-wrap;
   word-wrap: break-word;
 }

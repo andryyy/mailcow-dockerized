@@ -84,8 +84,8 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
     $fh = fopen('thunderbird-plugins/version.csv', 'r');
     if ($fh) {
       while (($row = fgetcsv($fh, 1000, ';')) !== FALSE) {
-        if ($row[0] == 'sogo-integrator@inverse.ca') {
-          $clientconfigstr .= "&integrator=" . urlencode($row[1]);
+        if ($row[0] == 'sogo-connector@inverse.ca') {
+          $clientconfigstr .= "&connector=" . urlencode($row[1]);
         }
       }
       fclose($fh);

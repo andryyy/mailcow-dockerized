@@ -52,7 +52,7 @@ services:
             - redis
 
     clamd-mailcow:
-      image: mailcow/clamd:1.30
+      image: mailcow/clamd:1.32
       build: ./data/Dockerfiles/clamd
       restart: always
       dns:
@@ -68,7 +68,7 @@ services:
             - clamd
 
     rspamd-mailcow:
-      image: mailcow/rspamd:1.48
+      image: mailcow/rspamd:1.54
       build: ./data/Dockerfiles/rspamd
       stop_grace_period: 30s
       depends_on:
@@ -96,7 +96,7 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.49
+      image: mailcow/phpfpm:1.51
       build: ./data/Dockerfiles/phpfpm
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
@@ -105,6 +105,7 @@ services:
         - ./data/hooks/dovecot:/hooks
         - ./data/web:/web:rw
         - ./data/conf/rspamd/dynmaps:/dynmaps:ro
+        - ./data/conf/rspamd/custom/:/rspamd_custom_maps
         - rspamd-vol-1:/var/lib/rspamd
         - mysql-socket-vol-1:/var/run/mysqld/
         - ./data/conf/sogo/:/etc/sogo/
@@ -173,7 +174,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.91
+      image: mailcow/dovecot:1.94
       build: ./data/Dockerfiles/dovecot
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
@@ -227,7 +228,7 @@ services:
             - dovecot
 
     postfix-mailcow:
-      image: mailcow/postfix:1.40
+      image: mailcow/postfix:1.41
       build: ./data/Dockerfiles/postfix
       volumes:
         - ./data/conf/postfix:/opt/postfix/conf
@@ -314,7 +315,7 @@ services:
     acme-mailcow:
       depends_on:
         - nginx-mailcow
-      image: mailcow/acme:1.62
+      image: mailcow/acme:1.63
       build: ./data/Dockerfiles/acme
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254

@@ -1,9 +1,15 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/modals/footer.php';
 logger();
+
+$hash = $js_minifier->getDataHash();
+$JSPath = '/tmp/' . $hash . '.js';
+if(!file_exists($JSPath)) {
+  $js_minifier->minify($JSPath);
+  cleanupJS($hash);
+}
 ?>
-<div style="margin-bottom: 100px;"></div>
-<script type='text/javascript'><?=$js_minifier->minify();?></script>
+<script src="/cache/<?=basename($JSPath)?>"></script>
 <script>
 <?php
 $lang_footer = json_encode($lang['footer']);
@@ -156,7 +162,7 @@ $(document).ready(function() {
   });
 
   // Reload after session timeout
-  var session_lifetime = <?=(intval($SESSION_LIFETIME) * 1000) + 15000;?>;
+  var session_lifetime = <?=((int)$SESSION_LIFETIME * 1000) + 15000;?>;
   <?php
   if (isset($_SESSION['mailcow_cc_username'])):
   ?>
@@ -174,16 +180,16 @@ $(document).ready(function() {
   }
 });
 </script>
-<?php
-if (!empty($UI_TEXTS['ui_footer'])):
-?>
-  <div class="container" style="margin-bottom:20px;color:#959595;">
-  <hr>
-    <?=$UI_TEXTS['ui_footer'];?>
+
+  <div class="container footer">
+    <?php
+    if (!empty($UI_TEXTS['ui_footer'])):
+    ?>
+     <hr><?=$UI_TEXTS['ui_footer'];?>
+    <?php
+    endif;
+    ?>
   </div>
-<?php
-endif;
-?>
 </body>
 </html>
 <?php

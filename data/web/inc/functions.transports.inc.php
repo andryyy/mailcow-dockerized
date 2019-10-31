@@ -243,7 +243,7 @@ function transport($_action, $_data = null) {
           }
         }
       }
-      $destinations = array_values($destinations);
+      $destinations = array_values(array_unique($destinations));
       if (empty($destinations)) { return false; }
       if (isset($next_hop_matches[1])) {
         if (in_array($next_hop_clean, $existing_nh)) {

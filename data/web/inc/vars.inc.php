@@ -73,11 +73,11 @@ $autodiscover_config = array(
 // Uses HTTP_ACCEPT_LANGUAGE header
 $DETECT_LANGUAGE = true;
 
-// Change default language, "cs", "de", "en", "es", "nl", "pt", "ru"
+// Change default language
 $DEFAULT_LANG = 'en';
 
 // Available languages
-$AVAILABLE_LANGUAGES = array('cs', 'de', 'en', 'es', 'fr', 'lv', 'nl', 'pl', 'pt', 'ru', 'it', 'ca');
+$AVAILABLE_LANGUAGES = array('ca', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'it', 'lv', 'nl', 'pl', 'pt', 'ru');
 
 // Change theme (default: lumen)
 // Needs to be one of those: cerulean, cosmo, cyborg, darkly, flatly, journal, lumen, paper, readable, sandstone,
@@ -154,3 +154,13 @@ $MAILBOX_DEFAULT_ATTRIBUTES['quarantine_notification'] = 'hourly';
 // Default mailbox format, should not be changed unless you know exactly, what you do, keep the trailing ":"
 // Check dovecot.conf for further changes (e.g. shared namespace)
 $MAILBOX_DEFAULT_ATTRIBUTES['mailbox_format'] = 'maildir:';
+
+// Set visible Rspamd maps in mailcow UI, do not change unless you know what you are doing
+$RSPAMD_MAPS = array(
+  'global_mime_from_blacklist.map',
+  'global_mime_from_whitelist.map',
+  'global_rcpt_blacklist.map',
+  'global_rcpt_whitelist.map',
+  'global_smtp_from_blacklist.map',
+  'global_smtp_from_whitelist.map'
+);

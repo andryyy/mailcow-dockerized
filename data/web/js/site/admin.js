@@ -3,7 +3,9 @@ var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456
 jQuery(function($){
   // http://stackoverflow.com/questions/24816/escaping-html-strings-with-jquery
   var entityMap={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"};
+  function jq(myid) {return "#" + myid.replace( /(:|\.|\[|\]|,|=|@)/g, "\\$1" );}
   function escapeHtml(n){return String(n).replace(/[&<>"'`=\/]/g,function(n){return entityMap[n]})}
+  function validateRegex(e){var t=e.split("/"),n=e,r="";t.length>1&&(n=t[1],r=t[2]);try{return new RegExp(n,r),!0}catch(e){return!1}}
   function humanFileSize(i){if(Math.abs(i)<1024)return i+" B";var B=["KiB","MiB","GiB","TiB","PiB","EiB","ZiB","YiB"],e=-1;do{i/=1024,++e}while(Math.abs(i)>=1024&&e<B.length-1);return i.toFixed(1)+" "+B[e]}
   function hashCode(t){for(var n=0,r=0;r<t.length;r++)n=t.charCodeAt(r)+((n<<5)-n);return n}
   function intToRGB(t){var n=(16777215&t).toString(16).toUpperCase();return"00000".substring(0,6-n.length)+n}
@@ -29,6 +31,39 @@ jQuery(function($){
   $("#mass_exclude").change(function(){ $("#mass_include").selectpicker('deselectAll'); });
   $("#mass_include").change(function(){ $("#mass_exclude").selectpicker('deselectAll'); });
   $("#mass_disarm").click(function() { $("#mass_send").attr("disabled", !this.checked); });
+  $(".validate_rspamd_regex").click(function( event ) {
+    event.preventDefault();
+    var regex_map_id = $(this).data('regex-map');
+    var regex_data = $(jq(regex_map_id)).val().split(/\r?\n/);
+    var regex_valid = true;
+    for(var i = 0;i < regex_data.length;i++){
+      if(regex_data[i].startsWith('#') || !regex_data[i]){
+        continue;
+      }
+      if(!validateRegex(regex_data[i])) {
+        mailcow_alert_box('Cannot build regex from line ' + (i+1), 'danger');
+        var regex_valid = false;
+        break;
+      }
+      if(!regex_data[i].startsWith('/') || !/\/[ims]?$/.test(regex_data[i])){
+        mailcow_alert_box('Line ' + (i+1) + ' is invalid', 'danger');
+        var regex_valid = false;
+        break;
+      }
+    }
+    if (regex_valid) {
+      mailcow_alert_box('Regex OK', 'success');
+      $('button[data-id="' + regex_map_id + '"]').attr({"disabled": false});
+    }
+  });
+	$('.textarea-code').on('keyup', function() {
+    $('.submit_rspamd_regex').attr({"disabled": true});
+	});
+  $("#show_rspamd_global_filters").click(function() {
+    $.get("inc/ajax/show_rspamd_global_filters.php");
+    $("#confirm_show_rspamd_global_filters").hide();
+    $("#rspamd_global_filters").removeClass("hidden");
+  });
   $("#super_delete").click(function() { return confirm(lang.queue_ays); });
   $(".refresh_table").on('click', function(e) {
     e.preventDefault();

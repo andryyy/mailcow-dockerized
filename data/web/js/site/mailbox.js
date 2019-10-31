@@ -133,16 +133,15 @@ $(document).ready(function() {
     $(e.currentTarget).find('#sieveDataText').html('<pre style="font-size:14px;line-height:1.1">' + sieveScript + '</pre>');
   });
   // Disable submit button on script change
-	$('#script_data').on('keyup', function() {
+	$('.textarea-code').on('keyup', function() {
     $('#add_filter_btns > #add_sieve_script').attr({"disabled": true});
-    $('#validation_msg').html('-');
 	});
   // Validate script data
   $("#validate_sieve").click(function( event ) {
     event.preventDefault();
     var script = $('#script_data').val();
     $.ajax({
-      dataType: 'jsonp',
+      dataType: 'json',
       url: "/inc/ajax/sieve_validation.php",
       type: "get",
       data: { script: script },

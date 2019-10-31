@@ -1072,9 +1072,10 @@ function verify_tfa_login($username, $token) {
   case "u2f":
     try {
       $reg = $u2f->doAuthenticate(json_decode($_SESSION['authReq']), get_u2f_registrations($username), json_decode($token));
-      $stmt = $pdo->prepare("UPDATE `tfa` SET `counter` = ? WHERE `id` = ?");
-      $stmt->execute(array($reg->counter, $reg->id));
-      $_SESSION['tfa_id'] = $reg->id;
+      $stmt = $pdo->prepare("SELECT `id` FROM `tfa` WHERE `keyHandle` = ?");
+      $stmt->execute(array($reg->keyHandle));
+      $row_key_id = $stmt->fetch(PDO::FETCH_ASSOC);
+      $_SESSION['tfa_id'] = $row_key_id['id'];
       $_SESSION['authReq'] = null;
       $_SESSION['return'][] =  array(
         'type' => 'success',
@@ -1615,5 +1616,23 @@ function solr_status() {
     return (!empty($status['status']['dovecot-fts'])) ? $status['status']['dovecot-fts'] : false;
   }
   return false;
+}
+
+function cleanupJS($ignore = '', $folder = '/tmp/*.js') {
+    foreach (glob($folder) as $filename) {
+        if(strpos($filename, $ignore) !== false) {
+            continue;
+        }
+        unlink($filename);
+    }
+}
+
+function cleanupCSS($ignore = '', $folder = '/tmp/*.css') {
+    foreach (glob($folder) as $filename) {
+        if(strpos($filename, $ignore) !== false) {
+            continue;
+        }
+        unlink($filename);
+    }
 }
 ?>

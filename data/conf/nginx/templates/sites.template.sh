@@ -26,7 +26,6 @@ for cert_dir in /etc/ssl/mail/*/ ; do
   esac
   echo -n '
 server {
-  include /etc/nginx/conf.d/listen_plain.active;
   include /etc/nginx/conf.d/listen_ssl.active;
 
   ssl_certificate '${cert_dir}'cert.pem;

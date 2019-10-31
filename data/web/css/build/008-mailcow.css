@@ -81,7 +81,7 @@
     transform: rotate(359deg);
   }
 }
-pre{white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
+pre{white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;}
 .footable-sortable {
   -webkit-user-select: none;  
   -moz-user-select: none;    
@@ -104,11 +104,11 @@ body {
   max-width: 550px;
   z-index: 2000;
 }
-.input-group-sm .btn { margin-top: 0px !important }
+.input-group-sm .btn { margin-top: 0 !important }
 legend {
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none
+  -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
   font-size: 12pt;
@@ -172,4 +172,9 @@ nav .glyphicon {
 .progress-bar {
   font-size: 12px;
   line-height: 14px;
+}
+.footer {
+  margin-top: 100px;
+  margin-bottom: 20px;
+  color: #959595;
 }

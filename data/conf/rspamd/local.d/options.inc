@@ -7,3 +7,4 @@ dns {
   retransmits = 2;
 }
 disable_monitoring = true;
+full_gc_iters = 1;

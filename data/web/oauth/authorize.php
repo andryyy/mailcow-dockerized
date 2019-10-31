@@ -50,7 +50,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
     </div>
   </div>
 </div> <!-- /container -->
-<script src="../js/authorize.js"></script>
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
 exit();

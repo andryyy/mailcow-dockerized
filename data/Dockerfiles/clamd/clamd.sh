@@ -38,18 +38,20 @@ sed -i '/^\s*$/d' /var/lib/clamav/whitelist.ign2
 
 BACKGROUND_TASKS=()
 
+echo "Running freshclam..."
+freshclam
+
 (
 while true; do
-  sleep 1m
+  sleep 12600
   freshclam
-  sleep 1h
 done
 ) &
 BACKGROUND_TASKS+=($!)
 
 (
 while true; do
-  sleep 2m
+  sleep 10m
   SANE_MIRRORS="$(dig +ignore +short rsync.sanesecurity.net)"
   for sane_mirror in ${SANE_MIRRORS}; do
     CE=
@@ -69,11 +71,15 @@ while true; do
     CE=$?
     chmod 755 /var/lib/clamav/
     if [ ${CE} -eq 0 ]; then
-      echo RELOAD | nc localhost 3310
+      while [ ! -z "$(pidof freshclam)" ]; do
+        echo "Freshclam is active, waiting..."
+        sleep 5
+      done
+      echo RELOAD | nc clamd-mailcow 3310
       break
     fi
   done
-  sleep 30h
+  sleep 12h
 done
 ) &
 BACKGROUND_TASKS+=($!)

@@ -17,6 +17,7 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
     <li role="presentation"><a href="#tab-routing" aria-controls="tab-config" role="tab" data-toggle="tab"><?=$lang['admin']['routing'];?></a></li>
     <li role="presentation"><a href="#tab-sys-mails" aria-controls="tab-sys-mails" role="tab" data-toggle="tab"><?=$lang['admin']['sys_mails'];?></a></li>
     <li role="presentation"><a href="#tab-mailq" aria-controls="tab-mailq" role="tab" data-toggle="tab"><?=$lang['admin']['queue_manager'];?></a></li>
+    <li role="presentation"><a href="#tab-rspamdmaps" aria-controls="tab-rspamdmaps" role="tab" data-toggle="tab"><?=$lang['admin']['rspamd_global_filters'];?></a></li>
   </ul>
 
   <div class="row">
@@ -660,7 +661,7 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
             ?>
             <a data-action="edit_selected" data-item="<?=$active_bans['network'];?>" data-id="f2b-quick" data-api-url='edit/fail2ban' data-api-attr='{"action":"unban"}' href="#">[<?=$lang['admin']['queue_unban'];?>]</a>
             <a data-action="edit_selected" data-item="<?=$active_bans['network'];?>" data-id="f2b-quick" data-api-url='edit/fail2ban' data-api-attr='{"action":"whitelist"}' href="#">[whitelist]</a>
-            <a data-action="edit_selected" data-item="<?=$active_bans['network'];?>" data-id="f2b-quick" data-api-url='edit/fail2ban' data-api-attr='{"action":"blacklist"}' href="#">[blacklist]</a>
+            <a data-action="edit_selected" data-item="<?=$active_bans['network'];?>" data-id="f2b-quick" data-api-url='edit/fail2ban' data-api-attr='{"action":"blacklist"}' href="#">[blacklist (<b>needs restart</b>)]</a>
             <?php
             else:
             ?>
@@ -1132,6 +1133,49 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
             href="#"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> <?=$lang['admin']['delete_queue'];?></a>
         </div>
       </div>
+      </div>
+    </div>
+  </div>
+  
+  <div role="tabpanel" class="tab-pane" id="tab-rspamdmaps">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <?=$lang['admin']['rspamd_global_filters'];?>
+      </div>
+      <div class="panel-body">
+        <p><?=$lang['admin']['rspamd_global_filters_info'];?></p>
+        <div id="confirm_show_rspamd_global_filters" class="<?=($_SESSION['show_rspamd_global_filters'] === true) ? 'hidden' : '';?>">
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <label>
+                <input type="checkbox" id="show_rspamd_global_filters"> <?=$lang['admin']['rspamd_global_filters_agree'];?>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div id="rspamd_global_filters" class="<?=($_SESSION['show_rspamd_global_filters'] !== true) ? 'hidden' : '';?>">
+        <?php
+        foreach ($RSPAMD_MAPS as $rspamd_map):
+        ?>
+        <hr>
+        <form class="form-horizontal" data-id="<?=$rspamd_map;?>" role="form" method="post">
+          <div class="form-group">
+            <label class="control-label col-sm-3" for="<?=$rspamd_map;?>"><code><?=$rspamd_map;?></code>:</label>
+            <div class="col-sm-9">
+              <textarea id="<?=$rspamd_map;?>" spellcheck="false" autocorrect="off" autocapitalize="none" class="form-control textarea-code" rows="10" name="rspamd_map_data" required><?=file_get_contents('/rspamd_custom_maps/' . $rspamd_map);?></textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+              <button class="btn btn-xs btn-default validate_rspamd_regex" data-regex-map="<?=$rspamd_map;?>" href="#"><?=$lang['add']['validate'];?></button>
+              <button class="btn btn-xs btn-success submit_rspamd_regex" data-action="edit_selected" data-id="<?=$rspamd_map;?>" data-item="<?=htmlspecialchars($rspamd_map);?>" data-api-url='edit/rspamd-map' data-api-attr='{}' href="#" disabled><?=$lang['edit']['save'];?></button>
+            </div>
+          </div>
+        </form>
+        <?php
+        endforeach;
+        ?>
+        </div>
       </div>
     </div>
   </div>

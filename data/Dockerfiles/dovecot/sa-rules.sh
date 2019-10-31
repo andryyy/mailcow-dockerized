@@ -26,6 +26,8 @@ if gzip -t /tmp/sa-rules-schaal.tar.gz; then
   cat /tmp/sa-rules-schaal/*cf >> /etc/rspamd/custom/sa-rules
 fi
 
+sed -i -e 's/\([^\\]\)\$\([^\/]\)/\1\\$\2/g' /etc/rspamd/custom/sa-rules
+
 if [[ "$(cat /etc/rspamd/custom/sa-rules | md5sum | cut -d' ' -f1)" != "${HASH_SA_RULES}" ]]; then
   CONTAINER_NAME=rspamd-mailcow
   CONTAINER_ID=$(curl --silent --insecure https://dockerapi/containers/json | \
