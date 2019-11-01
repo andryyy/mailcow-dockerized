@@ -1,0 +1,44 @@
+version: '2.1'
+services:
+
+    clamd-mailcow:
+      dns:
+        - my.resolvers.ip.addr
+
+    rspamd-mailcow:
+      dns:
+        - my.resolvers.ip.addr
+
+    php-fpm-mailcow:
+      dns:
+        - my.resolvers.ip.addr
+
+    sogo-mailcow:
+      dns:
+        - my.resolvers.ip.addr
+
+    dovecot-mailcow:
+      dns:
+        - my.resolvers.ip.addr
+
+    postfix-mailcow:
+      dns:
+        - my.resolvers.ip.addr
+
+    nginx-mailcow:
+      dns:
+        - my.resolvers.ip.addr
+
+    acme-mailcow:
+      dns:
+        - my.resolvers.ip.addr
+
+    watchdog-mailcow:
+      environment:
+        - CHECK_UNBOUND=0
+      dns:
+        - my.resolvers.ip.addr
+
+    dockerapi-mailcow:
+      dns:
+        - my.resolvers.ip.addr
