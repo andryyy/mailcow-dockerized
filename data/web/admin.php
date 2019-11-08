@@ -1155,12 +1155,12 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
         </div>
         <div id="rspamd_global_filters" class="<?=($_SESSION['show_rspamd_global_filters'] !== true) ? 'hidden' : '';?>">
         <?php
-        foreach ($RSPAMD_MAPS as $rspamd_map):
+        foreach ($RSPAMD_MAPS as $rspamd_desc => $rspamd_map):
         ?>
         <hr>
         <form class="form-horizontal" data-id="<?=$rspamd_map;?>" role="form" method="post">
           <div class="form-group">
-            <label class="control-label col-sm-3" for="<?=$rspamd_map;?>"><code><?=$rspamd_map;?></code>:</label>
+            <label class="control-label col-sm-3" for="<?=$rspamd_map;?>"><?=$rspamd_desc;?><br><small><?=$rspamd_map;?></small></label>
             <div class="col-sm-9">
               <textarea id="<?=$rspamd_map;?>" spellcheck="false" autocorrect="off" autocapitalize="none" class="form-control textarea-code" rows="10" name="rspamd_map_data" required><?=file_get_contents('/rspamd_custom_maps/' . $rspamd_map);?></textarea>
             </div>

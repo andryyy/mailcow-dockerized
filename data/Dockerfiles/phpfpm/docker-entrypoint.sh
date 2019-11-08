@@ -123,6 +123,30 @@ EOF
   fi
 fi
 
+# Create events
+mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} << EOF
+DROP EVENT IF EXISTS clean_spamalias;
+DELIMITER //
+CREATE EVENT clean_spamalias
+ON SCHEDULE EVERY 1 DAY DO
+BEGIN
+  DELETE FROM spamalias WHERE validity < UNIX_TIMESTAMP();
+END;
+//
+DELIMITER ;
+DROP EVENT IF EXISTS clean_oauth2;
+DELIMITER //
+CREATE EVENT clean_oauth2
+ON SCHEDULE EVERY 1 DAY DO
+BEGIN
+  DELETE FROM oauth_refresh_tokens WHERE expires < NOW();
+  DELETE FROM oauth_access_tokens WHERE expires < NOW();
+  DELETE FROM oauth_authorization_codes WHERE expires < NOW();
+END;
+//
+DELIMITER ;
+EOF
+
 # Run hooks
 for file in /hooks/*; do
   if [ -x "${file}" ]; then

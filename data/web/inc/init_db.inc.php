@@ -3,7 +3,7 @@ function init_db_schema() {
   try {
     global $pdo;
 
-    $db_version = "1102019_1040";
+    $db_version = "06112019_1840";
 
     $stmt = $pdo->query("SHOW TABLES LIKE 'versions'");
     $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -1045,31 +1045,6 @@ function init_db_schema() {
     foreach ($views as $view => $create) {
       $pdo->query("DROP VIEW IF EXISTS `" . $view . "`;");
       $pdo->query($create);
-    }
-
-    // Create events to clean database
-    $events[] = 'DROP EVENT IF EXISTS clean_spamalias;
-DELIMITER //
-CREATE EVENT clean_spamalias 
-ON SCHEDULE EVERY 1 DAY DO 
-BEGIN
-  DELETE FROM spamalias WHERE validity < UNIX_TIMESTAMP();
-END;
-//
-DELIMITER ;';
-    $events[] = 'DROP EVENT IF EXISTS clean_oauth2;
-DELIMITER //
-CREATE EVENT clean_oauth2 
-ON SCHEDULE EVERY 1 DAY DO 
-BEGIN
-  DELETE FROM oauth_refresh_tokens WHERE expires < NOW();
-  DELETE FROM oauth_access_tokens WHERE expires < NOW();
-  DELETE FROM oauth_authorization_codes WHERE expires < NOW();
-END;
-//
-DELIMITER ;';
-    foreach ($events as $event) {
-      $pdo->exec($event);
     }
 
     // Inject admin if not exists

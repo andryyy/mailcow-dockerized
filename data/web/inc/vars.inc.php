@@ -157,10 +157,13 @@ $MAILBOX_DEFAULT_ATTRIBUTES['mailbox_format'] = 'maildir:';
 
 // Set visible Rspamd maps in mailcow UI, do not change unless you know what you are doing
 $RSPAMD_MAPS = array(
-  'global_mime_from_blacklist.map',
-  'global_mime_from_whitelist.map',
-  'global_rcpt_blacklist.map',
-  'global_rcpt_whitelist.map',
-  'global_smtp_from_blacklist.map',
-  'global_smtp_from_whitelist.map'
+  'Header-From: Blacklist' => 'global_mime_from_blacklist.map',
+  'Header-From: Whitelist' => 'global_mime_from_whitelist.map',
+  'Envelope Sender Blacklist' => 'global_smtp_from_blacklist.map',
+  'Envelope Sender Whitelist' => 'global_smtp_from_whitelist.map',
+  'Recipient Blacklist' => 'global_rcpt_blacklist.map',
+  'Recipient Whitelist' => 'global_rcpt_whitelist.map',
+  'Fishy TLDS (only fired in combination with bad words)' => 'fishy_tlds.map',
+  'Bad Words (only fired in combination with fishy TLDs)' => 'bad_words.map',
+  'Bad Words DE (only fired in combination with fishy TLDs)' => 'bad_words_de.map'
 );

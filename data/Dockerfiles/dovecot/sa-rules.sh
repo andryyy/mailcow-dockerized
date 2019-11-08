@@ -13,7 +13,7 @@ fi
 
 # Deploy
 ## Heinlein
-curl --connect-timeout 15 --max-time 30 http://www.spamassassin.heinlein-support.de/$(dig txt 1.4.3.spamassassin.heinlein-support.de +short | tr -d '"').tar.gz --output /tmp/sa-rules-heinlein.tar.gz
+curl --connect-timeout 15 --retry 10 --max-time 30 http://www.spamassassin.heinlein-support.de/$(dig txt 1.4.3.spamassassin.heinlein-support.de +short | tr -d '"').tar.gz --output /tmp/sa-rules-heinlein.tar.gz
 if gzip -t /tmp/sa-rules-heinlein.tar.gz; then
   tar xfvz /tmp/sa-rules-heinlein.tar.gz -C /tmp/sa-rules-heinlein
   cat /tmp/sa-rules-heinlein/*cf > /etc/rspamd/custom/sa-rules
