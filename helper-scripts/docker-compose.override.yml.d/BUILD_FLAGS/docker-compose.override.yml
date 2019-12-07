@@ -1,0 +1,41 @@
+version: '2.1'
+services:
+  unbound-mailcow:
+    build: ./data/Dockerfiles/unbound
+
+  clamd-mailcow:
+    build: ./data/Dockerfiles/clamd
+
+  rspamd-mailcow:
+    build: ./data/Dockerfiles/rspamd
+
+  php-fpm-mailcow:
+    build: ./data/Dockerfiles/phpfpm
+
+  sogo-mailcow:
+    build: ./data/Dockerfiles/sogo
+
+  dovecot-mailcow:
+    build: ./data/Dockerfiles/dovecot
+
+  postfix-mailcow:
+    build: ./data/Dockerfiles/postfix
+
+  acme-mailcow:
+    build: ./data/Dockerfiles/acme
+
+  netfilter-mailcow:
+    build: ./data/Dockerfiles/netfilter
+
+  watchdog-mailcow:
+    build: ./data/Dockerfiles/watchdog
+
+  dockerapi-mailcow:
+    build: ./data/Dockerfiles/dockerapi
+
+  solr-mailcow:
+    build: ./data/Dockerfiles/solr
+
+  olefy-mailcow:
+    build: ./data/Dockerfiles/olefy
+

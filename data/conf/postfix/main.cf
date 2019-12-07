@@ -120,7 +120,6 @@ smtpd_recipient_restrictions = permit_sasl_authenticated,
   permit_mynetworks,
   check_recipient_access proxy:mysql:/opt/postfix/conf/sql/mysql_tls_enforce_in_policy.cf,
   reject_invalid_helo_hostname,
-  reject_unknown_reverse_client_hostname,
   reject_unauth_destination
 smtpd_sasl_auth_enable = yes
 smtpd_sasl_authenticated_header = yes
@@ -183,12 +182,17 @@ smtp_tls_policy_maps=proxy:mysql:/opt/postfix/conf/sql/mysql_tls_policy_override
 smtp_header_checks = pcre:/opt/postfix/conf/anonymize_headers.pcre
 mail_name = Postcow
 # local_transport map catches local destinations and prevents routing local dests when the next map would route "*"
-transport_maps = pcre:/opt/postfix/conf/local_transport,
+# Use custom_transport.pcre for custom transports
+transport_maps = pcre:/opt/postfix/conf/custom_transport.pcre,
+  pcre:/opt/postfix/conf/local_transport,
   proxy:mysql:/opt/postfix/conf/sql/mysql_transport_maps.cf
 smtp_sasl_auth_soft_bounce = no
 postscreen_discard_ehlo_keywords = silent-discard, dsn
 compatibility_level = 2
-smtputf8_enable = no
+smtputf8_enable = yes
+# Define protocols for SMTPS and submission service
+submission_smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3
+smtps_smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3
 
 # DO NOT EDIT ANYTHING BELOW #
 # User overrides #

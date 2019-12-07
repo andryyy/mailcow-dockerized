@@ -41,8 +41,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
         </form>
         <hr>
         <p><?=$lang['admin']['rspamd-com_settings'];?></p>
-        <a href="#" class="small" id="rspamd_preset_1"><?=sprintf($lang['admin']['rsettings_insert_preset'], $lang['admin']['rsettings_preset_1']);?></a><br />
-        <a href="#" class="small" id="rspamd_preset_2"><?=sprintf($lang['admin']['rsettings_insert_preset'], $lang['admin']['rsettings_preset_2']);?></a>
+        <ul id="rspamd_presets"></ul>
       </div>
     </div>
   </div>

@@ -1,13 +1,14 @@
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 LABEL maintainer "André Peters <andre.peters@servercow.de>"
 
 # Installation
-ENV CLAMAV 0.101.4
+ENV CLAMAV 0.102.1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   ca-certificates \
   zlib1g-dev \
+  libcurl4-openssl-dev \
   libncurses5-dev \
   libzip-dev \
   libpcre2-dev \

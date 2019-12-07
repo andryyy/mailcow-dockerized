@@ -9,7 +9,7 @@ if (isset($_GET['script'])) {
   $sieve = new Sieve\SieveParser();
   try {
     if (empty($_GET['script'])) {
-      echo json_encode(array('type' => 'danger', 'msg' => 'Script cannot be empty'));
+      echo json_encode(array('type' => 'danger', 'msg' => $lang['danger']['script_empty']));
       exit();
     }
     $sieve->parse($_GET['script']);

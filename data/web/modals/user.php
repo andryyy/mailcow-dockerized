@@ -162,6 +162,52 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
     </div>
   </div>
 </div><!-- add sync job modal -->
+<!-- app passwd modal -->
+<div class="modal fade" id="addAppPasswdModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+        <h3 class="modal-title"><?=$lang['add']['app_password'];?></h3>
+      </div>
+      <div class="modal-body">
+				<form class="form-horizontal" data-cached-form="true" role="form" data-id="add_apppasswd">
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="app_name"><?=$lang['add']['app_name'];?></label>
+						<div class="col-sm-10">
+						<input type="text" class="form-control" name="app_name" required>
+						</div>
+					</div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="app_passwd"><?=$lang['user']['password'];?></label>
+            <div class="col-sm-10">
+            <input type="password" data-hibp="true" class="form-control" name="app_passwd" autocomplete="off" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="app_passwd2"><?=$lang['user']['password_repeat'];?></label>
+            <div class="col-sm-10">
+            <input type="password" class="form-control" name="app_passwd2" autocomplete="off" required>
+            <p class="help-block"><?=$lang['user']['new_password_description'];?></p>
+            </div>
+          </div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<div class="checkbox">
+							<label><input type="checkbox" value="1" name="active" checked> <?=$lang['add']['active'];?></label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+              <button class="btn btn-default" data-action="add_item" data-id="add_apppasswd" data-api-url='add/app-passwd' data-api-attr='{}' href="#"><?=$lang['admin']['add'];?></button>
+						</div>
+					</div>
+				</form>
+      </div>
+    </div>
+  </div>
+</div><!-- add app passwd modal -->
 <!-- log modal -->
 <div class="modal fade" id="syncjobLogModal" tabindex="-1" role="dialog" aria-labelledby="syncjobLogModalLabel">
   <div class="modal-dialog modal-lg" role="document">

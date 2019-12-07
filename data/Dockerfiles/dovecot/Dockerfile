@@ -69,6 +69,7 @@ RUN groupadd -g 5000 vmail \
   libunicode-string-perl \
   liburi-perl \
   libwww-perl \
+  lua-sql-mysql \
   mariadb-client \
   procps \
   python3-pip \

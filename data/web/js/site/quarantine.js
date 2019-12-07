@@ -15,10 +15,11 @@ jQuery(function($){
         {"name":"id","type":"ID","filterable": false,"sorted": true,"direction":"DESC","title":"ID","style":{"width":"50px"}},
         {"name":"qid","breakpoints":"all","type":"text","title":lang.qid,"style":{"width":"125px"}},
         {"name":"sender","title":lang.sender},
+        {"name":"subject","title":lang.subj, "type": "text"},
         {"name":"rcpt","title":lang.rcpt, "breakpoints":"xs sm md", "type": "text"},
         {"name":"virus","title":lang.danger, "type": "text"},
         {"name":"score","title": lang.spam_score, "type": "text"},
-        {"name":"subject","title":lang.subj, "type": "text"},
+        {"name":"notified","title":lang.notified, "type": "text"},
         {"name":"created","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.received,"style":{"width":"170px"}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right"},"style":{"width":"220px"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
       ],
@@ -43,6 +44,11 @@ jQuery(function($){
               item.virus = '<span class="dot-danger"></span>';
             } else {
               item.virus = '<span class="dot-neutral"></span>';
+            }
+            if(item.notified > 0) {
+              item.notified = '&#10004;';
+            } else {
+              item.notified = '&#10006;';
             }
             if (acl_data.login_as === 1) {
             item.action = '<div class="btn-group">' +

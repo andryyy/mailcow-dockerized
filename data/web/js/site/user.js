@@ -156,6 +156,51 @@ jQuery(function($){
       "toggleSelector": "table tbody span.footable-toggle"
     });
   }
+  function draw_app_passwd_table() {
+    ft_apppasswd_table = FooTable.init('#app_passwd_table', {
+      "columns": [
+        {"name":"chkbox","title":"","style":{"maxWidth":"60px","width":"60px","text-align":"center"},"filterable": false,"sortable": false,"type":"html"},
+        {"sorted": true,"name":"id","title":"ID","style":{"maxWidth":"60px","width":"60px","text-align":"center"}},
+        {"name":"name","title":lang.app_name},
+        {"name":"active","filterable": false,"style":{"maxWidth":"70px","width":"70px"},"title":lang.active},
+        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
+      ],
+      "empty": lang.empty,
+      "rows": $.ajax({
+        dataType: 'json',
+        url: '/api/v1/get/app-passwd/all',
+        jsonp: false,
+        error: function () {
+          console.log('Cannot draw app passwd table');
+        },
+        success: function (data) {
+          $.each(data, function (i, item) {
+            if (acl_data.app_passwds === 1) {
+              item.action = '<div class="btn-group">' +
+                '<a href="/edit/app-passwd/' + item.id + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>' +
+                '<a href="#" data-action="delete_selected" data-id="single-apppasswd" data-api-url="delete/app-passwd" data-item="' + item.id + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.remove + '</a>' +
+                '</div>';
+              item.chkbox = '<input type="checkbox" data-id="apppasswd" name="multi_select" value="' + item.id + '" />';
+            }
+            else {
+              item.action = '<span>-</span>';
+              item.chkbox = '<input type="checkbox" disabled />';
+            }
+          });
+        }
+      }),
+      "paging": {
+        "enabled": true,
+        "limit": 5,
+        "size": pagination_size
+      },
+      "state": {"enabled": true},
+      "sorting": {
+        "enabled": true
+      },
+      "toggleSelector": "table tbody span.footable-toggle"
+    });
+  }
   function draw_wl_policy_mailbox_table() {
     ft_wl_policy_mailbox_table = FooTable.init('#wl_policy_mailbox_table', {
       "columns": [
@@ -244,6 +289,7 @@ jQuery(function($){
   })
 
   draw_sync_job_table();
+  draw_app_passwd_table();
   draw_tla_table();
   draw_wl_policy_mailbox_table();
   draw_bl_policy_mailbox_table();

@@ -23,6 +23,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/sieve/SieveParser.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/JSminifierExtended.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/CSSminifierExtended.php';
 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/array_merge_real.php';
+
 // Minify JS
 use MatthiasMullie\Minify;
 $js_minifier = new JSminifierExtended();
@@ -142,7 +144,7 @@ set_exception_handler('exception_handler');
 // TODO: Move function
 function get_remote_ip($anonymize = null) {
   global $ANONYMIZE_IPS;
-  if ($anonymize === null) { 
+  if ($anonymize === null) {
     $anonymize = $ANONYMIZE_IPS;
   }
   elseif ($anonymize !== true && $anonymize !== false)  {
@@ -191,10 +193,19 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], $AVAILABLE_LANGUAGES)) {
   setcookie("mailcow_locale", $_GET['lang'], time()+30758400); // one year
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/lang/lang.en.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/lang/lang.'.$_SESSION['mailcow_locale'].'.php';
+/*
+ * load language
+ */
+$lang = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/lang/lang.en.json'), true);
+
+$langFile = $_SERVER['DOCUMENT_ROOT'] . '/lang/lang.'.$_SESSION['mailcow_locale'].'.json';
+if(file_exists($langFile)) {
+  $lang = array_merge_real($lang, json_decode(file_get_contents($langFile), true));
+}
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.acl.inc.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.app_passwd.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.mailbox.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.customize.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.address_rewriting.inc.php';

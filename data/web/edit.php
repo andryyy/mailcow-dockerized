@@ -1059,7 +1059,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                 <option value="none" <?=($result['policy'] != 'none') ?: 'selected';?>>none</option>
                 <option value="may" <?=($result['policy'] != 'may') ?: 'selected';?>>may</option>
                 <option value="encrypt" <?=($result['policy'] != 'encrypt') ?: 'selected';?>>encrypt</option>
-                <option value="dane" <?=($result['policy'] != 'dane') ?: 'selected';?>>dane-only</option>
+                <option value="dane" <?=($result['policy'] != 'dane') ?: 'selected';?>>dane</option>
                 <option value="dane-only" <?=($result['policy'] != 'dane-only') ?: 'selected';?>>dane-only</option>
                 <option value="fingerprint" <?=($result['policy'] != 'fingerprint') ?: 'selected';?>>fingerprint</option>
                 <option value="verify" <?=($result['policy'] != 'verify') ?: 'selected';?>>verify</option>
@@ -1303,6 +1303,54 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <button class="btn btn-success" data-action="edit_selected" data-id="editfilter" data-item="<?=htmlspecialchars($result['id']);?>" data-api-url='edit/filter' data-api-attr='{}' href="#"><?=$lang['edit']['validate_save'];?></button>
+              </div>
+            </div>
+          </form>
+        <?php
+        }
+        else {
+        ?>
+          <div class="alert alert-info" role="alert"><?=$lang['info']['no_action'];?></div>
+        <?php
+        }
+    }
+    elseif (isset($_GET['app-passwd']) &&
+      is_numeric($_GET['app-passwd'])) {
+        $id = $_GET["app-passwd"];
+        $result = app_passwd('details', $id);
+        if (!empty($result)) {
+        ?>
+          <h4><?=$lang['edit']['app_passwd'];?></h4>
+          <form class="form-horizontal" data-id="editapp" role="form" method="post">
+            <input type="hidden" value="0" name="active">
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="app_name"><?=$lang['edit']['app_name'];?></label>
+              <div class="col-sm-10">
+              <input type="text" class="form-control" name="app_name" id="app_name" value="<?=htmlspecialchars($result['name'], ENT_QUOTES, 'UTF-8');?>" required maxlength="255">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?></label>
+              <div class="col-sm-10">
+              <input type="password" data-hibp="true" class="form-control" name="password" placeholder="">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="password2"><?=$lang['edit']['password_repeat'];?></label>
+              <div class="col-sm-10">
+              <input type="password" class="form-control" name="password2">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                <label><input type="checkbox" value="1" name="active" <?=($result['active_int']=="1") ? "checked" : "";?>> <?=$lang['edit']['active'];?></label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-success" data-action="edit_selected" data-id="editapp" data-item="<?=htmlspecialchars($result['id']);?>" data-api-url='edit/app-passwd' data-api-attr='{}' href="#"><?=$lang['edit']['save'];?></button>
               </div>
             </div>
           </form>

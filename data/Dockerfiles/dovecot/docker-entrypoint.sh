@@ -7,21 +7,6 @@ while ! mysqladmin status --socket=/var/run/mysqld/mysqld.sock -u${DBUSER} -p${D
   sleep 2
 done
 
-# Hard-code env vars to scripts due to cron not passing them to the scripts
-sed -i "s/__DBUSER__/${DBUSER}/g" /usr/local/bin/imapsync_cron.pl
-sed -i "s/__DBPASS__/${DBPASS}/g" /usr/local/bin/imapsync_cron.pl
-sed -i "s/__DBNAME__/${DBNAME}/g" /usr/local/bin/imapsync_cron.pl
-
-sed -i "s/__DBUSER__/${DBUSER}/g" /usr/local/bin/quarantine_notify.py
-sed -i "s/__DBPASS__/${DBPASS}/g" /usr/local/bin/quarantine_notify.py
-sed -i "s/__DBNAME__/${DBNAME}/g" /usr/local/bin/quarantine_notify.py
-
-sed -i "s/__DBUSER__/${DBUSER}/g" /usr/local/bin/clean_q_aged.sh
-sed -i "s/__DBPASS__/${DBPASS}/g" /usr/local/bin/clean_q_aged.sh
-sed -i "s/__DBNAME__/${DBNAME}/g" /usr/local/bin/clean_q_aged.sh
-
-sed -i "s/__LOG_LINES__/${LOG_LINES}/g" /usr/local/bin/trim_logs.sh
-
 # Create missing directories
 [[ ! -d /etc/dovecot/sql/ ]] && mkdir -p /etc/dovecot/sql/
 [[ ! -d /var/vmail/_garbage ]] && mkdir -p /var/vmail/_garbage
@@ -127,6 +112,39 @@ default_pass_scheme = SSHA256
 password_query = SELECT password FROM mailbox WHERE active = '1' AND username = '%u' AND domain IN (SELECT domain FROM domain WHERE domain='%d' AND active='1') AND JSON_EXTRACT(attributes, '$.force_pw_update') NOT LIKE '%%1%%'
 EOF
 
+cat <<EOF > /var/lib/dovecot/app-passdb.lua
+function auth_password_verify(req, pass)
+  if req.domain == nil then
+    return dovecot.auth.PASSDB_RESULT_USER_UNKNOWN, "No such user"
+  end
+  local cur,errorString = con:execute(string.format([[SELECT mailbox, password FROM app_passwd
+    WHERE mailbox = '%s'
+      AND active = '1'
+      AND domain IN (SELECT domain FROM domain WHERE domain='%s' AND active='1')]], con:escape(req.user), con:escape(req.domain)))
+  local row = cur:fetch ({}, "a")
+  while row do
+    if req.password_verify(req, row.password, pass) == 1 then
+      cur:close()
+      return dovecot.auth.PASSDB_RESULT_OK, "password=" .. pass
+    end
+    row = cur:fetch (row, "a")
+  end
+  return dovecot.auth.PASSDB_RESULT_USER_UNKNOWN, "No such user"
+end
+
+function script_init()
+  mysql = require "luasql.mysql"
+  env  = mysql.mysql()
+  con = env:connect("__DBNAME__","__DBUSER__","__DBPASS__","mysql")
+  return 0
+end
+
+function script_deinit()
+  con:close()
+  env:close()
+end
+EOF
+
 # Migrate old sieve_after file
 [[ -f /etc/dovecot/sieve_after ]] && mv /etc/dovecot/sieve_after /etc/dovecot/global_sieve_after
 # Create global sieve scripts
@@ -204,6 +222,12 @@ else
     rm -f /etc/dovecot/sogo-sso.pass
     rm -f /etc/dovecot/sogo-sso.conf
 fi
+
+# Hard-code env vars to scripts due to cron not passing them to the scripts
+sed -i "s/__DBUSER__/${DBUSER}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /var/lib/dovecot/app-passdb.lua
+sed -i "s/__DBPASS__/${DBPASS}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /var/lib/dovecot/app-passdb.lua
+sed -i "s/__DBNAME__/${DBNAME}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /var/lib/dovecot/app-passdb.lua
+sed -i "s/__LOG_LINES__/${LOG_LINES}/g" /usr/local/bin/trim_logs.sh
 
 # 401 is user dovecot
 if [[ ! -s /mail_crypt/ecprivkey.pem || ! -s /mail_crypt/ecpubkey.pem ]]; then
@@ -288,5 +312,9 @@ for file in /hooks/*; do
     "${file}"
   fi
 done
+
+# For some strange, unknown and stupid reason, Dovecot may run into a race condition, when this file is not touched before it is read by dovecot/auth
+# May be related to something inside Docker, I seriously don't know
+touch /var/lib/dovecot/app-passdb.lua
 
 exec "$@"

@@ -35,7 +35,7 @@ function domain_admin($_action, $_data = null) {
         $_SESSION['return'][] = array(
           'type' => 'danger',
           'log' => array(__FUNCTION__, $_action, $_data_log),
-          'msg' => 'username_invalid'
+          'msg' => array('username_invalid', $username)
         );
         return false;
       }
@@ -44,12 +44,12 @@ function domain_admin($_action, $_data = null) {
         WHERE `username` = :username");
       $stmt->execute(array(':username' => $username));
       $num_results[] = count($stmt->fetchAll(PDO::FETCH_ASSOC));
-      
+
       $stmt = $pdo->prepare("SELECT `username` FROM `admin`
         WHERE `username` = :username");
       $stmt->execute(array(':username' => $username));
       $num_results[] = count($stmt->fetchAll(PDO::FETCH_ASSOC));
-      
+
       $stmt = $pdo->prepare("SELECT `username` FROM `domain_admins`
         WHERE `username` = :username");
       $stmt->execute(array(':username' => $username));
@@ -379,7 +379,7 @@ function domain_admin($_action, $_data = null) {
       }
       $stmt = $pdo->query("SELECT DISTINCT
         `username`
-          FROM `domain_admins` 
+          FROM `domain_admins`
             WHERE `username` IN (
               SELECT `username` FROM `admin`
                 WHERE `superadmin`!='1'
@@ -415,7 +415,7 @@ function domain_admin($_action, $_data = null) {
         ':domain_admin' => $_data
       ));
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
-      if (empty($row)) { 
+      if (empty($row)) {
         return false;
       }
       $domainadmindata['username'] = $row['username'];

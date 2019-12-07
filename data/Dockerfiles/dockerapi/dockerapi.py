@@ -230,6 +230,14 @@ class container_post(Resource):
       else:
         return jsonify(type='error', msg='mysql_upgrade: error running command', text=sql_return.output.decode('utf-8'))
 
+  # api call: container_post - post_action: exec - cmd: system - task: mysql_tzinfo_to_sql
+  def container_post__exec__system__mysql_tzinfo_to_sql(self, container_id):
+    for container in docker_client.containers.list(filters={"id": container_id}):
+      sql_return = container.exec_run(["/bin/bash", "-c", "/usr/bin/mysql_tzinfo_to_sql /usr/share/zoneinfo | /bin/sed 's/Local time zone must be set--see zic manual page/FCTY/' | /usr/bin/mysql -uroot -p'" + os.environ['DBROOT'].replace("'", "'\\''") + "' mysql \n"], user='mysql')
+      if sql_return.exit_code == 0:
+        return jsonify(type='info', msg='mysql_tzinfo_to_sql: command completed successfully', text=sql_return.output.decode('utf-8'))
+      else:
+        return jsonify(type='error', msg='mysql_tzinfo_to_sql: error running command', text=sql_return.output.decode('utf-8'))
 
   # api call: container_post - post_action: exec - cmd: reload - task: dovecot
   def container_post__exec__reload__dovecot(self, container_id):

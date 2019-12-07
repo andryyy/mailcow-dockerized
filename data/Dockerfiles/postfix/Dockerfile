@@ -17,6 +17,7 @@ RUN groupadd -g 102 postfix \
 	ca-certificates \
 	curl \
 	dirmngr \
+  dnsutils \
 	gnupg \
 	libsasl2-modules \
   mariadb-client \

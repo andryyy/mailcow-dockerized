@@ -220,9 +220,9 @@ elif [[ ${1} == "restore" ]]; then
     exit 1
   fi
 
-  echo "[ 0 ] all"
-  # find all files in folder with .tar.gz extension, print their base names, remove backup_, remove .tar, remove .gz
-  FILE_SELECTION[0]=$(find "${FOLDER_SELECTION[${input_sel}]}" -type f -name "*.tar.gz" -printf "%f\n" | sed 's/backup_*//' | sed 's/\.[^.]*$//' | sed 's/\.[^.]*$//')
+  echo "[ 0 ] - all"
+  # find all files in folder with *.gz extension, print their base names, remove backup_, remove .tar (if present), remove .gz
+  FILE_SELECTION[0]=$(find "${FOLDER_SELECTION[${input_sel}]}" -type f -name '*.gz' -printf '%f\n' | sed 's/backup_*//' | sed 's/\.[^.]*$//' | sed 's/\.[^.]*$//')
   for file in $(ls -f "${FOLDER_SELECTION[${input_sel}]}"); do
     if [[ ${file} =~ vmail ]]; then
       echo "[ ${i} ] - Mail directory (/var/vmail)"

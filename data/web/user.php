@@ -100,6 +100,7 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
     <li role="presentation"><a href="#SpamAliases" aria-controls="SpamAliases" role="tab" data-toggle="tab"><?=$lang['user']['spam_aliases'];?></a></li>
     <li role="presentation"><a href="#Spamfilter" aria-controls="Spamfilter" role="tab" data-toggle="tab"><?=$lang['user']['spamfilter'];?></a></li>
     <li role="presentation"><a href="#Syncjobs" aria-controls="Syncjobs" role="tab" data-toggle="tab"><?=$lang['user']['sync_jobs'];?></a></li>
+    <li role="presentation"><a href="#AppPasswds" aria-controls="AppPasswds" role="tab" data-toggle="tab"><?=$lang['user']['app_passwds'];?></a></li>
   </ul>
   <hr>
 
@@ -459,7 +460,28 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
         <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#addSyncJobModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['user']['create_syncjob'];?></a>
       </div>
     </div>
+  </div>
+
+	<div role="tabpanel" class="tab-pane" id="AppPasswds">
+    <p><?=$lang['user']['app_hint'];?></p>
+		<div class="table-responsive">
+      <table class="table table-striped" id="app_passwd_table"></table>
 		</div>
+    <div class="mass-actions-user">
+      <div class="btn-group" data-acl="<?=$_SESSION['acl']['app_passwds'];?>">
+        <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="apppasswd" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
+        <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" href="#"><?=$lang['mailbox']['quick_actions'];?> <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a data-action="edit_selected" data-id="apppasswd" data-api-url='edit/app-passwd' data-api-attr='{"active":"1"}' href="#"><?=$lang['mailbox']['activate'];?></a></li>
+          <li><a data-action="edit_selected" data-id="apppasswd" data-api-url='edit/app-passwd' data-api-attr='{"active":"0"}' href="#"><?=$lang['mailbox']['deactivate'];?></a></li>
+          <li role="separator" class="divider"></li>
+          <li><a data-action="delete_selected" data-id="apppasswd" data-api-url='delete/app-passwd' href="#"><?=$lang['mailbox']['remove'];?></a></li>
+        </ul>
+        <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#addAppPasswdModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['user']['create_app_passwd'];?></a>
+      </div>
+    </div>
+		</div>
+
 	</div>
   
 </div><!-- /container -->

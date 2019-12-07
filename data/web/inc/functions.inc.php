@@ -1264,17 +1264,20 @@ function license($action, $data = null) {
           $_SESSION['gal']['valid'] = "true";
           $_SESSION['gal']['c'] = $json_return['c'];
           $_SESSION['gal']['s'] = $json_return['s'];
-                  }
+          $_SESSION['gal']['m'] = str_repeat('🐄', substr_count($json_return['m'], 'o'));
+        }
         elseif ($json_return['response'] === "invalid") {
           $_SESSION['gal']['valid'] = "false";
           $_SESSION['gal']['c'] = $lang['mailbox']['no'];
           $_SESSION['gal']['s'] = $lang['mailbox']['no'];
+          $_SESSION['gal']['m'] = $lang['mailbox']['no'];
         }
       }
       else {
         $_SESSION['gal']['valid'] = "false";
         $_SESSION['gal']['c'] = $lang['danger']['temp_error'];
         $_SESSION['gal']['s'] = $lang['danger']['temp_error'];
+        $_SESSION['gal']['m'] = $lang['danger']['temp_error'];
       }
       try {
         // json_encode needs "true"/"false" instead of true/false, to not encode it to 0 or 1

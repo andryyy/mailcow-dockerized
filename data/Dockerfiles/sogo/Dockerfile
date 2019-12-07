@@ -1,4 +1,4 @@
-FROM debian:stretch-slim
+FROM debian:buster-slim
 LABEL maintainer "Andre Peters <andre.peters@servercow.de>"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   cron \
   gettext \
   gnupg \
-  mysql-client \
+  mariadb-client \
   rsync \
   supervisor \
   syslog-ng \
@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && mkdir /usr/share/doc/sogo \
   && touch /usr/share/doc/sogo/empty.sh \
   && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 0x810273C4 \
-  && echo "deb http://packages.inverse.ca/SOGo/nightly/4/debian/ stretch stretch" > /etc/apt/sources.list.d/sogo.list \
+  && echo "deb http://packages.inverse.ca/SOGo/nightly/4/debian/ buster buster" > /etc/apt/sources.list.d/sogo.list \
   && apt-get update && apt-get install -y --no-install-recommends \
     sogo \
     sogo-activesync \

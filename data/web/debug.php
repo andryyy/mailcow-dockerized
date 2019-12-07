@@ -237,7 +237,9 @@ else {
               </div>
             </div>
             <div class="panel-body">
-              <div id="rspamd_donut" style="height: 300px;"></div>
+              <div id="chart-container">
+                <canvas id="rspamd_donut" style="width:100%;height:400px"></canvas>
+              </div>
               <div class="table-responsive">
                 <table class="table table-striped table-condensed log-table" id="rspamd_history"></table>
               </div>
