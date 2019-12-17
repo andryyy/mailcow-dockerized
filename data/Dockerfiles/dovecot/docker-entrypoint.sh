@@ -9,6 +9,7 @@ done
 
 # Create missing directories
 [[ ! -d /etc/dovecot/sql/ ]] && mkdir -p /etc/dovecot/sql/
+[[ ! -d /etc/dovecot/lua/ ]] && mkdir -p /etc/dovecot/lua/
 [[ ! -d /var/vmail/_garbage ]] && mkdir -p /var/vmail/_garbage
 [[ ! -d /var/vmail/sieve ]] && mkdir -p /var/vmail/sieve
 [[ ! -d /etc/sogo ]] && mkdir -p /etc/sogo
@@ -112,7 +113,7 @@ default_pass_scheme = SSHA256
 password_query = SELECT password FROM mailbox WHERE active = '1' AND username = '%u' AND domain IN (SELECT domain FROM domain WHERE domain='%d' AND active='1') AND JSON_EXTRACT(attributes, '$.force_pw_update') NOT LIKE '%%1%%'
 EOF
 
-cat <<EOF > /var/lib/dovecot/app-passdb.lua
+cat <<EOF > /etc/dovecot/lua/app-passdb.lua
 function auth_password_verify(req, pass)
   if req.domain == nil then
     return dovecot.auth.PASSDB_RESULT_USER_UNKNOWN, "No such user"
@@ -224,9 +225,9 @@ else
 fi
 
 # Hard-code env vars to scripts due to cron not passing them to the scripts
-sed -i "s/__DBUSER__/${DBUSER}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /var/lib/dovecot/app-passdb.lua
-sed -i "s/__DBPASS__/${DBPASS}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /var/lib/dovecot/app-passdb.lua
-sed -i "s/__DBNAME__/${DBNAME}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /var/lib/dovecot/app-passdb.lua
+sed -i "s/__DBUSER__/${DBUSER}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /etc/dovecot/lua/app-passdb.lua
+sed -i "s/__DBPASS__/${DBPASS}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /etc/dovecot/lua/app-passdb.lua
+sed -i "s/__DBNAME__/${DBNAME}/g" /usr/local/bin/imapsync_cron.pl /usr/local/bin/quarantine_notify.py /usr/local/bin/clean_q_aged.sh /etc/dovecot/lua/app-passdb.lua
 sed -i "s/__LOG_LINES__/${LOG_LINES}/g" /usr/local/bin/trim_logs.sh
 
 # 401 is user dovecot
@@ -246,8 +247,8 @@ sievec /usr/lib/dovecot/sieve/report-ham.sieve
 
 # Fix permissions
 chown root:root /etc/dovecot/sql/*.conf
-chown root:dovecot /etc/dovecot/sql/dovecot-dict-sql-sieve* /etc/dovecot/sql/dovecot-dict-sql-quota*
-chmod 640 /etc/dovecot/sql/*.conf
+chown root:dovecot /etc/dovecot/sql/dovecot-dict-sql-sieve* /etc/dovecot/sql/dovecot-dict-sql-quota* /etc/dovecot/lua/app-passdb.lua
+chmod 640 /etc/dovecot/sql/*.conf /etc/dovecot/lua/app-passdb.lua
 chown -R vmail:vmail /var/vmail/sieve
 chown -R vmail:vmail /var/volatile
 adduser vmail tty
@@ -315,6 +316,6 @@ done
 
 # For some strange, unknown and stupid reason, Dovecot may run into a race condition, when this file is not touched before it is read by dovecot/auth
 # May be related to something inside Docker, I seriously don't know
-touch /var/lib/dovecot/app-passdb.lua
+touch /etc/dovecot/lua/app-passdb.lua
 
 exec "$@"

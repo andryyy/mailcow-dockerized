@@ -216,6 +216,12 @@
         "ip_invalid": "Skipped invalid IP: %s"
     },
     "user": {
+        "apple_connection_profile": "Apple connection profile",
+        "apple_connection_profile_mailonly": "This connection profile includes IMAP and SMTP configuration parameters for an Apple device.",
+        "apple_connection_profile_complete": "This connection profile includes IMAP and SMTP parameters as well as CalDAV (calendars) and CardDAV (contacts) pathes for an Apple device.",
+        "email": "Email",
+        "email_and_dav": "Email, calendars and contacts",
+        "generate": "generate",
         "create_app_passwd": "Create app password",
         "app_passwds": "App passwords",
         "app_name": "App name",
@@ -564,6 +570,7 @@
         "booking_0_short": "Always free",
         "booking_lt0_short": "Soft limit",
         "booking_custom_short": "Hard limit",
+        "alias_domain_alias_hint": "Aliases are <b>not</b> applied on domain aliases automatically. An alias address <code>my-alias@domain</code> <b>does not</b> cover the address <code>my-alias@alias-domain</code> (where \"alias-domain\" is an imaginary alias domain for \"domain\").",
         "domain": "Domain",
         "spam_aliases": "Temp. alias",
         "multiple_bookings": "Multiple bookings",
@@ -665,6 +672,7 @@
         "sieve_preset_2": "Always mark the e-mail of a specific sender as seen"
     },
     "edit": {
+        "generate": "generate",
         "app_name": "App name",
         "app_passwd": "App password",
         "sogo_visible": "Alias is visible in SOGo",
@@ -845,6 +853,7 @@
         "username": "Username",
         "password": "Password",
         "login": "Login",
+        "mobileconfig_info": "Please login as mailbox user to download the requested Apple connection profile.",
         "delayed": "Login was delayed by %s seconds."
     },
     "tfa": {

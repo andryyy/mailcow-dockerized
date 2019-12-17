@@ -564,6 +564,28 @@ function quarantine($_action, $_data = null) {
                 );
               }
               curl_close($curl);
+              $curl = curl_init();
+              curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+              curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+              curl_setopt($curl, CURLOPT_POST, 1);
+              curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+              curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: text/plain', 'Flag: 13'));
+              curl_setopt($curl, CURLOPT_URL,"http://rspamd/fuzzydel");
+              curl_setopt($curl, CURLOPT_POSTFIELDS, $row['msg']);
+              // It is most likely not a ham hash, so we ignore any error/warning response
+              // $response = curl_exec($curl);
+              curl_exec($curl);
+              // if (!curl_errno($curl)) {
+                // $response = json_decode($response, true);
+                // if (isset($response['error'])) {
+                  // $_SESSION['return'][] = array(
+                    // 'type' => 'warning',
+                    // 'log' => array(__FUNCTION__),
+                    // 'msg' => array('fuzzy_learn_error', $response['error'])
+                  // );
+                // }
+              // }
+              curl_close($curl);
               try {
                 $stmt = $pdo->prepare("DELETE FROM `quarantine` WHERE `id` = :id");
                 $stmt->execute(array(

@@ -3,6 +3,7 @@ FILE=/tmp/mail$$
 cat > $FILE
 trap "/bin/rm -f $FILE" 0 1 2 3 13 15
 
+cat ${FILE} | /usr/bin/curl -H "Flag: 13" -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/fuzzydel
 cat ${FILE} | /usr/bin/curl -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/learnspam
 cat ${FILE} | /usr/bin/curl -H "Flag: 11" -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/fuzzyadd
 

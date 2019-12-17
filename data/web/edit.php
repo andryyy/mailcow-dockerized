@@ -125,15 +125,15 @@ if (isset($_SESSION['mailcow_cc_role'])) {
           </div>
         </div>
         <div class="form-group">
-          <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?></label>
+          <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?> (<a href="#" class="generate_password"><?=$lang['edit']['generate'];?></a>)</label>
           <div class="col-sm-10">
-          <input type="password" data-hibp="true" class="form-control" name="password" placeholder="">
+          <input type="password" data-pwgen-field="true" data-hibp="true" class="form-control" name="password" placeholder="">
           </div>
         </div>
         <div class="form-group">
           <label class="control-label col-sm-2" for="password2"><?=$lang['edit']['password_repeat'];?></label>
           <div class="col-sm-10">
-          <input type="password" class="form-control" name="password2">
+          <input type="password" data-pwgen-field="true" class="form-control" name="password2">
           </div>
         </div>
         <div class="form-group">
@@ -204,15 +204,15 @@ if (isset($_SESSION['mailcow_cc_role'])) {
           </div>
         </div>
         <div class="form-group">
-          <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?></label>
+          <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?> (<a href="#" class="generate_password"><?=$lang['edit']['generate'];?></a>)</label>
           <div class="col-sm-10">
-          <input type="password" data-hibp="true" class="form-control" name="password" placeholder="">
+          <input type="password" data-pwgen-field="true" data-hibp="true" class="form-control" name="password" placeholder="">
           </div>
         </div>
         <div class="form-group">
           <label class="control-label col-sm-2" for="password2"><?=$lang['edit']['password_repeat'];?></label>
           <div class="col-sm-10">
-          <input type="password" class="form-control" name="password2">
+          <input type="password" data-pwgen-field="true" class="form-control" name="password2">
           </div>
         </div>
         <div class="form-group">
@@ -680,15 +680,15 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             </div>
           </div>
           <div class="form-group">
-            <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?></label>
+            <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?> (<a href="#" class="generate_password"><?=$lang['edit']['generate'];?></a>)</label>
             <div class="col-sm-10">
-            <input type="password" data-hibp="true" class="form-control" name="password" placeholder="<?=$lang['edit']['unchanged_if_empty'];?>">
+            <input type="password" data-pwgen-field="true" data-hibp="true" class="form-control" name="password" placeholder="<?=$lang['edit']['unchanged_if_empty'];?>">
             </div>
           </div>
           <div class="form-group">
             <label class="control-label col-sm-2" for="password2"><?=$lang['edit']['password_repeat'];?></label>
             <div class="col-sm-10">
-            <input type="password" class="form-control" name="password2">
+            <input type="password" data-pwgen-field="true" class="form-control" name="password2">
             </div>
           </div>
           <div data-acl="<?=$_SESSION['acl']['extend_sender_acl'];?>" class="form-group">
@@ -1321,7 +1321,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         if (!empty($result)) {
         ?>
           <h4><?=$lang['edit']['app_passwd'];?></h4>
-          <form class="form-horizontal" data-id="editapp" role="form" method="post">
+          <form class="form-horizontal" data-pwgen-length="32" data-id="editapp" role="form" method="post">
             <input type="hidden" value="0" name="active">
             <div class="form-group">
               <label class="control-label col-sm-2" for="app_name"><?=$lang['edit']['app_name'];?></label>
@@ -1330,15 +1330,15 @@ if (isset($_SESSION['mailcow_cc_role'])) {
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?></label>
+              <label class="control-label col-sm-2" for="password"><?=$lang['edit']['password'];?> (<a href="#" class="generate_password"><?=$lang['edit']['generate'];?></a>)</label>
               <div class="col-sm-10">
-              <input type="password" data-hibp="true" class="form-control" name="password" placeholder="">
+              <input type="password" data-pwgen-field="true" data-hibp="true" class="form-control" name="password" placeholder="">
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-2" for="password2"><?=$lang['edit']['password_repeat'];?></label>
               <div class="col-sm-10">
-              <input type="password" class="form-control" name="password2">
+              <input type="password" data-pwgen-field="true" class="form-control" name="password2">
               </div>
             </div>
             <div class="form-group">
@@ -1387,5 +1387,6 @@ echo "var pagination_size = '". $PAGINATION_SIZE . "';\n";
 </script>
 <?php
 $js_minifier->add('/web/js/site/edit.js');
+$js_minifier->add('/web/js/site/pwgen.js');
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
 ?>

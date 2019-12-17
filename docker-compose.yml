@@ -54,7 +54,7 @@ services:
             - redis
 
     clamd-mailcow:
-      image: mailcow/clamd:1.33
+      image: mailcow/clamd:1.34
       restart: always
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
@@ -144,7 +144,7 @@ services:
             - phpfpm
 
     sogo-mailcow:
-      image: mailcow/sogo:1.64
+      image: mailcow/sogo:1.65
       environment:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
@@ -172,7 +172,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.103
+      image: mailcow/dovecot:1.104
       depends_on:
         - mysql-mailcow
       dns:

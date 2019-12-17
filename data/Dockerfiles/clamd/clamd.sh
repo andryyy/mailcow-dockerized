@@ -18,9 +18,14 @@ if [[ -s /etc/clamav/whitelist.ign2 ]]; then
   echo "Copying non-empty whitelist.ign2 to /var/lib/clamav/whitelist.ign2"
   cp /etc/clamav/whitelist.ign2 /var/lib/clamav/whitelist.ign2
 fi
+
 if [[ ! -f /var/lib/clamav/whitelist.ign2 ]]; then
   echo "Creating /var/lib/clamav/whitelist.ign2"
-  echo "Example-Signature.Ignore-1" > /var/lib/clamav/whitelist.ign2
+  cat <<EOF > /var/lib/clamav/whitelist.ign2
+# Please restart ClamAV after changing signatures
+Example-Signature.Ignore-1
+PUA.Pdf.Trojan.EmbeddedJavaScript-1
+EOF
 fi
 
 chown clamav:clamav -R /var/lib/clamav /run/clamav
@@ -29,12 +34,12 @@ chmod 755 /var/lib/clamav
 chmod 644 -R /var/lib/clamav/*
 chmod 750 /run/clamav
 
-echo "Stating whitelist.ign2"
 stat /var/lib/clamav/whitelist.ign2
-
 dos2unix /var/lib/clamav/whitelist.ign2
-
 sed -i '/^\s*$/d' /var/lib/clamav/whitelist.ign2
+# Copying to /etc/clamav to expose file as-is to administrator
+cp -p /var/lib/clamav/whitelist.ign2 /etc/clamav/whitelist.ign2
+
 
 BACKGROUND_TASKS=()
 

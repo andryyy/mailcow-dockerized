@@ -51,6 +51,7 @@ postscreen_dnsbl_sites = wl.mailspike.net=127.0.0.[18;19;20]*-2
   list.dnswl.org=127.0.[0..255].3*-8
   ix.dnsbl.manitu.net*2
   bl.spamcop.net*2
+  bl.suomispam.net*2
   hostkarma.junkemailfilter.com=127.0.0.2*3
   hostkarma.junkemailfilter.com=127.0.0.4*2
   hostkarma.junkemailfilter.com=127.0.1.2*1

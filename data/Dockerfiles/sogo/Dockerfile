@@ -2,11 +2,13 @@ FROM debian:buster-slim
 LABEL maintainer "Andre Peters <andre.peters@servercow.de>"
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG SOGO_DEBIAN_REPOSITORY=http://packages.inverse.ca/SOGo/nightly/4/debian/
 ENV LC_ALL C
 ENV GOSU_VERSION 1.11
 
 # Prerequisites
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN echo "Building from repository $SOGO_DEBIAN_REPOSITORY" \
+  && apt-get update && apt-get install -y --no-install-recommends \
   apt-transport-https \
   ca-certificates \
   cron \
@@ -30,12 +32,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && mkdir /usr/share/doc/sogo \
   && touch /usr/share/doc/sogo/empty.sh \
   && apt-key adv --keyserver keyserver.ubuntu.com --recv-key 0x810273C4 \
-  && echo "deb http://packages.inverse.ca/SOGo/nightly/4/debian/ buster buster" > /etc/apt/sources.list.d/sogo.list \
+  && echo "deb ${SOGO_DEBIAN_REPOSITORY} buster buster" > /etc/apt/sources.list.d/sogo.list \
   && apt-get update && apt-get install -y --no-install-recommends \
     sogo \
     sogo-activesync \
   && apt-get autoclean \
-  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/sogo.list \
   && touch /etc/default/locale
 
 COPY ./bootstrap-sogo.sh /bootstrap-sogo.sh

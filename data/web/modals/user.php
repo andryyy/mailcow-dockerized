@@ -171,7 +171,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
         <h3 class="modal-title"><?=$lang['add']['app_password'];?></h3>
       </div>
       <div class="modal-body">
-				<form class="form-horizontal" data-cached-form="true" role="form" data-id="add_apppasswd">
+				<form class="form-horizontal" data-cached-form="true" role="form" data-pwgen-length="32" data-id="add_apppasswd">
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="app_name"><?=$lang['add']['app_name'];?></label>
 						<div class="col-sm-10">
@@ -179,15 +179,15 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
 						</div>
 					</div>
           <div class="form-group">
-            <label class="control-label col-sm-2" for="app_passwd"><?=$lang['user']['password'];?></label>
+            <label class="control-label col-sm-2" for="app_passwd"><?=$lang['user']['password'];?> (<a href="#" class="generate_password"><?=$lang['user']['generate'];?></a>)</label>
             <div class="col-sm-10">
-            <input type="password" data-hibp="true" class="form-control" name="app_passwd" autocomplete="off" required>
+            <input type="password" data-pwgen-field="true" data-hibp="true" class="form-control" name="app_passwd" autocomplete="off" required>
             </div>
           </div>
           <div class="form-group">
             <label class="control-label col-sm-2" for="app_passwd2"><?=$lang['user']['password_repeat'];?></label>
             <div class="col-sm-10">
-            <input type="password" class="form-control" name="app_passwd2" autocomplete="off" required>
+            <input type="password" data-pwgen-field="true" class="form-control" name="app_passwd2" autocomplete="off" required>
             <p class="help-block"><?=$lang['user']['new_password_description'];?></p>
             </div>
           </div>
@@ -226,15 +226,15 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
       <div class="modal-body">
         <form class="form-horizontal" data-cached-form="false" data-id="pwchange" role="form" method="post" autocomplete="off">
           <div class="form-group">
-            <label class="control-label col-sm-3" for="user_new_pass"><?=$lang['user']['new_password'];?></label>
+            <label class="control-label col-sm-3" for="user_new_pass"><?=$lang['user']['new_password'];?> (<a href="#" class="generate_password"><?=$lang['user']['generate'];?></a>)</label>
             <div class="col-sm-5">
-            <input type="password" data-hibp="true" class="form-control" name="user_new_pass" autocomplete="off" required>
+            <input type="password" data-pwgen-field="true" data-hibp="true" class="form-control" name="user_new_pass" autocomplete="off" required>
             </div>
           </div>
           <div class="form-group">
             <label class="control-label col-sm-3" for="user_new_pass2"><?=$lang['user']['new_password_repeat'];?></label>
             <div class="col-sm-5">
-            <input type="password" class="form-control" name="user_new_pass2" autocomplete="off" required>
+            <input type="password" data-pwgen-field="true" class="form-control" name="user_new_pass2" autocomplete="off" required>
             <p class="help-block"><?=$lang['user']['new_password_description'];?></p>
             </div>
           </div>

@@ -216,6 +216,12 @@
         "session_ua": "Formular-Token ungültig: User-Agent-Validierungsfehler"
     },
     "user": {
+        "generate": "generieren",
+        "apple_connection_profile": "Apple Verbindungsprofil",
+        "apple_connection_profile_mailonly": "Dieses Verbindungsprofil beinhaltet IMAP und SMTP Konfigurationen für ein Apple Gerät.",
+        "apple_connection_profile_complete": "Dieses Verbindungsprofil beinhaltet neben IMAP und SMTP Konfigurationen auch Pfade für die Konfiguration von CalDAV (Kalender) und CardDAV (Adressbücher) für ein Apple Gerät.",
+        "email": "E-Mail",
+        "email_and_dav": "E-Mail, Kalender und Adressbücher",
         "create_app_passwd": "Erstelle App Passwort",
         "app_passwds": "App Passwörter",
         "app_name": "App Name",
@@ -565,6 +571,7 @@
         "booking_0_short": "Immer verfügbar",
         "booking_lt0_short": "Weiches Limit",
         "booking_custom_short": "Hartes Limit",
+        "alias_domain_alias_hint": "Alias-Adressen werden <b>nicht</b> automatisch auch auf Domain-Alias Adressen angewendet. Eine Alias-Adresse <code>mein-alias@domain</code> bildet demnach <b>nicht</b> die Adresse <code>my-alias@alias-domain</code> ab.",
         "domain": "Domain",
         "spam_aliases": "Temp. Alias",
         "alias": "Alias",
@@ -666,6 +673,7 @@
         "sieve_preset_2": "E-Mail eines bestimmten Absenders immer als gelesen markieren"
     },
     "edit": {
+        "generate": "generieren",
         "app_name": "App Name",
         "app_passwd": "App Passwörter",
         "sogo_visible": "Alias in SOGo sichtbar",
@@ -846,6 +854,7 @@
         "username": "Benutzername",
         "password": "Passwort",
         "login": "Anmelden",
+        "mobileconfig_info": "Bitte als Mailbox-Benutzer einloggen, um das Verbindungsprofil herunterzuladen.",
         "delayed": "Login wurde zur Sicherheit um %s Sekunde/n verzögert."
     },
     "tfa": {

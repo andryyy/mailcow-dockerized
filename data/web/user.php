@@ -130,6 +130,16 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
           </div>
         </div>
         <hr>
+        <div class="row">
+          <div class="col-md-3 col-xs-5 text-right"><?=$lang['user']['apple_connection_profile'];?>:</div>
+          <div class="col-md-9 col-xs-7">
+            <p><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> <a href="/mobileconfig.php?only_email"><?=$lang['user']['email'];?></a> <small>IMAP, SMTP</small></p>
+            <p class="help-block"><?=$lang['user']['apple_connection_profile_mailonly'];?></p>
+            <p><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> <a href="/mobileconfig.php"><?=$lang['user']['email_and_dav'];?></a> <small>IMAP, SMTP, Cal/CardDAV</small></p>
+            <p class="help-block"><?=$lang['user']['apple_connection_profile_complete'];?></p>
+          </div>
+        </div>
+        <hr>
         <?php // Get user information about aliases
         $user_get_alias_details = user_get_alias_details($username);
         ?>
@@ -503,6 +513,7 @@ echo "var pagination_size = '". $PAGINATION_SIZE . "';\n";
 </script>
 <?php
 $js_minifier->add('/web/js/site/user.js');
+$js_minifier->add('/web/js/site/pwgen.js');
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
 }
 else {

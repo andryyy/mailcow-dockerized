@@ -70,15 +70,6 @@ $(document).ready(function() {
     auto_fill_quota($('#addSelectDomain').val());
 	});
   auto_fill_quota($('#addSelectDomain').val());
-  $(".generate_password").click(function( event ) {
-    event.preventDefault();
-    $('[data-hibp]').trigger('input');
-    var random_passwd = GPW.pronounceable(8)
-    $(this).closest("form").find("input[name='password']").prop('type', 'text');
-    $(this).closest("form").find("input[name='password2']").prop('type', 'text');
-    $(this).closest("form").find("input[name='password']").val(random_passwd);
-    $(this).closest("form").find("input[name='password2']").val(random_passwd);
-  });
   $(".goto_checkbox").click(function( event ) {
    $("form[data-id='add_alias'] .goto_checkbox").not(this).prop('checked', false);
     if ($("form[data-id='add_alias'] .goto_checkbox:checked").length > 0) {

@@ -1,5 +1,6 @@
 rebuild-images.sh
 data/conf/sogo/sieve.creds
+data/conf/clamav/whitelist.ign2
 data/conf/phpfpm/sogo-sso/sogo-sso.pass
 data/conf/dovecot/dovecot-master.passwd
 data/conf/dovecot/dovecot-master.userdb
@@ -13,6 +14,7 @@ data/conf/postfix/sql
 data/conf/postfix/custom_transport.pcre
 data/conf/postfix/allow_mailcow_local.regexp
 data/conf/dovecot/sql
+data/conf/dovecot/lua
 data/conf/nextcloud-*.bak
 data/web/inc/vars.local.inc.php
 data/web/css/build/0081-custom-mailcow.css
