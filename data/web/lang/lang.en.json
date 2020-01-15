@@ -378,6 +378,7 @@
         "rsetting_no_selection": "Please select a rule",
         "rsettings_preset_1": "Disable all but DKIM and rate limit for authenticated users",
         "rsettings_preset_2": "Postmasters want spam",
+        "rsettings_preset_3": "Only allow specific senders for a mailbox (i.e. usage as internal mailbox only)",
         "rsettings_insert_preset": "Insert example preset \"%s\"",
         "rsetting_add_rule": "Add rule",
         "queue_ays": "Please confirm you want to delete all items from the current queue.",
@@ -456,6 +457,7 @@
         "quota_notifications_vars": "{{percent}} equals the current quota of the user<br>{{username}} is the mailbox name",
         "active_rspamd_settings_map": "Active settings map",
         "quota_notifications_info": "Quota notications are sent to users once when crossing 80% and once when crossing 95% usage.",
+        "quarantine_bcc": "Send a copy of all notifications (BCC) to this recipient:<br><small>Leave empty to disable. <b>Unsigned, unchecked mail. Should be delivered internally only.</b></small>",
         "quarantine_retention_size": "Retentions per mailbox:<br><small>0 indicates <b>inactive</b>.</small>",
         "quarantine_max_size": "Maximum size in MiB (larger elements are discarded):<br><small>0 does <b>not</b> indicate unlimited.</small>",
         "quarantine_max_age": "Maximum age in days<br><small>Value must be equal to or greater than 1 day.</small>",
@@ -508,7 +510,8 @@
         "transport_dest_format": "Syntax: example.org, .example.org, *, box@example.org (multiple values can be comma-separated)",
         "rspamd_global_filters_agree": "I will be careful!",
         "rspamd_global_filters": "Global filter maps",
-        "rspamd_global_filters_info": "Global filter maps contain different kind of global black and whitelists. Their names explain their purpose. All content must contain valid regular expression in the format of \"/pattern/options\" (e.g. <code>/.+@domain\\.tld/i</code>).<br>\r\n  Although rudimentary checks are being executed on each line of regex, Rspamds functionality can be broken, if it fails to read the syntax correctly.<br>\r\n  Rspamd will try to read the map content when changed. If you experience problems, <a href=\"\" data-toggle=\"modal\" data-container=\"rspamd-mailcow\" data-target=\"#RestartContainer\">restart Rspamd</a> to enforce a map reload."
+        "rspamd_global_filters_info": "Global filter maps contain different kind of global black and whitelists.",
+        "rspamd_global_filters_regex": "Their names explain their purpose. All content must contain valid regular expression in the format of \"/pattern/options\" (e.g. <code>/.+@domain\\.tld/i</code>).<br>\r\n  Although rudimentary checks are being executed on each line of regex, Rspamds functionality can be broken, if it fails to read the syntax correctly.<br>\r\n  Rspamd will try to read the map content when changed. If you experience problems, <a href=\"\" data-toggle=\"modal\" data-container=\"rspamd-mailcow\" data-target=\"#RestartContainer\">restart Rspamd</a> to enforce a map reload."
     },
     "start": {
         "mailcow_apps_detail": "Use a mailcow app to access your mails, calendar, contacts and more.",
@@ -555,6 +558,7 @@
     },
     "mailbox": {
         "tls_policy_maps": "TLS policy maps",
+        "sogo_allow_admin_hint": "Administrative SOGo logins are only available for mailboxes with an existing SOGo profile. A user must have been logged in to SOGo at least once.",
         "tls_policy_maps_long": "Outgoing TLS policy map overrides",
         "tls_policy_maps_info": "This policy map overrides outgoing TLS transport rules independently of a users TLS policy settings.<br>\r\n  Please check <a href=\"http://www.postfix.org/postconf.5.html#smtp_tls_policy_maps\" target=\"_blank\">the \"smtp_tls_policy_maps\" docs</a> for further information.",
         "tls_enforce_in": "Enforce TLS incoming",
@@ -669,7 +673,12 @@
         "insert_preset": "Insert example preset \"%s\"",
         "sieve_preset_header": "Please see the example presets below. For more details see <a href=\"https://en.wikipedia.org/wiki/Sieve_(mail_filtering_language)\" target=\"_blank\">Wikipedia</a>.",
         "sieve_preset_1": "Discard mail with probable dangerous file types",
-        "sieve_preset_2": "Always mark the e-mail of a specific sender as seen"
+        "sieve_preset_2": "Always mark the e-mail of a specific sender as seen",
+        "sieve_preset_3": "Discard silently, stop all further sieve processing",
+        "sieve_preset_4": "File into INBOX, skip further processing by sieve filters",
+        "sieve_preset_5": "Auto responder (vacation)",
+        "sieve_preset_6": "Reject mail with reponse",
+        "sieve_preset_7": "Redirect and keep/drop"
     },
     "edit": {
         "generate": "generate",
@@ -811,7 +820,7 @@
         "select_domain": "Please select a domain first",
         "password": "Password",
         "password_repeat": "Confirmation password (repeat)",
-        "restart_sogo_hint": "You will need to restart the SOGo service container after adding a new domain!",
+        "post_domain_add": "The SOGo container, \"sogo-mailcow\", needs to be restarted after adding a new domain!<br><br>Additionally the domains DNS configuration should be reviewed. Once the DNS configuration is approved, restart \"acme-mailcow\" to automatically generate certificates for your new domain (autoconfig.&lt;domain&gt;, autodiscover.&lt;domain&gt;).<br>This step is optional and will be retried every 24 hours.",
         "goto_null": "Silently discard mail",
         "goto_ham": "Learn as <span class=\"text-success\"><b>ham</b></span>",
         "goto_spam": "Learn as <span class=\"text-danger\"><b>spam</b></span>",

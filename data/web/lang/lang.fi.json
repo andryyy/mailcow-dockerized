@@ -778,7 +778,7 @@
         "select_domain": "Valitse ensin verkkotunnus",
         "password": "Salasana",
         "password_repeat": "Vahvista salasana (anna uudelleen salasanasi)",
-        "restart_sogo_hint": "Sinun on käynnistettävä SOGo-palvelusäiliö uudelleen, kun olet lisännyt uuden verkkotunnuksen!",
+        "post_domain_add": "Sinun on käynnistettävä SOGo-palvelusäiliö uudelleen, kun olet lisännyt uuden verkkotunnuksen!",
         "goto_null": "Hylkää posti hiljaa",
         "goto_ham": "Opi nimellä <span class=\"text-success\"><b>ham</b></span>",
         "goto_spam": "Opi nimellä <span class=\"text-danger\"><b>spam</b></span>",

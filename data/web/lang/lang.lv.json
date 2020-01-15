@@ -462,7 +462,7 @@
         "select_domain": "Lūdzu sākumā izvēlaties domēnu",
         "password": "Parole",
         "password_repeat": "Apstiprinājuma parole (atkārtot)",
-        "restart_sogo_hint": "Jums būs nepieciešams atsāknēt SOGo servisa konteineru pēc jauna domēna pievienošanas!",
+        "post_domain_add": "Jums būs nepieciešams atsāknēt SOGo servisa konteineru pēc jauna domēna pievienošanas!",
         "goto_null": "Klusām dzēst pastu",
         "validation_success": "Apstiprināts veiksmīgi",
         "activate_filter_warn": "Visi pārējie filtri tiks deaktivizēti, kad aktīvs ir atzīmēts.",

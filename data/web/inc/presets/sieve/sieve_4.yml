@@ -1,0 +1,4 @@
+headline: lang.sieve_preset_4
+content: |
+  require "fileinto";
+  fileinto "INBOX"; stop;

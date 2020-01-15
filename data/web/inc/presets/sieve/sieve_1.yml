@@ -1,0 +1,10 @@
+headline: lang.sieve_preset_1
+content: |
+  require ["reject","body","regex"];
+  if anyof (body :raw :regex ["filename=.*\.doc","filename=.*\.exe","filename=.*\.moo"]) {
+    reject text:
+  doc, exe and moo are dangerous file extensions.
+  Why would you do that? I am a sad cow.
+  .
+  ;
+  }

@@ -1,0 +1,10 @@
+headline: lang.sieve_preset_6
+content: |
+  require ["reject"];
+  # Rejects are sent from postmaster@mailcow_hostname, make sure DMARC/SPF are fine
+  # You should prefer rejects via mailcow blacklists
+  reject text:
+  I am not taking mail from you, and I don't
+  want your birdseed, either!
+  .
+  ;

@@ -14,10 +14,12 @@ fi
 
 if [[ "$(uname -r)" =~ ^4\.4\. ]]; then
   if grep -q Ubuntu <<< $(uname -a); then
-    echo "DO NOT RUN mailcow ON THIS UBUNTU KERNEL!";
+    echo "DO NOT RUN mailcow ON THIS UBUNTU KERNEL!"
     echo "Please update to linux-generic-hwe-16.04 by running \"apt-get install --install-recommends linux-generic-hwe-16.04\""
+    exit 1
   fi
-  exit 1
+  echo "mailcow on a 4.4.x kernel is not supported. It may or may not work, please upgrade your kernel or continue at your own risk."
+  read -p "Press any key to continue..." < /dev/tty
 fi
 
 # Exit on error and pipefail
@@ -411,7 +413,7 @@ fi
 
 echo -e "\e[32mFetching new docker-compose version...\e[0m"
 sleep 2
-if [[ ! -z $(which pip) && $(pip list --local | grep -c docker-compose) == 1 ]]; then
+if [[ ! -z $(which pip) && $(pip list --local 2>&1 | grep -v DEPRECATION | grep -c docker-compose) == 1 ]]; then
   true
   #prevent breaking a working docker-compose installed with pip
 elif [[ $(curl -sL -w "%{http_code}" https://www.servercow.de/docker-compose/latest.php -o /dev/null) == "200" ]]; then
@@ -459,6 +461,15 @@ if [ -f data/conf/rspamd/custom/global_from_blacklist.map ]; then
 fi
 if [ -f data/conf/rspamd/custom/global_from_whitelist.map ]; then
   mv data/conf/rspamd/custom/global_from_whitelist.map data/conf/rspamd/custom/global_smtp_from_whitelist.map
+fi
+
+# Fix deprecated metrics.conf
+if [ -f "data/conf/rspamd/local.d/metrics.conf" ]; then
+  if [ ! -z "$(git diff --name-only origin/master data/conf/rspamd/local.d/metrics.conf)" ]; then
+    echo -e "\e[33mWARNING\e[0m - Please migrate your customizations of data/conf/rspamd/local.d/metrics.conf to actions.conf and groups.conf after this update."
+    echo "The deprecated configuration file metrics.conf will be moved to metrics.conf_deprecated after updating mailcow."
+  fi
+  mv data/conf/rspamd/local.d/metrics.conf data/conf/rspamd/local.d/metrics.conf_deprecated
 fi
 
 echo -e "\e[32mStarting mailcow...\e[0m"

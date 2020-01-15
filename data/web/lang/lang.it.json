@@ -299,7 +299,7 @@
         "select_domain": "Perfavore seleziona il dominio prima",
         "password": "Password:",
         "password_repeat": "Conferma password (riscrivi):",
-        "restart_sogo_hint": "Dovrai riavviare il servizio SOGo dopo aver aggiunto un nuovo dominio!"
+        "post_domain_add": "Dovrai riavviare il servizio SOGo dopo aver aggiunto un nuovo dominio!"
     },
     "login": {
         "username": "Username",

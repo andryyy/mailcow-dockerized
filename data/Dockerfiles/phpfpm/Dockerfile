@@ -56,7 +56,6 @@ RUN apk add -U --no-cache autoconf \
   && docker-php-ext-configure exif \
   && docker-php-ext-configure gd \
     --with-gd \
-    --enable-gd-native-ttf \
     --with-freetype-dir=/usr/include/ \
     --with-png-dir=/usr/include/ \
     --with-jpeg-dir=/usr/include/ \

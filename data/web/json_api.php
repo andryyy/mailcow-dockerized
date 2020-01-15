@@ -288,10 +288,16 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
           case "app-passwd":
             switch ($object) {
               case "all":
-                $app_passwds = app_passwd('get');
+                if (empty($extra)) {
+                  $app_passwds = app_passwd('get');
+                }
+                else {
+                  $app_passwds = app_passwd('get', array('username' => $extra));
+                }
                 if (!empty($app_passwds)) {
                   foreach ($app_passwds as $app_passwd) {
-                    if ($details = app_passwd('details', $app_passwd['id'])) {
+                    $details = app_passwd('details', array('id' => $app_passwd['id']));
+                    if ($details !== false) {
                       $data[] = $details;
                     }
                     else {
@@ -306,7 +312,7 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
               break;
 
               default:
-                $data = app_passwd('details', $object);
+                $data = app_passwd('details', array('id' => $object['id']));
                 process_get_return($data);
               break;
             }
@@ -1097,18 +1103,79 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
             switch ($object) {
               default:
                 $data = dkim('details', $object);
-                  process_get_return($data);
-                  break;
+                process_get_return($data);
+                break;
             }
           break;
-          // return no route found if no case is matched
-          default:
-            http_response_code(404);
-            echo json_encode(array(
-              'type' => 'error',
-              'msg' => 'route not found'
-            ));
-            exit();
+          case "presets":
+            switch ($object) {
+              case "rspamd":
+                process_get_return(presets('get', 'rspamd'));
+              break;
+              case "sieve":
+                process_get_return(presets('get', 'sieve'));
+              break;
+            }
+          break;
+          case "status":
+            switch ($object) {
+              case "containers":
+                $containers = (docker('info'));
+                foreach ($containers as $container => $container_info) {
+                  $container . ' (' . $container_info['Config']['Image'] . ')';
+                  $containerstarttime = ($container_info['State']['StartedAt']);
+                  $containerstate = ($container_info['State']['Status']);
+                  $containerimage = ($container_info['Config']['Image']);
+                  $temp[$container] = array(
+                    'type' => 'info',
+                    'container' => $container,
+                    'state' => $containerstate,
+                    'started_at' => $containerstarttime,
+                    'image' => $containerimage
+                  );
+                }
+                echo json_encode($temp, JSON_UNESCAPED_SLASHES);
+              break;
+              case "vmail":
+                $exec_fields_vmail = array('cmd' => 'system', 'task' => 'df', 'dir' => '/var/vmail');
+                $vmail_df = explode(',', json_decode(docker('post', 'dovecot-mailcow', 'exec', $exec_fields_vmail), true));
+                $temp = array(
+                  'type' => 'info',
+                  'disk' => $vmail_df[0],
+                  'used' => $vmail_df[2],
+                  'total'=> $vmail_df[1],
+                  'used_percent' => $vmail_df[4]
+                );
+                echo json_encode($temp, JSON_UNESCAPED_SLASHES);
+            break;
+            case "solr":
+              $solr_status = solr_status();
+              $solr_size = ($solr_status['status']['dovecot-fts']['index']['size']);
+              $solr_documents = ($solr_status['status']['dovecot-fts']['index']['numDocs']);
+              if (strtolower(getenv('SKIP_SOLR')) != 'n') {
+                $solr_enabled = false;
+              }
+              else {
+                $solr_enabled = true;
+              }
+              echo json_encode(array(
+                'type' => 'info',
+                'solr_enabled' => $solr_enabled,
+                'solr_size' => $solr_size,
+                'solr_documents' => $solr_documents
+              ));
+            break;
+            }
+          break;
+        break;
+        // return no route found if no case is matched
+        default:
+          http_response_code(404);
+          echo json_encode(array(
+            'type' => 'error',
+            'msg' => 'route not found'
+          ));
+          exit();
         }
       break;
       case "delete":
@@ -1338,7 +1405,7 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
           break;
           case "filter":
             process_edit_return(mailbox('edit', 'filter', array_merge(array('id' => $items), $attr)));
-          break;          
+          break;
           case "resource":
             process_edit_return(mailbox('edit', 'resource', array_merge(array('name' => $items), $attr)));
           break;

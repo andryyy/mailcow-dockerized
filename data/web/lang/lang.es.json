@@ -379,7 +379,7 @@
         "select_domain": "Por favor elige un dominio primero",
         "password": "Constraseña:",
         "password_repeat": "Confirmación de contraseña (repetir):",
-        "restart_sogo_hint": "<b>Nota:</b> Necesitarás reiniciar el contenedor del servicio SOGo despues de agregar un nuevo dominio",
+        "post_domain_add": "<b>Nota:</b> Necesitarás reiniciar el contenedor del servicio SOGo despues de agregar un nuevo dominio",
         "port": "Puerto",
         "mailbox_quota_def": "Cuota de buzón predeterminada",
         "syncjob": "Añadir trabajo de sincronización",

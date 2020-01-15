@@ -1,0 +1,13 @@
+headline: lang.rsettings_preset_3
+content: |
+  priority = 10;
+  rcpt = "internal-only@domain.tld";
+  # Multiple allowed hosts
+  # from = "/^((?!(.*@allowed-domain\.tld|.*@other-allowed-domain\.tld)).)*$/";
+  from = "/^((?!.*@domain\.tld).)*$/";
+  apply "default" {
+    MAILCOW_BLACK = 9999.0;
+  }
+  symbols [
+    "MAILCOW_BLACK"
+  ]

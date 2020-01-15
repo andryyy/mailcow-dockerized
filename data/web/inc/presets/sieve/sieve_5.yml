@@ -1,0 +1,16 @@
+headline: lang.sieve_preset_5
+content: |
+  require "vacation-seconds";
+  if true
+  {
+    # Only send once a day:
+    # vacation :seconds 86400 text:
+    # Only send once every 300 seconds:
+    # vacation :seconds 300 text:
+    # Else:
+    vacation text:
+  I am on holidays, yay!
+  Mail me later, alligator.
+  .
+  ;
+  }

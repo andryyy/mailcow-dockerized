@@ -381,7 +381,7 @@
         "select_domain": "Merci de d'abord sélectionner un domaine",
         "password": "Mot de passe",
         "password_repeat": "Confirmation du mot de passe (répéter)",
-        "restart_sogo_hint": "Vous devrez redémarrer le container du service SOGo après l'ajout d'un nouveau domaine !",
+        "post_domain_add": "Vous devrez redémarrer le container du service SOGo après l'ajout d'un nouveau domaine !",
         "goto_null": "Ignorer silencieusement le courriel"
     },
     "login": {

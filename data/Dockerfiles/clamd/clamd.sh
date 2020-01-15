@@ -24,6 +24,7 @@ if [[ ! -f /var/lib/clamav/whitelist.ign2 ]]; then
   cat <<EOF > /var/lib/clamav/whitelist.ign2
 # Please restart ClamAV after changing signatures
 Example-Signature.Ignore-1
+PUA.Win.Trojan.EmbeddedPDF-1
 PUA.Pdf.Trojan.EmbeddedJavaScript-1
 EOF
 fi

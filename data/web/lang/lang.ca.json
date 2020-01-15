@@ -460,7 +460,7 @@
         "select_domain": "Si et plau, primer selecciona un domini",
         "password": "Constrasenya:",
         "password_repeat": "Confirmació de contrasenya (repetir):",
-        "restart_sogo_hint": "Necessites reiniciar el contenidor del servei SOGo després d'afegir un nou domini",
+        "post_domain_add": "Necessites reiniciar el contenidor del servei SOGo després d'afegir un nou domini",
         "goto_null": "Descartar mail silenciosament",
         "validation_success": "Validated successfully",
         "activate_filter_warn": "All other filters will be deactivated, when active is checked.",

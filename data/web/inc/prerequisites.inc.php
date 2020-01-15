@@ -224,6 +224,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.rspamd.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.tls_policy_maps.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.fail2ban.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.docker.inc.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.presets.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/init_db.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/triggers.inc.php';
 init_db_schema();

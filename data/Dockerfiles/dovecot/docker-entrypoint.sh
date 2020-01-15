@@ -202,7 +202,7 @@ namespace {
     type = shared
     separator = /
     prefix = Shared/%%u/
-    location = maildir:%%h${MAILDIR_SUB_SHARED}:INDEX=~${MAILDIR_SUB_SHARED}/Shared/%%u;CONTROL=~${MAILDIR_SUB_SHARED}/Shared/%%u
+    location = maildir:%%h${MAILDIR_SUB_SHARED}:INDEX=~${MAILDIR_SUB_SHARED}/Shared/%%u
     subscriptions = no
     list = children
 }

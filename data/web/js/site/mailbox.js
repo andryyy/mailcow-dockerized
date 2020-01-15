@@ -48,6 +48,10 @@ $(document).ready(function() {
       $(this.$domain).closest("select").selectpicker();
     }
   });
+  // Clone mailbox mass actions
+  $("div").find("[data-actions-header='true'").each(function() {
+    $(this).html($(this).nextAll('.mass-actions-mailbox:first').html());
+  });
   // Auto-fill domain quota when adding new domain
   auto_fill_quota = function(domain) {
 		$.get("/api/v1/get/domain/" + domain, function(data){

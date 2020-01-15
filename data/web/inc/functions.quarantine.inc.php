@@ -298,6 +298,12 @@ function quarantine($_action, $_data = null) {
         $max_size = $_data['max_size'];
         $max_age = intval($_data['max_age']);
         $subject = $_data['subject'];
+        if (!filter_var($_data['bcc'], FILTER_VALIDATE_EMAIL)) {
+          $bcc = '';
+        }
+        else {
+          $bcc = $_data['bcc'];
+        }
         if (!filter_var($_data['sender'], FILTER_VALIDATE_EMAIL)) {
           $sender = '';
         }
@@ -316,6 +322,7 @@ function quarantine($_action, $_data = null) {
           $redis->Set('Q_EXCLUDE_DOMAINS', json_encode($exclude_domains));
           $redis->Set('Q_RELEASE_FORMAT', $release_format);
           $redis->Set('Q_SENDER', $sender);
+          $redis->Set('Q_BCC', $bcc);
           $redis->Set('Q_SUBJ', $subject);
           $redis->Set('Q_HTML', $html);
         }
@@ -684,6 +691,7 @@ function quarantine($_action, $_data = null) {
         $settings['release_format'] = $redis->Get('Q_RELEASE_FORMAT');
         $settings['subject'] = $redis->Get('Q_SUBJ');
         $settings['sender'] = $redis->Get('Q_SENDER');
+        $settings['bcc'] = $redis->Get('Q_BCC');
         $settings['html_tmpl'] = htmlspecialchars($redis->Get('Q_HTML'));
         if (empty($settings['html_tmpl'])) {
           $settings['html_tmpl'] = htmlspecialchars(file_get_contents("/tpls/quarantine.tpl"));

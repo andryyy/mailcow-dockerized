@@ -1,0 +1,5 @@
+headline: lang.rsettings_preset_2
+content: |
+  priority = 10;
+  rcpt = "/postmaster@.*/";
+  want_spam = yes;

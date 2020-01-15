@@ -1,0 +1,8 @@
+html_tags:
+  - <br>
+  - <p>
+html_content:
+  - <p>hello world</p>
+  - hello<br>world
+text_content:
+  - hello world

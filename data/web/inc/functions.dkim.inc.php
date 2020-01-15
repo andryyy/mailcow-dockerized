@@ -247,7 +247,12 @@ function dkim($_action, $_data = null) {
         }
         $dkimdata['dkim_txt'] = 'v=DKIM1;k=rsa;t=s;s=email;p=' . $redis_dkim_key_data;
         $dkimdata['dkim_selector'] = $redis->hGet('DKIM_SELECTORS', $_data);
-        $dkimdata['privkey'] = base64_encode($redis->hGet('DKIM_PRIV_KEYS', $dkimdata['dkim_selector'] . '.' . $_data));
+        if ($GLOBALS['SHOW_DKIM_PRIV_KEYS']) {
+          $dkimdata['privkey'] = base64_encode($redis->hGet('DKIM_PRIV_KEYS', $dkimdata['dkim_selector'] . '.' . $_data));
+        }
+        else {
+          $dkimdata['privkey'] = '';
+        }
       }
       return $dkimdata;
     break;

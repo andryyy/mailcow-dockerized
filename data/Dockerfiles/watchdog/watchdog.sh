@@ -476,7 +476,12 @@ acme_checks() {
   while [ ${err_count} -lt ${THRESHOLD} ]; do
     err_c_cur=${err_count}
     ACME_LOG_STATUS_PREV=${ACME_LOG_STATUS}
-    ACME_LOG_STATUS=$(redis-cli -h redis GET ACME_FAIL_TIME)
+    ACME_LC=0
+    until [[ ! -z ${ACME_LOG_STATUS} ]] || [ ${ACME_LC} -ge 3 ]; do
+      ACME_LOG_STATUS=$(redis-cli -h redis GET ACME_FAIL_TIME 2> /dev/null)
+      sleep 3
+      ACME_LC=$((ACME_LC+1))
+    done
     if [[ ${ACME_LOG_STATUS_PREV} != ${ACME_LOG_STATUS} ]]; then
       err_count=$(( ${err_count} + 1 ))
     fi

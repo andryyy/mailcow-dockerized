@@ -1,0 +1,7 @@
+headline: lang.rsettings_preset_1
+content: |
+  priority = 10;
+  authenticated = yes;
+  apply "default" {
+    symbols_enabled = ["DKIM_SIGNED", "RATELIMITED", "RATELIMIT_UPDATE", "RATELIMIT_CHECK", "DYN_RL_CHECK", "HISTORY_SAVE", "MILTER_HEADERS", "ARC_SIGNED"];
+  }

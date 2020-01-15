@@ -1,0 +1,70 @@
+root:
+  child_1: 2
+
+  child_2: 0
+  child_3: 1
+
+root2:
+  child_1: 1
+# A comment
+  child_2: 2
+
+displays:
+  - resolutions:
+      1024: 768
+  - resolutions:
+      1920: 1200
+
+display:
+  - resolutions:
+      1024: 768
+      1920: 1200
+    producer: "Nec"
+
+nested_hashes_and_seqs:
+ - { row: 0, col: 0, headsets_affected: [{ports: [0], side: left}], switch_function: {ics_ptt: true} }
+
+easier_nest: { h: [{a: b, a1: b1}, {c: d}] }
+
+one_space: |
+    By four
+      spaces
+
+steps:
+  - step: &id001
+      instrument:      Lasik 2000
+      pulseEnergy:     5.4
+      pulseDuration:   12
+      repetition:      1000
+      spotSize:        1mm
+  - step:
+      <<: *id001
+      spotSize:       2mm
+
+death masks are:
+   sad: 2
+   <<: {magnificent: 4}
+
+login: &login
+   adapter: mysql
+   host: localhost
+
+development:
+   database: rails_dev
+   <<: *login
+
+"key": "value:"
+colon_only: ":"
+
+list_and_comment: [one, two, three] # comment
+kai:
+  -example: value
+kai_list_of_items:
+  - -item
+  - '-item'
+  -item
+
+&foo bar:
+  1: "abc"
+
+zzz: *foo

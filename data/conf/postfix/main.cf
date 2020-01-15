@@ -106,6 +106,7 @@ relay_domains = proxy:mysql:/opt/postfix/conf/sql/mysql_virtual_relay_domain_map
 relay_recipient_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_relay_recipient_maps.cf
 sender_dependent_default_transport_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_sender_dependent_default_transport_maps.cf
 smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtpd_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 smtp_tls_cert_file = /etc/ssl/mail/cert.pem
 smtp_tls_key_file = /etc/ssl/mail/key.pem
 smtp_tls_loglevel = 1

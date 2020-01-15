@@ -379,7 +379,7 @@
         "select_domain": "Proszę najpierw wybrać domenę",
         "password": "Hasło:",
         "password_repeat": "Potwierdź hasło(powtórz):",
-        "restart_sogo_hint": "Po dodaniu nowej domeny będziesz musiał ponownie uruchomić kontener serwisowy SOGo!"
+        "post_domain_add": "Po dodaniu nowej domeny będziesz musiał ponownie uruchomić kontener serwisowy SOGo!"
     },
     "login": {
         "username": "Nazwa użytkownika",

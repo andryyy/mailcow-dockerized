@@ -3,6 +3,8 @@ function app_passwd($_action, $_data = null) {
 	global $pdo;
 	global $lang;
   $_data_log = $_data;
+  !isset($_data_log['app_passwd']) ?: $_data_log['app_passwd'] = '*';
+  !isset($_data_log['app_passwd2']) ?: $_data_log['app_passwd2'] = '*';
   if (isset($_data['username']) && filter_var($_data['username'], FILTER_VALIDATE_EMAIL)) {
     if (!hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $_data['username'])) {
       $_SESSION['return'][] = array(
@@ -59,25 +61,15 @@ function app_passwd($_action, $_data = null) {
         );
         return false;
       }
-      try {
-        $stmt = $pdo->prepare("INSERT INTO `app_passwd` (`name`, `mailbox`, `domain`, `password`, `active`)
-          VALUES (:app_name, :mailbox, :domain, :password, :active)");
-        $stmt->execute(array(
-          ':app_name' => $app_name,
-          ':mailbox' => $username,
-          ':domain' => $domain,
-          ':password' => $password_hashed,
-          ':active' => $active
-        ));
-      }
-      catch (PDOException $e) {
-        $_SESSION['return'][] = array(
-          'type' => 'danger',
-          'log' => array(__FUNCTION__, $_action, $_data_log),
-          'msg' => array('mysql_error', $e)
-        );
-        return false;
-      }
+      $stmt = $pdo->prepare("INSERT INTO `app_passwd` (`name`, `mailbox`, `domain`, `password`, `active`)
+        VALUES (:app_name, :mailbox, :domain, :password, :active)");
+      $stmt->execute(array(
+        ':app_name' => $app_name,
+        ':mailbox' => $username,
+        ':domain' => $domain,
+        ':password' => $password_hashed,
+        ':active' => $active
+      ));
       $_SESSION['return'][] = array(
         'type' => 'success',
         'log' => array(__FUNCTION__, $_action, $_data_log),
@@ -130,27 +122,17 @@ function app_passwd($_action, $_data = null) {
             ':id' => $id
           ));
         }
-        try {
-          $stmt = $pdo->prepare("UPDATE `app_passwd` SET
-            `name` = :app_name,
-            `mailbox` = :username,
-            `active` = :active
-              WHERE `id` = :id");
-          $stmt->execute(array(
-            ':app_name' => $app_name,
-            ':username' => $username,
-            ':active' => $active,
-            ':id' => $id
-          ));
-        }
-        catch (PDOException $e) {
-          $_SESSION['return'][] = array(
-            'type' => 'danger',
-            'log' => array(__FUNCTION__, $_action, $_data_log),
-            'msg' => array('mysql_error', $e)
-          );
-          continue;
-        }
+        $stmt = $pdo->prepare("UPDATE `app_passwd` SET
+          `name` = :app_name,
+          `mailbox` = :username,
+          `active` = :active
+            WHERE `id` = :id");
+        $stmt->execute(array(
+          ':app_name' => $app_name,
+          ':username' => $username,
+          ':active' => $active,
+          ':id' => $id
+        ));
         $_SESSION['return'][] = array(
           'type' => 'success',
           'log' => array(__FUNCTION__, $_action, $_data_log),
@@ -161,18 +143,27 @@ function app_passwd($_action, $_data = null) {
     case 'delete':
       $ids = (array)$_data['id'];
       foreach ($ids as $id) {
-        try {
-          $stmt = $pdo->prepare("DELETE FROM `app_passwd` WHERE `id`= :id AND `mailbox`= :username");
-          $stmt->execute(array(':id' => $id, ':username' => $username));
-        }
-        catch (PDOException $e) {
+        $stmt = $pdo->prepare("SELECT `mailbox` FROM `app_passwd` WHERE `id` = :id");
+        $stmt->execute(array(':id' => $id));
+        $mailbox = $stmt->fetch(PDO::FETCH_ASSOC)['mailbox'];
+        if (empty($mailbox)) {
           $_SESSION['return'][] = array(
             'type' => 'danger',
             'log' => array(__FUNCTION__, $_action, $_data_log),
-            'msg' => array('mysql_error', $e)
+            'msg' => 'app_passwd_id_invalid'
           );
           return false;
         }
+        if (!hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $mailbox)) {
+          $_SESSION['return'][] = array(
+            'type' => 'danger',
+            'log' => array(__FUNCTION__, $_action, $_data_log),
+            'msg' => 'access_denied'
+          );
+          return false;
+        }
+        $stmt = $pdo->prepare("DELETE FROM `app_passwd` WHERE `id`= :id");
+        $stmt->execute(array(':id' => $id));
         $_SESSION['return'][] = array(
           'type' => 'success',
           'log' => array(__FUNCTION__, $_action, $_data_log),
@@ -198,10 +189,16 @@ function app_passwd($_action, $_data = null) {
         `active` AS `active_int`,
         CASE `active` WHEN 1 THEN '".$lang['mailbox']['yes']."' ELSE '".$lang['mailbox']['no']."' END AS `active`
           FROM `app_passwd`
-            WHERE `id` = :id
-              AND `mailbox` = :username");
-      $stmt->execute(array(':id' => $_data, ':username' => $username));
+            WHERE `id` = :id");
+      $stmt->execute(array(':id' => $_data['id']));
       $app_passwd_data = $stmt->fetch(PDO::FETCH_ASSOC);
+      if (empty($app_passwd_data)) {
+        return false;
+      }
+      if (!hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $app_passwd_data['mailbox'])) {
+        $app_passwd_data = array();
+        return false;
+      }
       return $app_passwd_data;
     break;
   }

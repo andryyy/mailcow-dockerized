@@ -6,7 +6,7 @@ services:
       environment:
         - TZ=${TZ}
       volumes:
-        - ./data/hooks/dovecot:/hooks
+        - ./data/hooks/unbound:/hooks
         - ./data/conf/unbound/unbound.conf:/etc/unbound/unbound.conf:ro
       restart: always
       tty: true
@@ -54,7 +54,7 @@ services:
             - redis
 
     clamd-mailcow:
-      image: mailcow/clamd:1.34
+      image: mailcow/clamd:1.35
       restart: always
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
@@ -69,15 +69,17 @@ services:
             - clamd
 
     rspamd-mailcow:
-      image: mailcow/rspamd:1.56
+      image: mailcow/rspamd:1.59
       stop_grace_period: 30s
       depends_on:
         - nginx-mailcow
         - dovecot-mailcow
       environment:
         - TZ=${TZ}
+        - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
+        - IPV6_NETWORK=${IPV6_NETWORK:-fd4d:6169:6c63:6f77::/64}
       volumes:
-        - ./data/hooks/dovecot:/hooks
+        - ./data/hooks/rspamd:/hooks
         - ./data/conf/rspamd/custom/:/etc/rspamd/custom
         - ./data/conf/rspamd/override.d/:/etc/rspamd/override.d
         - ./data/conf/rspamd/local.d/:/etc/rspamd/local.d
@@ -101,7 +103,7 @@ services:
       depends_on:
         - redis-mailcow
       volumes:
-        - ./data/hooks/dovecot:/hooks
+        - ./data/hooks/phpfpm:/hooks
         - ./data/web:/web:rw
         - ./data/conf/rspamd/dynmaps:/dynmaps:ro
         - ./data/conf/rspamd/custom/:/rspamd_custom_maps
@@ -136,6 +138,7 @@ services:
         - API_ALLOW_FROM=${API_ALLOW_FROM:-invalid}
         - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-mailcow-dockerized}
         - SKIP_SOLR=${SKIP_SOLR:-y}
+        - SKIP_CLAMD=${SKIP_CLAMD:-n}
         - ALLOW_ADMIN_EMAIL_LOGIN=${ALLOW_ADMIN_EMAIL_LOGIN:-n}
       restart: always
       networks:
@@ -144,7 +147,7 @@ services:
             - phpfpm
 
     sogo-mailcow:
-      image: mailcow/sogo:1.65
+      image: mailcow/sogo:1.66
       environment:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
@@ -172,7 +175,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.104
+      image: mailcow/dovecot:1.108
       depends_on:
         - mysql-mailcow
       dns:
@@ -366,7 +369,7 @@ services:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.65
+      image: mailcow/watchdog:1.67
       # Debug
       #command: /watchdog.sh
       dns:

@@ -99,6 +99,15 @@ $(document).ready(function() {
             $(this).removeClass('inputMissingAttr');
           }
         }
+        if ($(this).attr("type") == 'email') {
+          var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+          if (!emailReg.test($(this).val())) {
+            invalid = true;
+            $(this).addClass('inputMissingAttr');
+          } else {
+            $(this).removeClass('inputMissingAttr');
+          }
+        }
         if ($(this).attr("max")) {
           if (Number($(this).val()) > Number($(this).attr("max"))) {
             invalid = true;
@@ -185,6 +194,15 @@ $(document).ready(function() {
       $(this).closest("form").find('select, textarea, input').each(function() {
         if ($(this).prop('required')) {
           if (!$(this).val() && $(this).prop('disabled') === false) {
+            invalid = true;
+            $(this).addClass('inputMissingAttr');
+          } else {
+            $(this).removeClass('inputMissingAttr');
+          }
+        }
+        if ($(this).attr("type") == 'email') {
+          var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+          if (!emailReg.test($(this).val())) {
             invalid = true;
             $(this).addClass('inputMissingAttr');
           } else {

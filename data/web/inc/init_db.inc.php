@@ -363,6 +363,7 @@ function init_db_schema() {
           "syncjobs" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "eas_reset" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "sogo_profile_reset" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          // quarantine is for quarantine actions, todo: rename
           "quarantine" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "quarantine_attachments" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "quarantine_notification" => "TINYINT(1) NOT NULL DEFAULT '1'",

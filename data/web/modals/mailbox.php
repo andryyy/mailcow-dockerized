@@ -176,7 +176,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
               <button class="btn btn-default" data-action="add_item" data-id="add_domain" data-api-url='add/domain' data-api-attr='{"restart_sogo":"1"}' href="#"><?=$lang['add']['add_domain_restart'];?></button>
             </div>
           </div>
-          <p><span class="glyphicon glyphicon-exclamation-sign text-danger"></span> <?=$lang['add']['restart_sogo_hint'];?></p>
+          <p><span class="glyphicon glyphicon-exclamation-sign text-danger"></span> <?=$lang['add']['post_domain_add'];?></p>
         </form>
       </div>
     </div>

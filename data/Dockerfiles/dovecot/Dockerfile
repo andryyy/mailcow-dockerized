@@ -33,6 +33,7 @@ RUN groupadd -g 5000 vmail \
   libdbi-perl \
   libdigest-hmac-perl \
   libdist-checkconflicts-perl \
+  libencode-imaputf7-perl \
   libfile-copy-recursive-perl \
   libfile-tail-perl \
   libhtml-parser-perl \
