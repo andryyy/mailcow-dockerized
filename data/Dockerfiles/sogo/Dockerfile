@@ -42,11 +42,15 @@ RUN echo "Building from repository $SOGO_DEBIAN_REPOSITORY" \
 
 COPY ./bootstrap-sogo.sh /bootstrap-sogo.sh
 COPY syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
+COPY syslog-ng-redis_slave.conf /etc/syslog-ng/syslog-ng-redis_slave.conf
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY acl.diff /acl.diff
 COPY stop-supervisor.sh /usr/local/sbin/stop-supervisor.sh
+COPY docker-entrypoint.sh /
 
 RUN chmod +x /bootstrap-sogo.sh \
   /usr/local/sbin/stop-supervisor.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 CMD exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf

@@ -831,7 +831,7 @@
         "reload_retry": "- (znovu načtěte stránku, opakuje-li se chyba)",
         "key_id_totp": "Identifikátor klíče",
         "error_code": "Kód chyby",
-        "api_register": "mailcow používá Yubico Cloud API. Prosím získejte API klíč pro své Yubico <a href=\"https://upgrade.yubico.com/getapikey/\" target=\"_blank\">ZDE</a>",
+        "api_register": "%s používá Yubico Cloud API. Prosím získejte API klíč pro své Yubico <a href=\"https://upgrade.yubico.com/getapikey/\" target=\"_blank\">ZDE</a>",
         "u2f": "U2F ověření",
         "none": "Deaktivovat",
         "delete_tfa": "Zakázat 2FA",

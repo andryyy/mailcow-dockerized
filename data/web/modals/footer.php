@@ -11,7 +11,7 @@ if (isset($_SESSION['mailcow_cc_role']) && ($_SESSION['mailcow_cc_role'] == "adm
           <input type="text" class="form-control" name="key_id" placeholder="<?=$lang['tfa']['key_id'];?>" autocomplete="off" required>
         </div>
         <hr>
-        <p class="help-block"><?=$lang['tfa']['api_register'];?></p>
+        <p class="help-block"><?=sprintf($lang['tfa']['api_register'], $UI_TEXTS['main_name']);?></p>
         <div class="form-group">
           <input type="text" class="form-control" name="yubico_id" placeholder="Yubico API ID" autocomplete="off" required>
         </div>

@@ -7,7 +7,17 @@ require_once "vars.inc.php";
 ini_set('error_reporting', 0);
 // Init Redis
 $redis = new Redis();
-$redis->connect('redis-mailcow', 6379);
+try {
+  if (!empty(getenv('REDIS_SLAVEOF_IP'))) {
+    $redis->connect(getenv('REDIS_SLAVEOF_IP'), getenv('REDIS_SLAVEOF_PORT'));
+  }
+  else {
+    $redis->connect('redis-mailcow', 6379);
+  }
+}
+catch (Exception $e) {
+  exit;
+}
 
 $raw_data_content = file_get_contents('php://input');
 $raw_data_decoded = json_decode($raw_data_content, true);

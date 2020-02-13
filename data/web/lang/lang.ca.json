@@ -482,7 +482,7 @@
         "yubi_otp": "Autenticació OTP de Yubico",
         "key_id": "Un identificador per la teva YubiKey",
         "key_id_totp": "Un identificador per la teva clau",
-        "api_register": "mailcow fa servir la Yubico Cloud API. Obté una API key per la teva clau <a href=\"https://upgrade.yubico.com/getapikey/\" target=\"_blank\">aquí</a>",
+        "api_register": "%s fa servir la Yubico Cloud API. Obté una API key per la teva clau <a href=\"https://upgrade.yubico.com/getapikey/\" target=\"_blank\">aquí</a>",
         "u2f": "Autenticació U2F",
         "none": "Desactivar",
         "delete_tfa": "Desactivar TFA",

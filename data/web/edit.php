@@ -709,7 +709,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="col-sm-offset-2 col-sm-10">
               <div class="checkbox">
               <label><input type="checkbox" value="1" name="force_pw_update" <?=($result['attributes']['force_pw_update']=="1") ? "checked" : null;?>> <?=$lang['edit']['force_pw_update'];?></label>
-              <small class="help-block"><?=$lang['edit']['force_pw_update_info'];?></small>
+              <small class="help-block"><?=sprintf($lang['edit']['force_pw_update_info'], $UI_TEXTS['main_name']);?></small>
               </div>
             </div>
           </div>
@@ -843,7 +843,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <label class="control-label col-sm-2" for="nexthop"><?=$lang['edit']['nexthop'];?></label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="nexthop" value="<?=htmlspecialchars($result['nexthop'], ENT_QUOTES, 'UTF-8');?>" required>
+                <input type="text" class="form-control" name="nexthop" placeholder='[0.0.0.0], [0.0.0.0]:25, host:25, host, [host]:25' value="<?=htmlspecialchars($result['nexthop'], ENT_QUOTES, 'UTF-8');?>" required>
               </div>
             </div>
             <div class="form-group">

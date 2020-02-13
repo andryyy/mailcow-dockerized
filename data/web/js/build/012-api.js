@@ -255,14 +255,17 @@ $(document).ready(function() {
           });
           if (unset === true) {
             unset = null;
-            $('form').formcache('clear');
-            $('form').formcache('destroy');
-            var i = localStorage.length;
-            while(i--) {
-              var key = localStorage.key(i);
-              if(/formcache/.test(key)) {
-                localStorage.removeItem(key);
-              }  
+            // Keep form data for sync jobs
+            if (id != "add_syncjob") {
+              $('form').formcache('clear');
+              $('form').formcache('destroy');
+              var i = localStorage.length;
+              while(i--) {
+                var key = localStorage.key(i);
+                if(/formcache/.test(key)) {
+                  localStorage.removeItem(key);
+                }  
+              }
             }
           }
           else {

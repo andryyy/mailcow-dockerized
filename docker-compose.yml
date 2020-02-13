@@ -69,7 +69,7 @@ services:
             - clamd
 
     rspamd-mailcow:
-      image: mailcow/rspamd:1.59
+      image: mailcow/rspamd:1.61
       stop_grace_period: 30s
       depends_on:
         - nginx-mailcow
@@ -78,6 +78,8 @@ services:
         - TZ=${TZ}
         - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
         - IPV6_NETWORK=${IPV6_NETWORK:-fd4d:6169:6c63:6f77::/64}
+        - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
+        - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
       volumes:
         - ./data/hooks/rspamd:/hooks
         - ./data/conf/rspamd/custom/:/etc/rspamd/custom
@@ -98,7 +100,7 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.55
+      image: mailcow/phpfpm:1.56
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
         - redis-mailcow
@@ -120,6 +122,8 @@ services:
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       environment:
+        - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
+        - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
         - LOG_LINES=${LOG_LINES:-9999}
         - TZ=${TZ}
         - DBNAME=${DBNAME}
@@ -140,6 +144,7 @@ services:
         - SKIP_SOLR=${SKIP_SOLR:-y}
         - SKIP_CLAMD=${SKIP_CLAMD:-n}
         - ALLOW_ADMIN_EMAIL_LOGIN=${ALLOW_ADMIN_EMAIL_LOGIN:-n}
+        - MASTER=${MASTER:-y}
       restart: always
       networks:
         mailcow-network:
@@ -147,7 +152,7 @@ services:
             - phpfpm
 
     sogo-mailcow:
-      image: mailcow/sogo:1.66
+      image: mailcow/sogo:1.71
       environment:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
@@ -159,6 +164,9 @@ services:
         - ALLOW_ADMIN_EMAIL_LOGIN=${ALLOW_ADMIN_EMAIL_LOGIN:-n}
         - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
         - SOGO_EXPIRE_SESSION=${SOGO_EXPIRE_SESSION:-480}
+        - MASTER=${MASTER:-y}
+        - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
+        - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       volumes:
@@ -175,7 +183,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.108
+      image: mailcow/dovecot:1.111
       depends_on:
         - mysql-mailcow
       dns:
@@ -208,6 +216,9 @@ services:
         - ACL_ANYONE=${ACL_ANYONE:-disallow}
         - SKIP_SOLR=${SKIP_SOLR:-y}
         - MAILDIR_SUB=${MAILDIR_SUB:-}
+        - MASTER=${MASTER:-y}
+        - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
+        - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
       ports:
         - "${DOVEADM_PORT:-127.0.0.1:19991}:12345"
         - "${IMAP_PORT:-143}:143"
@@ -230,7 +241,7 @@ services:
             - dovecot
 
     postfix-mailcow:
-      image: mailcow/postfix:1.44
+      image: mailcow/postfix:1.45
       depends_on:
         - mysql-mailcow
       volumes:
@@ -246,6 +257,8 @@ services:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
         - DBPASS=${DBPASS}
+        - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
+        - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
       cap_add:
         - NET_BIND_SERVICE
       ports:
@@ -318,7 +331,7 @@ services:
     acme-mailcow:
       depends_on:
         - nginx-mailcow
-      image: mailcow/acme:1.63
+      image: mailcow/acme:1.65
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       environment:
@@ -336,6 +349,8 @@ services:
         - ONLY_MAILCOW_HOSTNAME=${ONLY_MAILCOW_HOSTNAME:-n}
         - LE_STAGING=${LE_STAGING:-n}
         - TZ=${TZ}
+        - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
+        - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
       volumes:
         - ./data/web/.well-known/acme-challenge:/var/www/acme:rw
         - ./data/assets/ssl:/var/lib/acme/:rw
@@ -348,7 +363,7 @@ services:
             - acme
 
     netfilter-mailcow:
-      image: mailcow/netfilter:1.31
+      image: mailcow/netfilter:1.32
       stop_grace_period: 30s
       depends_on:
         - dovecot-mailcow
@@ -364,12 +379,14 @@ services:
         - IPV6_NETWORK=${IPV6_NETWORK:-fd4d:6169:6c63:6f77::/64}
         - SNAT_TO_SOURCE=${SNAT_TO_SOURCE:-n}
         - SNAT6_TO_SOURCE=${SNAT6_TO_SOURCE:-n}
+        - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
+        - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
       network_mode: "host"
       volumes:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.67
+      image: mailcow/watchdog:1.69
       # Debug
       #command: /watchdog.sh
       dns:
@@ -389,6 +406,7 @@ services:
         - USE_WATCHDOG=${USE_WATCHDOG:-n}
         - WATCHDOG_NOTIFY_EMAIL=${WATCHDOG_NOTIFY_EMAIL}
         - WATCHDOG_NOTIFY_BAN=${WATCHDOG_NOTIFY_BAN:-y}
+        - WATCHDOG_EXTERNAL_CHECKS=${WATCHDOG_EXTERNAL_CHECKS:-n}
         - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
         - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
         - IP_BY_DOCKER_API=${IP_BY_DOCKER_API:-0}
@@ -396,6 +414,8 @@ services:
         - SKIP_CLAMD=${SKIP_CLAMD:-n}
         - SKIP_LETS_ENCRYPT=${SKIP_LETS_ENCRYPT:-n}
         - HTTPS_PORT=${HTTPS_PORT:-443}
+        - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
+        - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
       networks:
         mailcow-network:
           aliases:

@@ -18,7 +18,12 @@ import dns.exception
 
 while True:
   try:
-    r = redis.StrictRedis(host=os.getenv('IPV4_NETWORK', '172.22.1') + '.249', decode_responses=True, port=6379, db=0)
+    redis_slaveof_ip = os.getenv('REDIS_SLAVEOF_IP', '')
+    redis_slaveof_port = os.getenv('REDIS_SLAVEOF_PORT', '')
+    if "".__eq__(redis_slaveof_ip):
+      r = redis.StrictRedis(host=os.getenv('IPV4_NETWORK', '172.22.1') + '.249', decode_responses=True, port=6379, db=0)
+    else:
+      r = redis.StrictRedis(host=redis_slaveof_ip, decode_responses=True, port=redis_slaveof_port, db=0)
     r.ping()
   except Exception as ex:
     print('%s - trying again in 3 seconds'  % (ex))
@@ -53,16 +58,16 @@ def log(priority, message):
   tolog['message'] = message
   r.lpush('NETFILTER_LOG', json.dumps(tolog, ensure_ascii=False))
   print(message)
-  
+
 def logWarn(message):
   log('warn', message)
-  
+
 def logCrit(message):
   log('crit', message)
-  
+
 def logInfo(message):
   log('info', message)
-  
+
 def refreshF2boptions():
   global f2boptions
   global quit_now
@@ -132,14 +137,13 @@ def ban(address):
     return
 
   self_network = ipaddress.ip_network(address)
-  
+
   with lock:
     temp_whitelist = set(WHITELIST)
 
   if temp_whitelist:
     for wl_key in temp_whitelist:
       wl_net = ipaddress.ip_network(wl_key, False)
-          
       if wl_net.overlaps(self_network):
         logInfo('Address %s is whitelisted by rule %s' % (self_network, wl_net))
         return
@@ -215,7 +219,6 @@ def unban(net):
 
 def permBan(net, unban=False):
   global lock
-  
   if type(ipaddress.ip_network(net, strict=False)) is ipaddress.IPv4Network:
     with lock:
       chain = iptc.Chain(iptc.Table(iptc.Table.FILTER), 'MAILCOW')
@@ -246,7 +249,7 @@ def permBan(net, unban=False):
         logCrit('Remove host/network %s from blacklist' % net)
         chain.delete_rule(rule)
         r.hdel('F2B_PERM_BANS', '%s' % net)
-    
+
 def quit(signum, frame):
   global quit_now
   quit_now = True
@@ -388,18 +391,16 @@ def isIpNetwork(address):
     return False
   return True
 
-          
+
 def genNetworkList(list):
   resolver = dns.resolver.Resolver()
   hostnames = []
   networks = []
-
   for key in list:
     if isIpNetwork(key):
       networks.append(key)
     else:
       hostnames.append(key)
-
   for hostname in hostnames:
     hostname_ips = []
     for rdtype in ['A', 'AAAA']:
@@ -413,66 +414,49 @@ def genNetworkList(list):
       except dns.exception.DNSException as dnsexception:
         logInfo('%s' % dnsexception)
         continue
-
       for rdata in answer:
         hostname_ips.append(rdata.to_text())
-
     networks.extend(hostname_ips)
-      
   return set(networks)
 
 def whitelistUpdate():
   global lock
   global quit_now
   global WHITELIST
-  
   while not quit_now:
     start_time = time.time()
     list = r.hgetall('F2B_WHITELIST')
-    
     new_whitelist = []
-    
     if list:
       new_whitelist = genNetworkList(list)
-    
     with lock:
       if Counter(new_whitelist) != Counter(WHITELIST):
         WHITELIST = new_whitelist
         logInfo('Whitelist was changed, it has %s entries' % len(WHITELIST))
-
     time.sleep(60.0 - ((time.time() - start_time) % 60.0)) 
-    
+
 def blacklistUpdate():
   global quit_now
   global BLACKLIST
-  
   while not quit_now:
     start_time = time.time()
     list = r.hgetall('F2B_BLACKLIST')
-    
     new_blacklist = []
-    
     if list:
       new_blacklist = genNetworkList(list)
-      
     if Counter(new_blacklist) != Counter(BLACKLIST): 
       addban = set(new_blacklist).difference(BLACKLIST)
       delban = set(BLACKLIST).difference(new_blacklist)
-        
       BLACKLIST = new_blacklist
       logInfo('Blacklist was changed, it has %s entries' % len(BLACKLIST))
-        
       if addban:
         for net in addban:
           permBan(net=net)
-            
       if delban:
         for net in delban:
           permBan(net=net, unban=True)
-      
-        
     time.sleep(60.0 - ((time.time() - start_time) % 60.0)) 
-      
+
 def initChain():
   # Is called before threads start, no locking
   print("Initializing mailcow netfilter chain")
@@ -500,7 +484,6 @@ def initChain():
     rule.target = target
     if rule not in chain.rules:
       chain.insert_rule(rule)
- 
 
 if __name__ == '__main__':
 
@@ -542,7 +525,7 @@ if __name__ == '__main__':
   mailcowchainwatch_thread = Thread(target=mailcowChainOrder)
   mailcowchainwatch_thread.daemon = True
   mailcowchainwatch_thread.start()
-  
+
   blacklistupdate_thread = Thread(target=blacklistUpdate)
   blacklistupdate_thread.daemon = True
   blacklistupdate_thread.start()

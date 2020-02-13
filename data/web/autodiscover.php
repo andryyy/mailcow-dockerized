@@ -9,7 +9,17 @@ $autodiscover_config = array_merge($default_autodiscover_config, $autodiscover_c
 
 // Redis
 $redis = new Redis();
-$redis->connect('redis-mailcow', 6379);
+try {
+  if (!empty(getenv('REDIS_SLAVEOF_IP'))) {
+    $redis->connect(getenv('REDIS_SLAVEOF_IP'), getenv('REDIS_SLAVEOF_PORT'));
+  }
+  else {
+    $redis->connect('redis-mailcow', 6379);
+  }
+}
+catch (Exception $e) {
+  exit;
+}
 
 error_reporting(0);
 

@@ -450,7 +450,7 @@ function quarantine($_action, $_data = null) {
               array('250', 'MAIL FROM: ' . $sender . chr(10)),
               array('250', 'RCPT TO: ' . $row['rcpt'] . chr(10)),
               array('250', 'DATA' . chr(10)),
-              array('354', $row['msg'] . chr(10) . '.' . chr(10)),
+              array('354', str_replace("\n.", '', $row['msg']) . chr(10) . '.' . chr(10)),
               array('250', 'QUIT' . chr(10)),
               array('221', '')
             );

@@ -12,6 +12,7 @@ data/conf/postfix/sni.map.db
 data/conf/postfix/extra.cf
 data/conf/postfix/sql
 data/conf/postfix/custom_transport.pcre
+data/conf/postfix/custom_postscreen_whitelist.cidr
 data/conf/postfix/allow_mailcow_local.regexp
 data/conf/dovecot/sql
 data/conf/dovecot/lua
@@ -24,6 +25,7 @@ data/assets/ssl/*
 *.iml
 data/web/.well-known/acme-challenge
 data/web/nextcloud*/
+data/web/rc*/
 data/conf/rspamd/local.d/*
 data/conf/rspamd/override.d/*
 !data/conf/nginx/dynmaps.conf

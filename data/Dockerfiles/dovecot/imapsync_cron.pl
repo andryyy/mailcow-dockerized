@@ -11,8 +11,8 @@ use sigtrap 'handler' => \&sig_handler, qw(INT TERM KILL QUIT);
 
 sub trim { my $s = shift; $s =~ s/^\s+|\s+$//g; return $s };
 my $t = Proc::ProcessTable->new;
-my $imapsync_running = grep { $_->{cmndline} =~ /^\/usr\/bin\/perl \/usr\/local\/bin\/imapsync\s/ } @{$t->table};
-if ($imapsync_running eq 1)
+my $imapsync_running = grep { $_->{cmndline} =~ /imapsync\s/i } @{$t->table};
+if ($imapsync_running gt 1)
 {
   print "imapsync is active, exiting...";
   exit;

@@ -1,7 +1,12 @@
 <?php
 $redis = new Redis();
 try {
-  $redis->connect('redis-mailcow', 6379);
+  if (!empty(getenv('REDIS_SLAVEOF_IP'))) {
+    $redis->connect(getenv('REDIS_SLAVEOF_IP'), getenv('REDIS_SLAVEOF_PORT'));
+  }
+  else {
+    $redis->connect('redis-mailcow', 6379);
+  }
 }
 catch (Exception $e) {
   exit;

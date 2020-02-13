@@ -84,7 +84,7 @@ def notify_rcpt(rcpt, msg_count, quarantine_acl):
       msg.attach(text_part)
       msg.attach(html_part)
       msg['To'] = str(rcpt)
-      bcc = r.get('Q_GLOBAL_RCPT') or ""
+      bcc = r.get('Q_BCC') or ""
       text = msg.as_string()
       server.sendmail(msg['From'], [str(rcpt)] + [str(bcc)], text)
       server.quit()

@@ -26,6 +26,6 @@ services:
         - /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
 
     mysql-mailcow:
-      image: alpine:3.8
+      image: alpine:3.10
       command: /bin/true
       restart: "no"

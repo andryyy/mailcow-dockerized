@@ -7,6 +7,7 @@ rspamd_config.MAILCOW_AUTH = {
 	end
 }
 
+
 rspamd_config:register_symbol({
   name = 'KEEP_SPAM',
   type = 'prefilter',
@@ -67,6 +68,25 @@ rspamd_config:register_symbol({
     end
   end,
   priority = 19
+})
+
+rspamd_config:register_symbol({
+  name = 'TLS_HEADER',
+  type = 'postfilter',
+  callback = function(task)
+    local rspamd_logger = require "rspamd_logger"
+    local tls_tag = task:get_request_header('TLS-Version')
+    if type(tls_tag) == 'nil' then
+      task:set_milter_reply({
+        add_headers = {['X-Last-TLS-Session-Version'] = 'None'}
+      })
+    else
+      task:set_milter_reply({
+        add_headers = {['X-Last-TLS-Session-Version'] = tostring(tls_tag)}
+      })
+    end
+  end,
+  priority = 12
 })
 
 rspamd_config:register_symbol({

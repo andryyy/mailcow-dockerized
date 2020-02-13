@@ -313,7 +313,7 @@
         "yubi_otp": "Autenticazione Yubico OTP",
         "key_id": "Identificatore per il tuo YubiKey",
         "key_id_totp": "Identificatore per la tua chiave",
-        "api_register": "mailcow usa le Api Yubico Cloud. Richiedi una Chiave API <a href=\"https://upgrade.yubico.com/getapikey/\" target=\"_blank\">qui</a>",
+        "api_register": "%s usa le Api Yubico Cloud. Richiedi una Chiave API <a href=\"https://upgrade.yubico.com/getapikey/\" target=\"_blank\">qui</a>",
         "u2f": "Autenticazione U2F",
         "totp": "Time-based OTP (Google Authenticator etc.)",
         "none": "Disattiva",

@@ -960,6 +960,9 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
           $stmt = $pdo->prepare("INSERT INTO `quota2` (`username`, `bytes`, `messages`)
             VALUES (:username, '0', '0') ON DUPLICATE KEY UPDATE `bytes` = '0', `messages` = '0';");
           $stmt->execute(array(':username' => $username));
+          $stmt = $pdo->prepare("INSERT INTO `quota2replica` (`username`, `bytes`, `messages`)
+            VALUES (:username, '0', '0') ON DUPLICATE KEY UPDATE `bytes` = '0', `messages` = '0';");
+          $stmt->execute(array(':username' => $username));
           $stmt = $pdo->prepare("INSERT INTO `alias` (`address`, `goto`, `domain`, `active`)
             VALUES (:username1, :username2, :domain, :active)");
           $stmt->execute(array(
@@ -3558,6 +3561,10 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
             $stmt->execute(array(
               ':domain' => '%@'.$domain,
             ));
+            $stmt = $pdo->prepare("DELETE FROM `quota2replica` WHERE `username` LIKE :domain");
+            $stmt->execute(array(
+              ':domain' => '%@'.$domain,
+            ));
             $stmt = $pdo->prepare("DELETE FROM `spamalias` WHERE `address` LIKE :domain");
             $stmt->execute(array(
               ':domain' => '%@'.$domain,
@@ -3757,6 +3764,10 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
               ':username' => $username
             ));
             $stmt = $pdo->prepare("DELETE FROM `quota2` WHERE `username` = :username");
+            $stmt->execute(array(
+              ':username' => $username
+            ));
+            $stmt = $pdo->prepare("DELETE FROM `quota2replica` WHERE `username` = :username");
             $stmt->execute(array(
               ':username' => $username
             ));

@@ -7,7 +7,8 @@ about: Report a bug for this project
   For community support and other discussions, you are welcome to visit us on our community channels listed at https://mailcow.github.io/mailcow-dockerized-docs/#community-support. For professional commercial support, please check out https://mailcow.github.io/mailcow-dockerized-docs/#commercial-support instead
 -->
 
-Please **try** to answer all questions. If you cannot, don't just delete it. If you completely ignore or remove the whole template, your issue is either closed or ignored, too. :( This is (not only) because we are evil. Many awesome mailcow supporters don't bother to reply to an issue, when crucial information is missing. Especially when it could have been answered by using this issue template. We need as much information as possible. Please post all logs, do not copy that one line you think may be interesting. Copy the whole bunch and remove sensible information. :) Thank you!
+Please **try** to answer all questions. If you cannot, don't just delete it. If you completely ignore or remove the whole template, **your issue will be closed** with a label "missing information".
+Many awesome mailcow supporters don't bother to reply to an issue, when crucial information is missing. Especially when it could have been answered by using this issue template. We need as much information as possible. Please post all logs, do not copy that one line you think may be interesting. Copy the whole bunch and remove sensible information. Thank you!
 
 **Prior to placing the issue, please check following:** *(fill out each checkbox with a `X` once done)*
 - [ ] I understand that not following below instructions might result in immediate closing and deletion of my issue.

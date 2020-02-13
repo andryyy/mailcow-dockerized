@@ -1,4 +1,10 @@
 <?php
+
+// Slave does not serve UI
+if (!preg_match('/y|yes/i', getenv('MASTER'))) {
+  header('Location: /SOGo', true, 307);
+}
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/vars.inc.php';
 $default_autodiscover_config = $autodiscover_config;
 
@@ -48,7 +54,12 @@ $tfa = new RobThree\Auth\TwoFactorAuth($OTP_LABEL, 6, 30, 'sha1', $qrprovider);
 // Redis
 $redis = new Redis();
 try {
-  $redis->connect('redis-mailcow', 6379);
+  if (!empty(getenv('REDIS_SLAVEOF_IP'))) {
+    $redis->connect(getenv('REDIS_SLAVEOF_IP'), getenv('REDIS_SLAVEOF_PORT'));
+  }
+  else {
+    $redis->connect('redis-mailcow', 6379);
+  }
 }
 catch (Exception $e) {
 ?>

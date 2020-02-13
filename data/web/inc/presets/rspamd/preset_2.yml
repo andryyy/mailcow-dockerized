@@ -2,4 +2,9 @@ headline: lang.rsettings_preset_2
 content: |
   priority = 10;
   rcpt = "/postmaster@.*/";
-  want_spam = yes;
+  apply {
+    symbols_enabled = ["DKIM_SIGNED", "HISTORY_SAVE", "MILTER_HEADERS", "ARC_SIGNED"];
+  actions {
+      greylist = null;
+    }
+  }
