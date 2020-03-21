@@ -341,7 +341,7 @@ function quarantine($_action, $_data = null) {
         );
       }
       // Release item
-      elseif ($_data['action'] == 'release') {
+      elseif ($_data['action'] == 'release' || $_data['action'] == 'learnham') {
         if (!is_array($_data['id'])) {
           $ids = array();
           $ids[] = $_data['id'];
@@ -482,25 +482,121 @@ function quarantine($_action, $_data = null) {
             }
             fclose($smtp_connection);
           }
-          try {
-            $stmt = $pdo->prepare("DELETE FROM `quarantine` WHERE `id` = :id");
-            $stmt->execute(array(
-              ':id' => $id
-            ));
-          }
-          catch (PDOException $e) {
-            $_SESSION['return'][] = array(
-              'type' => 'danger',
-              'log' => array(__FUNCTION__, $_action, $_data_log),
-              'msg' => array('mysql_error', $e)
-            );
-            continue;
-          }
+          $stmt = $pdo->prepare("DELETE FROM `quarantine` WHERE `id` = :id");
+          $stmt->execute(array(
+            ':id' => $id
+          ));
           $_SESSION['return'][] = array(
             'type' => 'success',
             'log' => array(__FUNCTION__, $_action, $_data_log),
             'msg' => array('item_released', $id)
           );
+          // Item was released and deleted from quarantine, now learning ham
+          $curl = curl_init();
+          curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+          curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+          curl_setopt($curl, CURLOPT_POST, 1);
+          curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+          curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
+          curl_setopt($curl, CURLOPT_URL,"http://rspamd/learnham");
+          curl_setopt($curl, CURLOPT_POSTFIELDS, $row['msg']);
+          $response = curl_exec($curl);
+          if (!curl_errno($curl)) {
+            $response = json_decode($response, true);
+            if (isset($response['error'])) {
+              if (stripos($response['error'], 'already learned') === false) {
+                $_SESSION['return'][] = array(
+                  'type' => 'danger',
+                  'log' => array(__FUNCTION__),
+                  'msg' => array('ham_learn_error', $response['error'])
+                );
+                continue;
+              }
+            }
+            curl_close($curl);
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: text/plain', 'Flag: 13'));
+            curl_setopt($curl, CURLOPT_URL,"http://rspamd/fuzzyadd");
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $row['msg']);
+            $response = curl_exec($curl);
+            if (!curl_errno($curl)) {
+              $response = json_decode($response, true);
+              if (isset($response['error'])) {
+                if (stripos($response['error'], 'No content to generate fuzzy') === false) {
+                  $_SESSION['return'][] = array(
+                    'type' => 'warning',
+                    'log' => array(__FUNCTION__),
+                    'msg' => array('fuzzy_learn_error', $response['error'])
+                  );
+                }
+              }
+              curl_close($curl);
+              $curl = curl_init();
+              curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+              curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+              curl_setopt($curl, CURLOPT_POST, 1);
+              curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+              curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: text/plain', 'Flag: 11'));
+              curl_setopt($curl, CURLOPT_URL,"http://rspamd/fuzzydel");
+              curl_setopt($curl, CURLOPT_POSTFIELDS, $row['msg']);
+              // It is most likely not a spam hash, so we ignore any error/warning response
+              // $response = curl_exec($curl);
+              curl_exec($curl);
+              // if (!curl_errno($curl)) {
+                // $response = json_decode($response, true);
+                // if (isset($response['error'])) {
+                  // $_SESSION['return'][] = array(
+                    // 'type' => 'warning',
+                    // 'log' => array(__FUNCTION__),
+                    // 'msg' => array('fuzzy_learn_error', $response['error'])
+                  // );
+                // }
+              // }
+              curl_close($curl);
+              $_SESSION['return'][] = array(
+                'type' => 'success',
+                'log' => array(__FUNCTION__),
+                'msg' => array('learned_ham', $id)
+              );
+              continue;
+            }
+            else {
+              curl_close($curl);
+              $_SESSION['return'][] = array(
+                'type' => 'danger',
+                'log' => array(__FUNCTION__),
+                'msg' => array('ham_learn_error', 'Curl: ' . curl_strerror(curl_errno($curl)))
+              );
+              continue;
+            }
+            curl_close($curl);
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__),
+              'msg' => array('ham_learn_error', 'unknown')
+            );
+            continue;
+          }
+          else {
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__),
+              'msg' => array('ham_learn_error', 'Curl: ' . curl_strerror(curl_errno($curl)))
+            );
+            curl_close($curl);
+            continue;
+          }
+          curl_close($curl);
+          $_SESSION['return'][] = array(
+            'type' => 'danger',
+            'log' => array(__FUNCTION__),
+            'msg' => array('ham_learn_error', 'unknown')
+          );
+          continue;
         }
       }
       elseif ($_data['action'] == 'learnspam') {
@@ -564,11 +660,13 @@ function quarantine($_action, $_data = null) {
             if (!curl_errno($curl)) {
               $response = json_decode($response, true);
               if (isset($response['error'])) {
-                $_SESSION['return'][] = array(
-                  'type' => 'warning',
-                  'log' => array(__FUNCTION__),
-                  'msg' => array('fuzzy_learn_error', $response['error'])
-                );
+                if (stripos($response['error'], 'No content to generate fuzzy') === false) {
+                  $_SESSION['return'][] = array(
+                    'type' => 'warning',
+                    'log' => array(__FUNCTION__),
+                    'msg' => array('fuzzy_learn_error', $response['error'])
+                  );
+                }
               }
               curl_close($curl);
               $curl = curl_init();

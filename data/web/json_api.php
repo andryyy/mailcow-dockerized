@@ -167,6 +167,9 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
           case "filter":
             process_add_return(mailbox('add', 'filter', $attr));
           break;
+          case "global-filter":
+            process_add_return(mailbox('add', 'global_filter', $attr));
+          break;
           case "domain-policy":
             process_add_return(policy('add', 'domain', $attr));
           break;
@@ -324,6 +327,36 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
                 $mailq = mailq('get');
                 if (!empty($mailq)) {
                   echo $mailq;
+                }
+                else {
+                  echo '{}';
+                }
+              break;
+            }
+          break;
+
+          case "global_filters":
+            $global_filters = mailbox('get', 'global_filter_details');
+            switch ($object) {
+              case "all":
+                if (!empty($global_filters)) {
+                  process_get_return($global_filters);
+                }
+                else {
+                  echo '{}';
+                }
+              break;
+              case "prefilter":
+                if (!empty($global_filters['prefilter'])) {
+                  process_get_return($global_filters['prefilter']);
+                }
+                else {
+                  echo '{}';
+                }
+              break;
+              case "postfilter":
+                if (!empty($global_filters['postfilter'])) {
+                  process_get_return($global_filters['postfilter']);
                 }
                 else {
                   echo '{}';

@@ -34,6 +34,7 @@ submission inet n       -       n       -       -       smtpd
 
 # used to reinject quarantine mails
 590 inet n      -       n       -       -       smtpd
+  -o smtpd_helo_restrictions=
   -o smtpd_client_restrictions=permit_mynetworks,reject
   -o smtpd_tls_auth_only=no
   -o smtpd_milters=

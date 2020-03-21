@@ -25,17 +25,17 @@ while ! mysqladmin status --socket=/var/run/mysqld/mysqld.sock -u${DBUSER} -p${D
   sleep 2
 done
 
-until [[ $(redis-cli -h redis-mailcow PING) == "PONG" ]]; do
-  echo "Waiting for Redis..."
-  sleep 2
-done
-
 # Do not attempt to write to slave
 if [[ ! -z ${REDIS_SLAVEOF_IP} ]]; then
   REDIS_CMDLINE="redis-cli -h ${REDIS_SLAVEOF_IP} -p ${REDIS_SLAVEOF_PORT}"
 else
   REDIS_CMDLINE="redis-cli -h redis -p 6379"
 fi
+
+until [[ $(${REDIS_CMDLINE} PING) == "PONG" ]]; do
+  echo "Waiting for Redis..."
+  sleep 2
+done
 
 ${REDIS_CMDLINE} DEL F2B_RES > /dev/null
 
@@ -171,7 +171,7 @@ fi
 external_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=1
+  THRESHOLD=${EXTERNAL_CHECKS_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   GUID=$(mysql -u${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT version FROM versions WHERE application = 'GUID'" -BN)
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
@@ -204,7 +204,7 @@ external_checks() {
 nginx_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=5
+  THRESHOLD=${NGINX_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -229,7 +229,7 @@ nginx_checks() {
 unbound_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=5
+  THRESHOLD=${UNBOUND_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -262,7 +262,7 @@ redis_checks() {
   # A check for the local redis container
   err_count=0
   diff_c=0
-  THRESHOLD=5
+  THRESHOLD=${REDIS_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -287,7 +287,7 @@ redis_checks() {
 mysql_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=5
+  THRESHOLD=${MYSQL_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -313,7 +313,7 @@ mysql_checks() {
 sogo_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=5
+  THRESHOLD=${SOGO_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -338,7 +338,7 @@ sogo_checks() {
 postfix_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=8
+  THRESHOLD=${POSTFIX_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -364,7 +364,7 @@ postfix_checks() {
 clamd_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=15
+  THRESHOLD=${CLAMD_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -389,7 +389,7 @@ clamd_checks() {
 dovecot_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=12
+  THRESHOLD=${DOVECOT_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -418,7 +418,7 @@ dovecot_checks() {
 phpfpm_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=5
+  THRESHOLD=${PHPFPM_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -444,7 +444,7 @@ phpfpm_checks() {
 ratelimit_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=1
+  THRESHOLD=${RATELIMIT_THRESHOLD}
   RL_LOG_STATUS=$(redis-cli -h redis LRANGE RL_LOG 0 0 | jq .qid)
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
@@ -454,6 +454,10 @@ ratelimit_checks() {
     RL_LOG_STATUS=$(redis-cli -h redis LRANGE RL_LOG 0 0 | jq .qid)
     if [[ ${RL_LOG_STATUS_PREV} != ${RL_LOG_STATUS} ]]; then
       err_count=$(( ${err_count} + 1 ))
+      echo 'Last 10 applied ratelimits (may overlap with previous reports).' > /tmp/ratelimit
+      echo 'Full ratelimit buckets can be emptied by deleting the ratelimit hash from within mailcow UI (see /debug -> Protocols -> Ratelimit):' >> /tmp/ratelimit
+      echo >> /tmp/ratelimit
+      redis-cli --raw -h redis LRANGE RL_LOG 0 10 | jq . >> /tmp/ratelimit
     fi
     [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
     [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
@@ -472,7 +476,7 @@ ratelimit_checks() {
 fail2ban_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=1
+  THRESHOLD=${FAIL2BAN_THRESHOLD}
   F2B_LOG_STATUS=($(${REDIS_CMDLINE} --raw HKEYS F2B_ACTIVE_BANS))
   F2B_RES=
   # Reduce error count by 2 after restarting an unhealthy container
@@ -506,7 +510,7 @@ fail2ban_checks() {
 acme_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=1
+  THRESHOLD=${ACME_THRESHOLD}
   ACME_LOG_STATUS=$(redis-cli -h redis GET ACME_FAIL_TIME)
   if [[ -z "${ACME_LOG_STATUS}" ]]; then
     ${REDIS_CMDLINE} SET ACME_FAIL_TIME 0
@@ -543,7 +547,7 @@ acme_checks() {
 ipv6nat_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=1
+  THRESHOLD=${IPV6NAT_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -576,7 +580,7 @@ ipv6nat_checks() {
 rspamd_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=5
+  THRESHOLD=${RSPAMD_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -611,7 +615,7 @@ Empty
 olefy_checks() {
   err_count=0
   diff_c=0
-  THRESHOLD=5
+  THRESHOLD=${OLEFY_THRESHOLD}
   # Reduce error count by 2 after restarting an unhealthy container
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
@@ -877,7 +881,7 @@ while true; do
   fi
   if [[ ${com_pipe_answer} == "ratelimit" ]]; then
     log_msg "At least one ratelimit was applied"
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please see mailcow UI logs for further information."
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
   elif [[ ${com_pipe_answer} == "external_checks" ]]; then
     log_msg "Your mailcow is an open relay!"
     [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please stop mailcow now and check your network configuration!"

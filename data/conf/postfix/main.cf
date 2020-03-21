@@ -197,8 +197,6 @@ smtputf8_enable = yes
 submission_smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
 smtps_smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
 
-smtpd_client_recipient_rate_limit = 50
-
 # DO NOT EDIT ANYTHING BELOW #
 # User overrides #
 

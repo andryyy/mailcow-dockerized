@@ -95,7 +95,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
           <div class="form-group">
             <label class="control-label col-sm-2" for="description"><?=$lang['add']['description'];?></label>
             <div class="col-sm-10">
-            <input type="text" class="form-control" name="description" required>
+            <input type="text" class="form-control" name="description">
             </div>
           </div>
           <div class="form-group">
@@ -592,7 +592,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
           <div class="form-group">
             <label class="control-label col-sm-2" for="script_data">Script:</label>
             <div class="col-sm-10">
-              <textarea autocorrect="off" spellcheck="false" autocapitalize="none" class="form-control textarea-code" rows="20" id="script_data" name="script_data" required></textarea>
+              <textarea autocorrect="off" spellcheck="false" autocapitalize="none" class="form-control textarea-code script_data" rows="20" name="script_data" required></textarea>
             </div>
           </div>
           <div class="form-group">
@@ -604,9 +604,9 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             </div>
           </div>
           <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10" id="add_filter_btns">
-              <button class="btn btn-default" id="validate_sieve" href="#"><?=$lang['add']['validate'];?></button>
-              <button class="btn btn-success" id="add_sieve_script" data-action="add_item" data-id="add_filter" data-api-url='add/filter' data-api-attr='{}' href="#" disabled><?=$lang['admin']['add'];?></button>
+            <div class="col-sm-offset-2 col-sm-10 add_filter_btns">
+              <button class="btn btn-default validate_sieve" href="#"><?=$lang['add']['validate'];?></button>
+              <button class="btn btn-success add_sieve_script" data-action="add_item" data-id="add_filter" data-api-url='add/filter' data-api-attr='{}' href="#" disabled><?=$lang['admin']['add'];?></button>
             </div>
           </div>
         </form>

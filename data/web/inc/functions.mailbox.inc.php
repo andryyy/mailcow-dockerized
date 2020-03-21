@@ -62,6 +62,85 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
             'msg' => array('mailbox_modified', htmlspecialchars($_SESSION['mailcow_cc_username']))
           );
         break;
+        case 'global_filter':
+          if ($_SESSION['mailcow_cc_role'] != "admin") {
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
+              'msg' => 'access_denied'
+            );
+            return false;
+          }
+          $sieve = new Sieve\SieveParser();
+          $script_data = $_data['script_data'];
+          $script_data = str_replace("\r\n", "\n", $script_data); // windows -> unix
+          $script_data = str_replace("\r", "\n", $script_data);   // remaining -> unix
+          $filter_type = $_data['filter_type'];
+          try {
+            $sieve->parse($script_data);
+          }
+          catch (Exception $e) {
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
+              'msg' => array('sieve_error', $e->getMessage())
+            );
+            return false;
+          }
+          if ($filter_type == 'prefilter') {
+            try {
+              if (file_exists('/global_sieve/before')) {
+                $filter_handle = fopen('/global_sieve/before', 'w');
+                if (!$filter_handle) {
+                  throw new Exception($lang['danger']['file_open_error']);
+                }
+                fwrite($filter_handle, $script_data);
+                fclose($filter_handle);
+              }
+            }
+            catch (Exception $e) {
+              $_SESSION['return'][] = array(
+                'type' => 'danger',
+                'log' => array(__FUNCTION__, $_action, $_data_log),
+                'msg' => array('global_filter_write_error', htmlspecialchars($e->getMessage()))
+              );
+              return false;
+            }
+          }
+          elseif ($filter_type == 'postfilter') {
+            try {
+              if (file_exists('/global_sieve/after')) {
+                $filter_handle = fopen('/global_sieve/after', 'w');
+                if (!$filter_handle) {
+                  throw new Exception($lang['danger']['file_open_error']);
+                }
+                fwrite($filter_handle, $script_data);
+                fclose($filter_handle);
+              }
+            }
+            catch (Exception $e) {
+              $_SESSION['return'][] = array(
+                'type' => 'danger',
+                'log' => array(__FUNCTION__, $_action, $_data_log),
+                'msg' => array('global_filter_write_error', htmlspecialchars($e->getMessage()))
+              );
+              return false;
+            }
+          }
+          else {
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
+              'msg' => 'invalid_filter_type'
+            );
+            return false;
+          }
+          $_SESSION['return'][] = array(
+            'type' => 'success',
+            'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
+            'msg' => 'global_filter_written'
+          );
+          return true;
         case 'filter':
           $sieve = new Sieve\SieveParser();
           if (!isset($_SESSION['acl']['filters']) || $_SESSION['acl']['filters'] != "1" ) {
@@ -324,6 +403,9 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
           }
           $domain				= idn_to_ascii(strtolower(trim($_data['domain'])), 0, INTL_IDNA_VARIANT_UTS46);
           $description  = $_data['description'];
+          if (empty($description)) {
+            $description = $domain;
+          }
           $aliases			= $_data['aliases'];
           $mailboxes    = $_data['mailboxes'];
           $defquota			= $_data['defquota'];
@@ -2650,6 +2732,15 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
           }
           return $filters;
         break;
+        case 'global_filter_details':
+          $global_filters = array();
+          if ($_SESSION['mailcow_cc_role'] != "admin") {
+            return false;
+          }
+          $global_filters['prefilter'] = file_get_contents('/global_sieve/before');
+          $global_filters['postfilter'] = file_get_contents('/global_sieve/after');
+          return $global_filters;
+        break;
         case 'filter_details':
           $filter_details = array();
           if (!is_numeric($_data)) {
@@ -3167,6 +3258,10 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
           }
           $mailboxdata = array();
           $rl = ratelimit('get', 'mailbox', $_data);
+          $last_mail_login = $redis->Get('last-login/' . $_data);
+          if ($last_mail_login === false) {
+            $last_mail_login = '';
+          }
           $stmt = $pdo->prepare("SELECT
               `domain`.`backupmx`,
               `mailbox`.`username`,
@@ -3209,6 +3304,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
           }
           $mailboxdata['is_relayed'] = $row['backupmx'];
           $mailboxdata['name'] = $row['name'];
+          $mailboxdata['last_mail_login'] = $last_mail_login;
           $mailboxdata['active'] = $row['active'];
           $mailboxdata['active_int'] = $row['active_int'];
           $mailboxdata['domain'] = $row['domain'];

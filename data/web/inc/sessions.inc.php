@@ -44,15 +44,16 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
 // API
 if (!empty($_SERVER['HTTP_X_API_KEY'])) {
-  $stmt = $pdo->prepare("SELECT `allow_from` FROM `api` WHERE `api_key` = :api_key AND `active` = '1';");
+  $stmt = $pdo->prepare("SELECT * FROM `api` WHERE `api_key` = :api_key AND `active` = '1';");
   $stmt->execute(array(
     ':api_key' => preg_replace('/[^a-zA-Z0-9-]/', '', $_SERVER['HTTP_X_API_KEY'])
   ));
   $api_return = $stmt->fetch(PDO::FETCH_ASSOC);
-  if (!empty($api_return['allow_from'])) {
+  if (!empty($api_return['api_key'])) {
+    $skip_ip_check = ($api_return['skip_ip_check'] == 1);
     $remote = get_remote_ip(false);
     $allow_from = array_map('trim', preg_split( "/( |,|;|\n)/", $api_return['allow_from']));
-    if (in_array($remote, $allow_from)) {
+    if (in_array($remote, $allow_from) || $skip_ip_check === true) {
       $_SESSION['mailcow_cc_username'] = 'API';
       $_SESSION['mailcow_cc_role'] = 'admin';
       $_SESSION['mailcow_cc_api'] = true;

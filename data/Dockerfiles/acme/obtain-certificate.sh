@@ -40,8 +40,8 @@ else
 fi
 
 if [[ -f ${DOMAINS_FILE} && "$(cat ${DOMAINS_FILE})" ==  "${CERT_DOMAINS[*]}" ]]; then
-  if [[ ! -f ${CERT} || ! -f "${KEY}" ]]; then
-    log_f "Certificate ${CERT} doesn't exist yet - start obtaining"
+  if [[ ! -f ${CERT} || ! -f "${KEY}" || -f "${ACME_BASE}/force_renew" ]]; then
+    log_f "Certificate ${CERT} doesn't exist yet or forced renewal - start obtaining"
   # Certificate exists and did not change but could be due for renewal (30 days)
   elif ! openssl x509 -checkend 2592000 -noout -in ${CERT} > /dev/null; then
     log_f "Certificate ${CERT} is due for renewal (< 30 days) - start renewing"

@@ -50,8 +50,8 @@ if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == "admi
         $port = null;
       }
       else {
-        $port = substr($hostname_w_port, strrpos($hostname_w_port, ':') + 1);
         $hostname = preg_replace('/'. preg_quote(':' . $port, '/') . '$/', '', $hostname_w_port);
+        $port = null;
       }
     }
     // Try to get MX if host is not [host]

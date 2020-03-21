@@ -24,6 +24,8 @@
         "hibp_ok": "No match found."
     },
     "danger": {
+        "invalid_filter_type": "Invalid filter type",
+        "file_open_error": "File cannot be opened for writing",
         "transport_dest_exists": "Transport destination \"%s\" exists",
         "unlimited_quota_acl": "Unlimited quota prohibited by ACL",
         "mysql_error": "MySQL error: %s",
@@ -61,6 +63,7 @@
         "app_passwd_id_invalid": "App password ID %s invalid",
         "global_map_invalid": "Global map ID %s invalid",
         "global_map_write_error": "Could not write global map ID %s: %s",
+        "global_filter_write_error": "Could not write filter file: %s",
         "invalid_host": "Invalid host specified: %s",
         "relayhost_invalid": "Map entry %s is invalid",
         "dkim_domain_or_sel_invalid": "DKIM domain or selector invalid: %s",
@@ -69,8 +72,8 @@
         "mailbox_quota_exceeds_domain_quota": "Max. quota exceeds domain quota limit",
         "object_is_not_numeric": "Value %s is not numeric",
         "alias_empty": "Alias address must not be empty",
-        "last_key": "Last key cannot be deleted",
-        "goto_empty": "Goto address must not be empty",
+        "last_key": "Last key cannot be deleted, please deactivate TFA instead.",
+        "goto_empty": "An alias address must contain at least one valid goto address",
         "policy_list_from_exists": "A record with given name exists",
         "policy_list_from_invalid": "Record has invalid format",
         "alias_invalid": "Alias address %s is invalid",
@@ -113,12 +116,14 @@
         "invalid_mime_type": "Invalid mime type",
         "imagick_exception": "Error: Imagick exception while reading image",
         "spam_learn_error": "Spam learn error: %s",
+        "ham_learn_error": "Ham learn error: %s",
         "release_send_failed": "Message could not be released: %s",
         "invalid_recipient_map_new": "Invalid new recipient specified: %s",
         "invalid_recipient_map_old": "Invalid original recipient specified: %s",
         "recipient_map_entry_exists": "A Recipient map entry \"%s\" exists",
         "tls_policy_map_entry_exists": "A TLS policy map entry \"%s\" exists",
         "tls_policy_map_parameter_invalid": "Policy parameter is invalid",
+        "tls_policy_map_dest_invalid": "Policy destination is invalid",
         "temp_error": "Temporary error",
         "text_empty": "Text must not be empty",
         "subject_empty": "Subject must not be empty",
@@ -130,6 +135,8 @@
         "extra_acl_invalid_domain": "External sender \"%s\" uses an invalid domain"
     },
     "success": {
+        "global_filter_written": "Filter was successfully written to file",
+        "learned_ham": "Successfully learned ID % as ham",
         "verified_totp_login": "Verified TOTP login",
         "verified_u2f_login": "Verified U2F login",
         "verified_yotp_login": "Verified Yubico OTP login",
@@ -216,6 +223,8 @@
         "ip_invalid": "Skipped invalid IP: %s"
     },
     "user": {
+        "no_last_login": "No last UI login information",
+        "last_mail_login": "Last mail login",
         "apple_connection_profile": "Apple connection profile",
         "apple_connection_profile_mailonly": "This connection profile includes IMAP and SMTP configuration parameters for an Apple device.",
         "apple_connection_profile_complete": "This connection profile includes IMAP and SMTP parameters as well as CalDAV (calendars) and CardDAV (contacts) pathes for an Apple device.",
@@ -445,6 +454,7 @@
         "relay_run": "Run test",
         "api_allow_from": "Allow API access from these IPs (separated by comma or new line)",
         "api_key": "API key",
+        "api_skip_ip_check": "Skip IP check for API",
         "activate_api": "Activate API",
         "regen_api_key": "Regenerate API key",
         "ban_list_info": "See a list of banned IPs below: <b>network (remaining ban time) - [actions]</b>.<br />IPs queued to be unbanned will be removed from the active ban list within a few seconds.<br />Red labels indicate active permanent bans by blacklisting.",
@@ -498,7 +508,7 @@
         "text": "Text",
         "activate_send": "Activate send button",
         "send": "Send",
-        "api_info": "The API is a work in progress.",
+        "api_info": "The API is a work in progress. The documentation can be found at <a href=\"/api\">/api</a>",
         "guid_and_license": "GUID & License",
         "guid": "GUID - unique instance ID",
         "license_info": "A license is not required but helps further development.<br><a href=\"https://www.servercow.de/mailcow?lang=en#sal\" target=\"_blank\" alt=\"SAL order\">Register your GUID here</a> or <a href=\"https://www.servercow.de/mailcow?lang=en#support\" target=\"_blank\" alt=\"Support order\">buy support for your mailcow installation.</a>",
@@ -520,6 +530,9 @@
         "help": "Show/Hide help panel"
     },
     "quarantine": {
+        "refresh": "Refresh",
+        "table_size": "Table size",
+        "table_size_show_n": "Show %s items",
         "disabled_by_config": "The current system configuration disables the quarantine functionality.",
         "quarantine": "Quarantine",
         "learn_spam_delete": "Learn as spam and delete",
@@ -557,6 +570,9 @@
         "notified": "Notified"
     },
     "mailbox": {
+        "last_mail_login": "Last mail login",
+        "table_size": "Table size",
+        "table_size_show_n": "Show %s items",
         "tls_policy_maps": "TLS policy maps",
         "sogo_allow_admin_hint": "Administrative SOGo logins are only available for mailboxes with an existing SOGo profile. A user must have been logged in to SOGo at least once.",
         "tls_policy_maps_long": "Outgoing TLS policy map overrides",
@@ -622,7 +638,7 @@
         "last_run": "Last run",
         "excludes": "Excludes",
         "last_run_reset": "Schedule next",
-        "sieve_info": "You can store multiple filters per user, but only one prefilter and one postfilter can be active at the same time.<br>\r\nEach filter will be processed in the described order. Neither a failed script nor an issued \"keep;\" will stop processing of further scripts.<br>\r\n<a href=\"https://github.com/mailcow/mailcow-dockerized/blob/master/data/conf/dovecot/global_sieve_before\" target=\"_blank\">Global sieve prefilter</a> → Prefilter → User scripts → Postfilter → <a href=\"https://github.com/mailcow/mailcow-dockerized/blob/master/data/conf/dovecot/global_sieve_after\" target=\"_blank\">Global sieve postfilter</a>",
+        "sieve_info": "You can store multiple filters per user, but only one prefilter and one postfilter can be active at the same time.<br>\r\nEach filter will be processed in the described order. Neither a failed script nor an issued \"keep;\" will stop processing of further scripts.<br><br>Global sieve prefilter → Prefilter → User scripts → Postfilter → Global sieve postfilter",
         "sogo_visible": "Alias is visible in SOGo",
         "sogo_visible_y": "Show alias in SOGo",
         "sogo_visible_n": "Hide alias in SOGo",

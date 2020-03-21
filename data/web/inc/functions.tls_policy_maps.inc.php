@@ -10,6 +10,14 @@ function tls_policy_maps($_action, $_data = null, $attr = null) {
       $dest = idn_to_ascii(trim($_data['dest']), 0, INTL_IDNA_VARIANT_UTS46);
       $policy = strtolower(trim($_data['policy']));
       $parameters = (isset($_data['parameters']) && !empty($_data['parameters'])) ? $_data['parameters'] : '';
+      if (empty($dest) || in_array($dest, array('.', '*', '@'))) {
+        $_SESSION['return'][] = array(
+          'type' => 'danger',
+          'log' => array(__FUNCTION__, $_action, $_data, $_attr),
+          'msg' => 'tls_policy_map_dest_invalid'
+        );
+        return false;
+      }
       if (!empty($parameters)) {
         foreach (explode(' ', $parameters) as $parameter) {
           if (!preg_match('/(.+)\=(.+)/i', $parameter)) {
@@ -65,6 +73,14 @@ function tls_policy_maps($_action, $_data = null, $attr = null) {
             'msg' => 'access_denied'
           );
           continue;
+        }
+        if (empty($dest) || in_array($dest, array('.', '*', '@'))) {
+          $_SESSION['return'][] = array(
+            'type' => 'danger',
+            'log' => array(__FUNCTION__, $_action, $_data, $_attr),
+            'msg' => 'tls_policy_map_dest_invalid'
+          );
+          return false;
         }
         if (!empty($parameters)) {
           foreach (explode(' ', $parameters) as $parameter) {

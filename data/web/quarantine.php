@@ -11,7 +11,21 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 		<div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title"><?=$lang['quarantine']['quarantine'];?></h3>
+          <?=$lang['quarantine']['quarantine'];?> <span class="badge badge-info table-lines"></span>
+          <div class="btn-group pull-right">
+            <button class="btn btn-xs btn-default refresh_table" data-draw="draw_quarantine_table" data-table="quarantinetable"><?=$lang['quarantine']['refresh'];?></button>
+            <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['quarantine']['table_size'];?> 
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" data-table-id="quarantinetable" role="menu">
+              <li><a href="#" data-page-size="10"><?=sprintf($lang['quarantine']['table_size_show_n'], 10);?></a></li>
+              <li><a href="#" data-page-size="20"><?=sprintf($lang['quarantine']['table_size_show_n'], 20);?></a></li>
+              <li><a href="#" data-page-size="50"><?=sprintf($lang['quarantine']['table_size_show_n'], 50);?></a></li>
+              <li><a href="#" data-page-size="100"><?=sprintf($lang['quarantine']['table_size_show_n'], 100);?></a></li>
+              <li><a href="#" data-page-size="200"><?=sprintf($lang['quarantine']['table_size_show_n'], 200);?></a></li>
+              <li><a href="#" data-page-size="500"><?=sprintf($lang['quarantine']['table_size_show_n'], 500);?></a></li>
+            </ul>
+          </div>
         </div>
         <p style="margin:10px" class="help-block"><?=$lang['quarantine']['qinfo'];?></p>
         <p style="margin:10px">

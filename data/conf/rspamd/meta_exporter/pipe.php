@@ -62,6 +62,11 @@ $symbols  = $headers['X-Rspamd-Symbols'];
 
 $raw_size = (int)$_SERVER['CONTENT_LENGTH'];
 
+if (empty($sender)) {
+  error_log("QUARANTINE: Unknown sender, assuming null@localhost");
+  $sender = 'null@localhost';
+}
+
 try {
   $max_size = (int)$redis->Get('Q_MAX_SIZE');
   if (($max_size * 1048576) < $raw_size) {

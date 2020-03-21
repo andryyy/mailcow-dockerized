@@ -132,6 +132,7 @@ DBROOT=$(LC_ALL=C </dev/urandom tr -dc A-Za-z0-9 | head -c 28)
 # You should use HTTPS, but in case of SSL offloaded reverse proxies:
 # Might be important: This will also change the binding within the container.
 # If you use a proxy within Docker, point it to the ports you set below.
+# IMPORTANT: Do not use port 8081, 9081 or 65510!
 
 HTTP_PORT=80
 HTTP_BIND=0.0.0.0
@@ -157,6 +158,7 @@ SIEVE_PORT=4190
 DOVEADM_PORT=127.0.0.1:19991
 SQL_PORT=127.0.0.1:13306
 SOLR_PORT=127.0.0.1:18983
+REDIS_PORT=127.0.0.1:7654
 
 # Your timezone
 

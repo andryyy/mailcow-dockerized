@@ -124,7 +124,14 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
           <div class="form-group">
             <label class="control-label col-sm-3" for="allow_from"><?=$lang['admin']['api_allow_from'];?>:</label>
             <div class="col-sm-9">
-              <textarea class="form-control" rows="5" name="allow_from" id="allow_from" required><?=htmlspecialchars($api['allow_from']);?></textarea>
+              <textarea class="form-control" rows="5" name="allow_from" id="allow_from" <?=($api['skip_ip_check'] == 1) ? 'disabled' : null;?> required><?=htmlspecialchars($api['allow_from']);?></textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+              <label>
+                <input type="checkbox" id="skip_ip_check" name="skip_ip_check" <?=($api['skip_ip_check'] == 1) ? 'checked' : null;?>> <?=$lang['admin']['api_skip_ip_check'];?>
+              </label>
             </div>
           </div>
           <div class="form-group">

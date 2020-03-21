@@ -26,7 +26,7 @@ if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == 'doma
         ?>
         <span style="margin-right:10px" class="glyphicon glyphicon-log-in"></span> <span data-time="<?=$_SESSION['mailcow_cc_last_login']['time'];?>" class="last_login_date"></span> (<?=$_SESSION['mailcow_cc_last_login']['remote'];?>)
         <?php
-        else: echo "Last login: -"; endif;
+        else: echo $lang['user']['no_last_login']; endif;
         ?>
         </small></p>
         <p>
@@ -124,7 +124,7 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
             ?>
             <span style="margin-right:10px" class="glyphicon glyphicon-log-in"></span> <span data-time="<?=$_SESSION['mailcow_cc_last_login']['time'];?>" class="last_login_date"></span> (<?=$_SESSION['mailcow_cc_last_login']['remote'];?>)
             <?php
-            else: echo "Last login: -"; endif;
+            else: echo $lang['user']['no_last_login']; endif;
             ?>
             </small></p>
           </div>

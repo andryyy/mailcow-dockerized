@@ -66,7 +66,7 @@ check_domain(){
     fi
     if [[ ! -z ${AAAA_DOMAIN} ]]; then
       log_f "Found AAAA record for ${DOMAIN}: ${AAAA_DOMAIN} - skipping A record check"
-      if [[ $(expand ${IPV6:-"0000:0000:0000:0000:0000:0000:0000:0000"}) == $(expand ${AAAA_DOMAIN}) ]] || [[ ${SKIP_IP_CHECK} == "y" ]]; then
+      if [[ $(expand ${IPV6:-"0000:0000:0000:0000:0000:0000:0000:0000"}) == $(expand ${AAAA_DOMAIN}) ]] || [[ ${SKIP_IP_CHECK} == "y" ]] || [[ ${SNAT6_TO_SOURCE} != "n" ]]; then
         if verify_challenge_path "${DOMAIN}" 6; then
           log_f "Confirmed AAAA record with IP ${AAAA_DOMAIN}"
           return 0
@@ -78,7 +78,7 @@ check_domain(){
       fi
     elif [[ ! -z ${A_DOMAIN} ]]; then
       log_f "Found A record for ${DOMAIN}: ${A_DOMAIN}"
-      if [[ ${IPV4:-ERR} == ${A_DOMAIN} ]] || [[ ${SKIP_IP_CHECK} == "y" ]]; then
+      if [[ ${IPV4:-ERR} == ${A_DOMAIN} ]] || [[ ${SKIP_IP_CHECK} == "y" ]] || [[ ${SNAT_TO_SOURCE} != "n" ]]; then
         if verify_challenge_path "${DOMAIN}" 4; then
           log_f "Confirmed A record ${A_DOMAIN}"
           return 0

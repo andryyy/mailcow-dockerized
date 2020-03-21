@@ -594,7 +594,7 @@
         "last_run": "Naposledy spuštěno",
         "excludes": "Vyloučené",
         "last_run_reset": "Plánovat další",
-        "sieve_info": "Můžete uložit více filtrů pro každého uživatele, ale současně může být aktivní pouze jeden prefilter a jeden postfilter.<br>\r\nKaždý filtr bude proveden v daném pořadí. Ani chyba při vykonávání skriptu nebo snaha o pozdržení nezastaví vykonání dalších skriptů.<br>\r\n<a href=\"https://github.com/mailcow/mailcow-dockerized/blob/master/data/conf/dovecot/global_sieve_before\" target=\"_blank\">Global sieve prefilter</a> → Prefilter → Uživatelské skripty → Postfilter → <a href=\"https://github.com/mailcow/mailcow-dockerized/blob/master/data/conf/dovecot/global_sieve_after\" target=\"_blank\">Global sieve postfilter</a>",
+        "sieve_info": "Můžete uložit více filtrů pro každého uživatele, ale současně může být aktivní pouze jeden prefilter a jeden postfilter.<br>\r\nKaždý filtr bude proveden v daném pořadí. Ani chyba při vykonávání skriptu nebo snaha o pozdržení nezastaví vykonání dalších skriptů.<br><br>Global sieve prefilter → Prefilter → Uživatelské skripty → Postfilter → Global sieve postfilter",
         "sogo_visible": "Alias dostupný v SOGo",
         "sogo_visible_y": "Zobrazit alias v SOGo",
         "sogo_visible_n": "Skrýt alias v SOGo",

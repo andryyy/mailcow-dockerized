@@ -40,7 +40,6 @@ RUN groupadd -g 102 postfix \
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
 COPY syslog-ng-redis_slave.conf /etc/syslog-ng/syslog-ng-redis_slave.conf
-COPY stop-supervisor.sh /usr/local/sbin/stop-supervisor.sh
 COPY postfix.sh /opt/postfix.sh
 COPY rspamd-pipe-ham /usr/local/bin/rspamd-pipe-ham
 COPY rspamd-pipe-spam /usr/local/bin/rspamd-pipe-spam

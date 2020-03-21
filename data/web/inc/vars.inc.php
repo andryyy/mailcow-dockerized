@@ -77,7 +77,7 @@ $DETECT_LANGUAGE = true;
 $DEFAULT_LANG = 'en';
 
 // Available languages
-$AVAILABLE_LANGUAGES = array('ca', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'it', 'lv', 'nl', 'pl', 'pt', 'ru');
+$AVAILABLE_LANGUAGES = array('ca', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'it', 'lv', 'nl', 'pl', 'pt', 'ru', 'sk', 'sv');
 
 // Change theme (default: lumen)
 // Needs to be one of those: cerulean, cosmo, cyborg, darkly, flatly, journal, lumen, paper, readable, sandstone,
@@ -168,5 +168,7 @@ $RSPAMD_MAPS = array(
     'Bad Words (only fired in combination with fishy TLDs)' => 'bad_words.map',
     'Bad Words DE (only fired in combination with fishy TLDs)' => 'bad_words_de.map',
     'Bad Languages' => 'bad_languages.map',
+    'Bulk Mail Headers' => 'bulk_header.map',
+    'Monitoring Hosts' => 'monitoring_nolog.map'
   )
 );

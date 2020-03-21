@@ -16,6 +16,7 @@ data/conf/postfix/custom_postscreen_whitelist.cidr
 data/conf/postfix/allow_mailcow_local.regexp
 data/conf/dovecot/sql
 data/conf/dovecot/lua
+data/conf/dovecot/global_sieve_*
 data/conf/nextcloud-*.bak
 data/web/inc/vars.local.inc.php
 data/web/css/build/0081-custom-mailcow.css
@@ -36,6 +37,7 @@ data/conf/nginx/*.custom
 data/conf/nginx/*.bak
 data/conf/dovecot/acl_anyone
 data/conf/dovecot/mail_plugins*
+data/conf/dovecot/last_login
 data/conf/dovecot/sni.conf
 data/conf/dovecot/sogo-sso.conf
 data/conf/dovecot/extra.conf

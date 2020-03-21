@@ -22,7 +22,7 @@ if (sieve_presetsElem) {
               document.getElementById(elemID).addEventListener('click', function (e) {
                 e.preventDefault();
                 document.querySelector('form[data-id=add_filter] #script_desc').value = item.headline;
-                document.querySelector('form[data-id=add_filter] #script_data').value = item.content;
+                document.querySelector('form[data-id=add_filter] .script_data').value = item.content;
                 return true;
               });
             }, 0);

@@ -38,6 +38,8 @@ if [[ "${CERT_AMOUNT_CHANGED}" == "1" ]]; then
   restart_container ${POSTFIX}
 else
   reload_nginx
-  reload_dovecot
-  reload_postfix
+  #reload_dovecot
+  restart_container ${DOVECOT}
+  #reload_postfix
+  restart_container ${POSTFIX}
 fi

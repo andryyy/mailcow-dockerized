@@ -45,6 +45,8 @@ services:
       volumes:
         - redis-vol-1:/data/
       restart: always
+      ports:
+        - "${REDIS_PORT:-127.0.0.1:7654}:6379"
       environment:
         - TZ=${TZ}
       networks:
@@ -69,7 +71,7 @@ services:
             - clamd
 
     rspamd-mailcow:
-      image: mailcow/rspamd:1.61
+      image: mailcow/rspamd:1.64
       stop_grace_period: 30s
       depends_on:
         - nginx-mailcow
@@ -100,7 +102,7 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.56
+      image: mailcow/phpfpm:1.58
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
         - redis-mailcow
@@ -118,6 +120,8 @@ services:
         - ./data/conf/phpfpm/php-conf.d/opcache-recommended.ini:/usr/local/etc/php/conf.d/opcache-recommended.ini
         - ./data/conf/phpfpm/php-conf.d/upload.ini:/usr/local/etc/php/conf.d/upload.ini
         - ./data/conf/phpfpm/php-conf.d/other.ini:/usr/local/etc/php/conf.d/zzz-other.ini
+        - ./data/conf/dovecot/global_sieve_before:/global_sieve/before
+        - ./data/conf/dovecot/global_sieve_after:/global_sieve/after
         - ./data/assets/templates:/tpls
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
@@ -152,7 +156,7 @@ services:
             - phpfpm
 
     sogo-mailcow:
-      image: mailcow/sogo:1.71
+      image: mailcow/sogo:1.73
       environment:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
@@ -175,6 +179,7 @@ services:
         - ./data/conf/sogo/custom-sogo.js:/usr/lib/GNUstep/SOGo/WebServerResources/js/custom-sogo.js
         - mysql-socket-vol-1:/var/run/mysqld/
         - sogo-web-vol-1:/sogo_web
+        - sogo-userdata-backup-vol-1:/sogo_backup
       restart: always
       networks:
         mailcow-network:
@@ -183,7 +188,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.111
+      image: mailcow/dovecot:1.115
       depends_on:
         - mysql-mailcow
       dns:
@@ -241,10 +246,11 @@ services:
             - dovecot
 
     postfix-mailcow:
-      image: mailcow/postfix:1.45
+      image: mailcow/postfix:1.46
       depends_on:
         - mysql-mailcow
       volumes:
+        - ./data/hooks/postfix:/hooks
         - ./data/conf/postfix:/opt/postfix/conf
         - ./data/assets/ssl:/etc/ssl/mail/:ro
         - postfix-vol-1:/var/spool/postfix
@@ -331,7 +337,7 @@ services:
     acme-mailcow:
       depends_on:
         - nginx-mailcow
-      image: mailcow/acme:1.65
+      image: mailcow/acme:1.70
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       environment:
@@ -351,6 +357,8 @@ services:
         - TZ=${TZ}
         - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
         - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
+        - SNAT_TO_SOURCE=${SNAT_TO_SOURCE:-n}
+        - SNAT6_TO_SOURCE=${SNAT6_TO_SOURCE:-n}
       volumes:
         - ./data/web/.well-known/acme-challenge:/var/www/acme:rw
         - ./data/assets/ssl:/var/lib/acme/:rw
@@ -363,7 +371,7 @@ services:
             - acme
 
     netfilter-mailcow:
-      image: mailcow/netfilter:1.32
+      image: mailcow/netfilter:1.33
       stop_grace_period: 30s
       depends_on:
         - dovecot-mailcow
@@ -386,7 +394,7 @@ services:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.69
+      image: mailcow/watchdog:1.72
       # Debug
       #command: /watchdog.sh
       dns:
@@ -416,6 +424,22 @@ services:
         - HTTPS_PORT=${HTTPS_PORT:-443}
         - REDIS_SLAVEOF_IP=${REDIS_SLAVEOF_IP:-}
         - REDIS_SLAVEOF_PORT=${REDIS_SLAVEOF_PORT:-}
+        - EXTERNAL_CHECKS_THRESHOLD=1
+        - NGINX_THRESHOLD=5
+        - UNBOUND_THRESHOLD=5
+        - REDIS_THRESHOLD=5
+        - MYSQL_THRESHOLD=5
+        - SOGO_THRESHOLD=3
+        - POSTFIX_THRESHOLD=8
+        - CLAMD_THRESHOLD=15
+        - DOVECOT_THRESHOLD=12
+        - PHPFPM_THRESHOLD=5
+        - RATELIMIT_THRESHOLD=1
+        - FAIL2BAN_THRESHOLD=1
+        - ACME_THRESHOLD=1
+        - IPV6NAT_THRESHOLD=1
+        - RSPAMD_THRESHOLD=5
+        - OLEFY_THRESHOLD=5
       networks:
         mailcow-network:
           aliases:
@@ -524,3 +548,4 @@ volumes:
   postfix-vol-1:
   crypt-vol-1:
   sogo-web-vol-1:
+  sogo-userdata-backup-vol-1:

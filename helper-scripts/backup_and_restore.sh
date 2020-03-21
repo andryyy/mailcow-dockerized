@@ -97,8 +97,14 @@ function backup() {
         --network $(docker network ls -qf name=${CMPS_PRJ}_) \
         -v $(docker volume ls -qf name=${CMPS_PRJ}_mysql-vol-1):/var/lib/mysql/:ro \
         --entrypoint= \
-        -v ${BACKUP_LOCATION}/mailcow-${DATE}:/backup \
-        ${SQLIMAGE} /bin/sh -c "mysqldump -hmysql -uroot -p${DBROOT} --all-databases | gzip > /backup/backup_mysql.gz"
+        -v ${BACKUP_LOCATION}/mailcow-${DATE}/mysql:/backup \
+        ${SQLIMAGE} /bin/sh -c "mariabackup --host mysql --user root --password ${DBROOT} --backup --rsync --target-dir=/backup"
+
+      docker run --rm \
+        --network $(docker network ls -qf name=${CMPS_PRJ}_) \
+        --entrypoint= \
+        -v ${BACKUP_LOCATION}/mailcow-${DATE}/mysql:/backup \
+        ${SQLIMAGE} /bin/sh -c "mariabackup --prepare --target-dir=/backup"
       ;;&
     --delete-days)
       shift
@@ -173,6 +179,14 @@ function restore() {
     mysql)
       SQLIMAGE=$(grep -iEo '(mysql|mariadb)\:.+' ${COMPOSE_FILE})
       docker stop $(docker ps -qf name=mysql-mailcow)
+      if [[ -d "${RESTORE_LOCATION}/mysql" ]]; then
+      docker run --rm \
+        --network $(docker network ls -qf name=${CMPS_PRJ}_) \
+        -v $(docker volume ls -qf name=${CMPS_PRJ}_mysql-vol-1):/var/lib/mysql/:rw \
+        --entrypoint= \
+        -v ${RESTORE_LOCATION}/mysql:/backup \
+        ${SQLIMAGE} /bin/bash -c "shopt -s dotglob ; /bin/rm -rf /var/lib/mysql/* ; rsync -avh --usermap=root:mysql --groupmap=root:mysql /backup/ /var/lib/mysql/"
+      elif [[ -f "${RESTORE_LOCATION}/backup_mysql.gz" ]]; then
       docker run \
         -it --rm \
         -v $(docker volume ls -qf name=${CMPS_PRJ}_mysql-vol-1):/var/lib/mysql/ \
@@ -184,6 +198,7 @@ function restore() {
         echo Restoring... && \
         gunzip < backup/backup_mysql.gz | mysql -uroot && \
         mysql -uroot -e SHUTDOWN;"
+      fi
       docker start $(docker ps -aqf name=mysql-mailcow)
       ;;
     esac
@@ -215,14 +230,14 @@ elif [[ ${1} == "restore" ]]; then
   echo
   declare -A FILE_SELECTION
   RESTORE_POINT="${FOLDER_SELECTION[${input_sel}]}"
-  if [[ -z $(find "${FOLDER_SELECTION[${input_sel}]}" -maxdepth 1 -type f -regex ".*\(redis\|rspamd\|mysql\|crypt\|vmail\|postfix\).*") ]]; then
+  if [[ -z $(find "${FOLDER_SELECTION[${input_sel}]}" -maxdepth 1 -type f,d -regex ".*\(redis\|rspamd\|mysql\|crypt\|vmail\|postfix\).*") ]]; then
     echo "No datasets found"
     exit 1
   fi
 
   echo "[ 0 ] - all"
   # find all files in folder with *.gz extension, print their base names, remove backup_, remove .tar (if present), remove .gz
-  FILE_SELECTION[0]=$(find "${FOLDER_SELECTION[${input_sel}]}" -type f -name '*.gz' -printf '%f\n' | sed 's/backup_*//' | sed 's/\.[^.]*$//' | sed 's/\.[^.]*$//')
+  FILE_SELECTION[0]=$(find "${FOLDER_SELECTION[${input_sel}]}" -maxdepth 1 -type f,d \( -name '*.gz' -o -name 'mysql' \) -printf '%f\n' | sed 's/backup_*//' | sed 's/\.[^.]*$//' | sed 's/\.[^.]*$//')
   for file in $(ls -f "${FOLDER_SELECTION[${input_sel}]}"); do
     if [[ ${file} =~ vmail ]]; then
       echo "[ ${i} ] - Mail directory (/var/vmail)"

@@ -7,6 +7,11 @@ rspamd_config.MAILCOW_AUTH = {
 	end
 }
 
+local monitoring_hosts = rspamd_config:add_map{
+  url = "/etc/rspamd/custom/monitoring_nolog.map",
+  description = "Monitoring hosts",
+  type = "regexp"
+}
 
 rspamd_config:register_symbol({
   name = 'KEEP_SPAM',
@@ -203,7 +208,7 @@ rspamd_config:register_symbol({
   type = 'postfilter',
   callback = function(task)
     local from = task:get_header('From')
-    if from and (string.find(from, 'monitoring-system@everycloudtech.us', 1, true) or from == 'watchdog@localhost') then
+    if from and monitoring_hosts:get_key(from) then
       task:set_flag('no_log')
       task:set_flag('no_stat')
     end

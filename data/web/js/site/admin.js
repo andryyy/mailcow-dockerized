@@ -359,6 +359,16 @@ jQuery(function($){
   draw_oauth2_clients();
   draw_transport_maps();
   draw_queue();
+  // API IP check toggle
+  $("#skip_ip_check").click(function( event ) {
+   $("#skip_ip_check").not(this).prop('checked', false);
+    if ($("#skip_ip_check:checked").length > 0) {
+      $('#allow_from').prop('disabled', true);
+    }
+    else {
+      $("#allow_from").removeAttr('disabled');
+    }
+  });
   // Relayhost
   $('#testRelayhostModal').on('show.bs.modal', function (e) {
     $('#test_relayhost_result').text("-");

@@ -3,7 +3,7 @@ function presets($_action, $_kind) {
   global $lang;
   switch ($_action) {
     case 'get':
-      if ($_SESSION['mailcow_cc_role'] != "admin") {
+      if ($_SESSION['mailcow_cc_role'] != "admin" && $_SESSION['mailcow_cc_role'] != "domainadmin") {
         return false;
       }
       $presets = array();

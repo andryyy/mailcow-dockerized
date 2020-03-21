@@ -134,11 +134,12 @@ while (($#)); do
       exit 0
     ;;
     --help|-h)
-    echo './update.sh [-c|--check, --ours, --gc, -h|--help]
+    echo './update.sh [-c|--check, --ours, --gc, --skip-start, -h|--help]
 
   -c|--check   -   Check for updates and exit (exit codes => 0: update available, 3: no updates)
   --ours       -   Use merge strategy "ours" to solve conflicts in favor of non-mailcow code (local changes)
   --gc         -   Run garbage collector to delete old image tags
+  --skip-start -   Do not start mailcow after update
 '
     exit 1
   esac
@@ -187,6 +188,7 @@ CONFIG_ARRAY=(
   "ALLOW_ADMIN_EMAIL_LOGIN"
   "SKIP_HTTP_VERIFICATION"
   "SOGO_EXPIRE_SESSION"
+  "REDIS_PORT"
 )
 
 sed -i '$a\' mailcow.conf
@@ -337,6 +339,11 @@ for option in ${CONFIG_ARRAY[@]}; do
       echo '# SOGo session timeout in minutes' >> mailcow.conf
       echo "SOGO_EXPIRE_SESSION=480" >> mailcow.conf
   fi
+  elif [[ ${option} == "REDIS_PORT" ]]; then
+    if ! grep -q ${option} mailcow.conf; then
+      echo "Adding new option \"${option}\" to mailcow.conf"
+      echo "REDIS_PORT=127.0.0.1:7654" >> mailcow.conf
+  fi
   elif ! grep -q ${option} mailcow.conf; then
     echo "Adding new option \"${option}\" to mailcow.conf"
     echo "${option}=n" >> mailcow.conf
@@ -378,18 +385,26 @@ fi
 
 DIFF_DIRECTORY=update_diffs
 DIFF_FILE=${DIFF_DIRECTORY}/diff_before_update_$(date +"%Y-%m-%d-%H-%M-%S")
-echo -e "\e[32mSaving diff to ${DIFF_FILE}...\e[0m"
-mkdir -p ${DIFF_DIRECTORY}
 mv diff_before_update* ${DIFF_DIRECTORY}/ 2> /dev/null
-git diff --stat > ${DIFF_FILE}
-git diff >> ${DIFF_FILE}
+if ! git diff-index --quiet HEAD; then
+  echo -e "\e[32mSaving diff to ${DIFF_FILE}...\e[0m"
+  mkdir -p ${DIFF_DIRECTORY}
+  git diff --stat > ${DIFF_FILE}
+  git diff >> ${DIFF_FILE}
+fi
 
 echo -e "\e[32mPrefetching images...\e[0m"
 prefetch_images
 
-echo -e "Stopping mailcow... "
+echo -e "\e[32mStopping mailcow...\e[0m"
 sleep 2
+MAILCOW_CONTAINERS=($(docker-compose ps -q))
 docker-compose down
+echo -e "\e[32mChecking for remaining containers...\e[0m"
+sleep 2
+for container in "${MAILCOW_CONTAINERS[@]}"; do
+  docker rm -f "$container" 2> /dev/null
+done
 
 # Silently fixing remote url from andryyy to mailcow
 git remote set-url origin https://github.com/mailcow/mailcow-dockerized

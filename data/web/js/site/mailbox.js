@@ -48,6 +48,23 @@ $(document).ready(function() {
       $(this.$domain).closest("select").selectpicker();
     }
   });
+  // Set paging
+  $('[data-page-size]').on('click', function(e){
+    e.preventDefault();
+    var new_size = $(this).data('page-size');
+    var parent_ul = $(this).closest('ul');
+    var table_id = $(parent_ul).data('table-id');
+    FooTable.get('#' + table_id).pageSize(new_size);
+    //$(this).parent().addClass('active').siblings().removeClass('active')
+    heading = $(this).parents('.panel').find('.panel-heading')
+    var n_results = $(heading).children('.table-lines').text().split(' / ')[1];
+    $(heading).children('.table-lines').text(function(){
+      if (new_size > n_results) {
+        new_size = n_results;
+      }
+      return new_size + ' / ' + n_results;
+    })
+  });
   // Clone mailbox mass actions
   $("div").find("[data-actions-header='true'").each(function() {
     $(this).html($(this).nextAll('.mass-actions-mailbox:first').html());
@@ -129,12 +146,15 @@ $(document).ready(function() {
   });
   // Disable submit button on script change
 	$('.textarea-code').on('keyup', function() {
-    $('#add_filter_btns > #add_sieve_script').attr({"disabled": true});
+    // Disable all "save" buttons, could be a "related button only" function, todo
+    $('.add_sieve_script').attr({"disabled": true});
 	});
   // Validate script data
-  $("#validate_sieve").click(function( event ) {
+  $(".validate_sieve").click(function( event ) {
     event.preventDefault();
-    var script = $('#script_data').val();
+    var validation_button = $(this);
+    // Get script_data textarea content from form the button was clicked in
+    var script = $('textarea[name="script_data"]', $(this).parents('form:first')).val();
     $.ajax({
       dataType: 'json',
       url: "/inc/ajax/sieve_validation.php",
@@ -144,7 +164,7 @@ $(document).ready(function() {
         var response = (data.responseText);
         response_obj = JSON.parse(response);
         if (response_obj.type == "success") {
-          $('#add_filter_btns > #add_sieve_script').attr({"disabled": false});
+          $(validation_button).next().attr({"disabled": false});
         }
         mailcow_alert_box(response_obj.msg, response_obj.type);
       },
@@ -181,10 +201,6 @@ jQuery(function($){
   var entityMap={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"};
   function escapeHtml(n){return String(n).replace(/[&<>"'`=\/]/g,function(n){return entityMap[n]})}
   // http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
-  function validateEmail(email) {
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
-  }
   function humanFileSize(i){if(Math.abs(i)<1024)return i+" B";var B=["KiB","MiB","GiB","TiB","PiB","EiB","ZiB","YiB"],e=-1;do{i/=1024,++e}while(Math.abs(i)>=1024&&e<B.length-1);return i.toFixed(1)+" "+B[e]}
   $(".refresh_table").on('click', function(e) {
     e.preventDefault();
@@ -205,7 +221,12 @@ jQuery(function($){
     heading = ft.$el.parents('.panel').find('.panel-heading')
     var ft_paging = ft.use(FooTable.Paging)
     $(heading).children('.table-lines').text(function(){
-      return ft_paging.totalRows;
+      var total_rows = ft_paging.totalRows;
+      var size = ft_paging.size;
+      if (size > total_rows) {
+        size = total_rows;
+      }
+      return size + ' / ' + total_rows;
     })
   }
   function draw_domain_table() {
@@ -263,6 +284,9 @@ jQuery(function($){
               item.action += '<a href="/edit/domain/' + encodeURIComponent(item.domain_name) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>';
             }
             item.action += '<a href="#dnsInfoModal" class="btn btn-xs btn-info" data-toggle="modal" data-domain="' + encodeURIComponent(item.domain_name) + '"><span class="glyphicon glyphicon-question-sign"></span> DNS</a></div>';
+            if (item.backupmx_int == 1) {
+              item.domain_name = '<span class="glyphicon glyphicon-export"></span> ' + item.domain_name;
+            }
           });
         }
       }),
@@ -319,6 +343,7 @@ jQuery(function($){
         {"name":"spam_aliases","filterable": false,"title":lang.spam_aliases,"breakpoints":"all"},
         {"name":"tls_enforce_in","filterable": false,"title":lang.tls_enforce_in,"breakpoints":"all"},
         {"name":"tls_enforce_out","filterable": false,"title":lang.tls_enforce_out,"breakpoints":"all"},
+        {"name":"last_mail_login","breakpoints":"xs sm","formatter":function unix_time_format(tm) { if (tm == '') { return lang.no; } else { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString(); }},"title":lang.last_mail_login,"style":{"width":"170px"}},
         {"name":"quarantine_notification","filterable": false,"title":lang.quarantine_notification,"breakpoints":"all"},
         {"name":"in_use","filterable": false,"type":"html","title":lang.in_use,"sortValue": function(value){
           return Number($(value).find(".progress-bar").attr('aria-valuenow'));

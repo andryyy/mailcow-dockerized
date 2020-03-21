@@ -245,11 +245,15 @@ chmod 600 /var/lib/sogo/GNUstep/Defaults/sogod.plist
 echo "Syncing web content with named volume"
 rsync -a /usr/lib/GNUstep/SOGo/. /sogo_web/
 
+# Chown backup path
+chown -R sogo:sogo /sogo_backup
+
 # Creating cronjobs
 if [[ "${MASTER}" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
   echo "* * * * *   sogo   /usr/sbin/sogo-ealarms-notify -p /etc/sogo/sieve.creds 2>/dev/null" > /etc/cron.d/sogo
   echo "* * * * *   sogo   /usr/sbin/sogo-tool expire-sessions ${SOGO_EXPIRE_SESSION}" >> /etc/cron.d/sogo
   echo "0 0 * * *   sogo   /usr/sbin/sogo-tool update-autoreply -p /etc/sogo/sieve.creds" >> /etc/cron.d/sogo
+  echo "0 2 * * *   sogo   /usr/sbin/sogo-tool backup /sogo_backup ALL" >> /etc/cron.d/sogo
 else
   rm /etc/cron.d/sogo
 fi
