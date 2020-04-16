@@ -3,9 +3,10 @@ LABEL maintainer "Andre Peters <andre.peters@servercow.de>"
 
 ENV APCU_PECL 5.1.18
 ENV IMAGICK_PECL 3.4.4
+# Mailparse is pulled from master branch
 #ENV MAILPARSE_PECL 3.0.2
 ENV MEMCACHED_PECL 3.1.5
-ENV REDIS_PECL 5.1.1
+ENV REDIS_PECL 5.2.1
 
 RUN apk add -U --no-cache autoconf \
   bash \

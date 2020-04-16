@@ -23,7 +23,6 @@ RUN apt-get update && apt-get install -y \
   && chown _rspamd:_rspamd /run/rspamd
 
 COPY settings.conf /etc/rspamd/settings.conf
-COPY neural.lua /usr/share/rspamd/plugins/neural.lua
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

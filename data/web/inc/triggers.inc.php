@@ -100,17 +100,26 @@ if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == "admi
 	if (isset($_POST["reset_main_logo"])) {
     customize('delete', 'main_logo');
 	}
-  // API and license cannot be controlled by API
+  // Some actions will not be available via API
 	if (isset($_POST["license_validate_now"])) {
 		license('verify');
 	}
   if (isset($_POST["admin_api"])) {
-		admin_api('edit', $_POST);
+    if (isset($_POST["admin_api"]["ro"])) {
+      admin_api('ro', 'edit', $_POST);
+    }
+    elseif (isset($_POST["admin_api"]["rw"])) {
+      admin_api('rw', 'edit', $_POST);
+    }
 	}
-	if (isset($_POST["admin_api_regen_key"])) {
-		admin_api('regen_key', $_POST);
+  if (isset($_POST["admin_api_regen_key"])) {
+    if (isset($_POST["admin_api_regen_key"]["ro"])) {
+      admin_api('ro', 'regen_key', $_POST);
+    }
+    elseif (isset($_POST["admin_api_regen_key"]["rw"])) {
+      admin_api('rw', 'regen_key', $_POST);
+    }
 	}
-  // Not available via API
 	if (isset($_POST["rspamd_ui"])) {
 		rspamd_ui('edit', $_POST);
 	}

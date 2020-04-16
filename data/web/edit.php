@@ -25,7 +25,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         if (!empty($result)) {
         ?>
           <h4><?=$lang['edit']['alias'];?></h4>
-          <br />
+          <br>
           <form class="form-horizontal" data-id="editalias" role="form" method="post">
             <input type="hidden" value="0" name="active">
             <input type="hidden" value="0" name="sogo_visible">
@@ -96,7 +96,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
       if (!empty($result)) {
       ?>
       <h4><?=$lang['edit']['domain_admin'];?></h4>
-      <br />
+      <br>
       <form class="form-horizontal" data-id="editdomainadmin" role="form" method="post">
         <input type="hidden" value="0" name="active">
         <div class="form-group">
@@ -194,7 +194,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
       if (!empty($result)) {
       ?>
       <h4><?=$lang['edit']['domain_admin'];?></h4>
-      <br />
+      <br>
       <form class="form-horizontal" data-id="editadmin" role="form" method="post">
         <input type="hidden" value="0" name="active">
         <div class="form-group">
@@ -258,6 +258,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <input type="hidden" value="0" name="backupmx">
             <input type="hidden" value="0" name="gal">
             <input type="hidden" value="0" name="relay_all_recipients">
+            <input type="hidden" value="0" name="relay_unknown_only">
             <div class="form-group">
               <label class="control-label col-sm-2" for="description"><?=$lang['edit']['description'];?></label>
               <div class="col-sm-10">
@@ -317,9 +318,13 @@ if (isset($_SESSION['mailcow_cc_role'])) {
               <div class="col-sm-10">
                 <div class="checkbox">
                   <label><input type="checkbox" value="1" name="backupmx" <?=(isset($result['backupmx_int']) && $result['backupmx_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_domain'];?></label>
-                  <br />
+                  <br>
                   <label><input type="checkbox" value="1" name="relay_all_recipients" <?=(isset($result['relay_all_recipients_int']) && $result['relay_all_recipients_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_all'];?></label>
                   <p><?=$lang['edit']['relay_all_info'];?></p>
+                  <label><input type="checkbox" value="1" name="relay_unknown_only" <?=(isset($result['relay_unknown_only_int']) && $result['relay_unknown_only_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_unknown_only'];?></label>
+                  <br>
+                  <p><?=$lang['edit']['relay_transport_info'];?></p>
+                  <hr style="margin:25px 0px 0px 0px">
                 </div>
               </div>
             </div>
@@ -559,6 +564,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
       $mailbox = html_entity_decode(rawurldecode($_GET["mailbox"]));
       $result = mailbox('get', 'mailbox_details', $mailbox);
       $rl = ratelimit('get', 'mailbox', $mailbox);
+      $pushover_data = pushover('get', $mailbox);
       $quarantine_notification = mailbox('get', 'quarantine_notification', $mailbox);
       if (!empty($result)) {
         ?>
@@ -576,7 +582,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
           </div>
           <div class="form-group">
             <label class="control-label col-sm-2" for="quota"><?=$lang['edit']['quota_mb'];?>
-              <br /><span id="quotaBadge" class="badge">max. <?=intval($result['max_new_quota'] / 1048576)?> MiB</span>
+              <br><span id="quotaBadge" class="badge">max. <?=intval($result['max_new_quota'] / 1048576)?> MiB</span>
             </label>
             <div class="col-sm-10">
               <input type="number" name="quota" style="width:100%" min="0" max="<?=intval($result['max_new_quota'] / 1048576);?>" value="<?=intval($result['quota']) / 1048576;?>" class="form-control">
@@ -724,6 +730,77 @@ if (isset($_SESSION['mailcow_cc_role'])) {
           <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
               <button class="btn btn-success" data-action="edit_selected" data-id="editmailbox" data-item="<?=htmlspecialchars($result['username']);?>" data-api-url='edit/mailbox' data-api-attr='{}' href="#"><?=$lang['edit']['save'];?></button>
+            </div>
+          </div>
+        </form>
+        <hr>
+        <form data-id="pushover" class="form well" method="post">
+          <input type="hidden" value="0" name="evaluate_x_prio">
+          <input type="hidden" value="0" name="only_x_prio">
+          <input type="hidden" value="0" name="active">
+          <input type="hidden" value="" name="senders">
+          <div class="row">
+            <div class="col-sm-1">
+              <p class="help-block"><a href="https://pushover.net" target="_blank"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAACglBMVEUAAAAAAAEAAAAilecFGigAAAAAAAAAAAAAAAANj+c3n+Ypm+oeYI4KWI4MieAtkdQbleoJcLcjmeswmN4Rit4KgdMKUYQJKUAQSnILL0kMNlMSTngimOoNPF0hlOQBBgkNOlkRS3MHIjUhk+IPf8wKLUYsjM0AAAASTngAAAAAAAAPfckbdLIbdrYUWIgegsgce70knfEAAAAknfENOVkGHi8YaaIjnvEdgMUhkuAQSG8aca0hleQUh9YLjOM4nOEMgtMcbaYWa6YemO02ltkKhNktgLodYZEPXJEyi8kKesktfLUzj84cWYMiluckZ5YJXJYeW4Y0k9YKfs4yjs0pc6YHZaUviskLfMkqmugak+cqkNcViNcqeK4Iaq4XRmYGPmYMKDsFJTstgr0LdL0ti84CCQ4BCQ4Qgc8rlt8XjN8shcQsi8wZSGgEP2cRMEUDKkUAAAD///8dmvEamfExo/EXmPEWl/ERlvElnvEsofEjnfETl/Enn/Ezo/E4pvEvovEfm/E1pPEzpPEvofEOlfEpoPEamPEQlfEYmfE6p/EgnPEVlvEroPE3pfE2pfENk/Ern/E3pPEcmfEfmvEnnvBlufT6/P0soPAknPDd7/zs9vzo9PxBqfItofAqoPD9/f3B4/q43/mx2/l/xfZ6w/Vxv/VtvfVgt/RXtPNTsfNEq/L3+/31+v3a7fvR6vvH5fqs2vmc0/jx+P3v9/3h8fzW7PvV7PvL5/q13fmo1/mh1PiY0fiNy/aHyfZ2wfVou/Vdt/RPsPM3oeoQkuowmeAgjdgcgMQbeLrw9/3k8vy74Pm63/mX0PdYtfNNr/Ikm+4wnOchkuAVjOAfdrMVcrOdoJikAAAAcnRSTlMAIQ8IzzweFwf+/fvw8P79+/Xt7e3p6eji4d7U08y8qZyTiIWDgn53bWxqaWBKQ0JBOjUwMCkoJCEfHBkT/vz8/Pv7+vr69/b29PTy7ezm5ubm5N7e29vQ0M/Pv7+4uLW1pqaWloWDg3x7e21mUVFFRUXdPracAAAEbElEQVRIx4WUZbvaQBCFF+ru7u7u7u7u7t4mvVwSoBC0JIUCLRQolLq7u7vr/+nMLkmQyvlwyfPcd86e3ZldUqwyQ/p329J+XfutPQYOLUP+q55rFtQJRvY79+xxlZTUWbKpz7/xrrMr2+3BoNPpdLn2lJQ4HEeqLOr1d7z7XNkesQed4A848G63Oy4Gmg/6Mz542QvZbqe8C/Ig73CLYiYTrtLmT3zfqbIcAR7y4wIqH/B6M9Fo0+Ldb6sM9ph/v4ozPuz12mxRofaAAr7jCNkuoz/jNf9AGHibkBCm51fsGKvxsAGWx4H+jBcEi6V2birDpCL/9Klrd1KHbiSvPWP8V0tTnTfO03iXi57P6WNHOVUf44IFdFDRz6pV5fw8Zy5z3JVH5+R48OwxqDiGvKJIY9R+9JsCuJ5HPg74OVEMpz+nbdEPUHEWeEk6IDUnTC1l5r+f8uffc0cfxc8fS17kLso24SwUPFDA/6DE82xKDOPliJ7n/GGOOyWK9zD9CdjvOfg9Dv6AH+AX04LW9gj2i8W/APx1UbxwCAu+wPmcpgUKL/EHdvtq4uwaZwCuznPJVY5LHhED15G/isd5Hz4eKui/e/du02YoKFeD5mHzHIN/nxEDe25gQQwKorAid04CfyzwL4XutXvl1Pt1guMOwwKPkU8mYIFT8JHK+vv8prpDScUVL+j8s3lOctw1GIhbWHAS+HgKPk7xPM/4UtNAYmzizJkf6NgTb/gM8jePQLsewMdthS3g95tMpT1IhVm6v1s8fYmLeb13Odwp8Fh5KY048y/d14WUrwrb1e/X/rNp73nkD8kWS+wi/MZ4XuetG4mhKubJm3/WNEvi8SHwB56nPKjUam0LBdp9ARwupFemTYudvgN/L1+A/Ko/LGBuS8pPy+YR1fuCTWNKnUyoeUyYx2o2dyEVGmr5xTD42xzvkD16+Pb9WIIH6fmt1r3mbsTY7Bvw+n23naT8BUWh86bz6G/e259UXPUK3gfAxQDlo7Rpx3Geqb2e3wp83SGEdKpB7zvwYbzvT2n65xLwbH6YP+M9C8vA8E1wxLU8gkCbdhXGUyrMgwVrcbzLHonr78lzDvWM3q/C/HtDlXoSUIe3YkblhRPIX4E8Oo/9siLv8dRjV7SBlkdgTXvKS7nzsA/9AfeEuhKq9T8zWIDv1Sd6ETAP4D6/H/1V+1BojvruNa4SZXz4JhY84dV5MOF5agUvu5OsOo+KRpG30KalEnoeDccFlutPZYs38D5n3zcpr1/0fBhfb3DOY1z2tSAgLxWezz6zuoHhfUmOejf6blHQH/sFuJYfcMZX307ytKvRa3ifoV/586P5j+tICtS77BuJxzxYAPZsntX8k3eSIhlajK4p8b7iefCEKs03kD/I2LnxL9ovH+43y4fAv1YrI/mzDBsavAX/UppfzVOrZT/ydxk6lJ047MfLfVbcb6hS9ZEzWxekKQ5WrtPqZg3rV6tWrX6Tle3KQZj/q6KxQnmDoXwFY0VSrN9e8FRXBCTAvwAAAABJRU5ErkJggg==" class="img img-fluid"></a></p>
+            </div>
+            <div class="col-sm-10">
+              <p class="help-block"><?=$lang['admin']['pushover_vars'];?>: <code>{SUBJECT}</code>, <code>{SENDER}</code></p>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="token">API Token/Key (Application)</label>
+                      <input type="text" class="form-control" name="token" maxlength="30" value="<?=$pushover_data['token'];?>" required>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="key">User/Group Key</label>
+                      <input type="text" class="form-control" name="key" maxlength="30" value="<?=$pushover_data['key'];?>" required>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="title"><?=$lang['admin']['pushover_title'];?></label>
+                      <input type="text" class="form-control" name="title" value="<?=$pushover_data['title'];?>" placeholder="Mail">
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="text"><?=$lang['admin']['pushover_text'];?></label>
+                      <input type="text" class="form-control" name="text" value="<?=$pushover_data['text'];?>" placeholder="You've got mail 📧">
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="text"><?=$lang['admin']['pushover_sender_array'];?></label>
+                      <input type="text" class="form-control" name="senders" value="<?=$pushover_data['senders'];?>" placeholder="sender1@example.com, sender2@example.com">
+                    </div>
+                  </div>
+                  <div class="col-sm-12">
+                    <div class="checkbox">
+                    <label><input type="checkbox" value="1" name="evaluate_x_prio" <?=($pushover_data['attributes']['evaluate_x_prio']=="1") ? "checked" : null;?>> <?=$lang['edit']['evaluate_x_prio'];?></label>
+                    </div>
+                  </div>
+                  <div class="col-sm-12">
+                    <div class="checkbox">
+                    <label><input type="checkbox" value="1" name="only_x_prio" <?=($pushover_data['attributes']['only_x_prio']=="1") ? "checked" : null;?>> <?=$lang['edit']['only_x_prio'];?></label>
+                    </div>
+                  </div>
+                  <div class="col-sm-12">
+                    <div class="checkbox">
+                    <label><input type="checkbox" value="1" name="active" <?=($pushover_data['active']=="1") ? "checked" : null;?>> <?=$lang['edit']['active'];?></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr>
+              <p><?=sprintf($lang['admin']['pushover_info'], $mailbox);?></p>
+              <div class="btn-group" data-acl="<?=$_SESSION['acl']['pushover'];?>">
+                  <a class="btn btn-sm btn-default" data-action="edit_selected" data-id="pushover" data-item="<?=htmlspecialchars($mailbox);?>" data-api-url='edit/pushover' data-api-attr='{}' href="#"><?=$lang['admin']['save'];?></a>
+                  <a class="btn btn-sm btn-default" data-action="edit_selected" data-id="pushover-test" data-item="<?=htmlspecialchars($mailbox);?>" data-api-url='edit/pushover-test' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['admin']['pushover_verify'];?></a>
+                  <a class="btn btn-sm btn-danger" data-action="edit_selected" data-id="pushover-delete" data-item="<?=htmlspecialchars($mailbox);?>" data-api-url='edit/pushover' data-api-attr='{"delete":"true"}' href="#"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> <?=$lang['admin']['remove'];?></a>
+              </div>
             </div>
           </div>
         </form>
@@ -945,7 +1022,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         if (!empty($result)) {
           ?>
           <h4><?=$lang['mailbox']['bcc_map'];?></h4>
-          <br />
+          <br>
           <form class="form-horizontal" data-id="editbcc" role="form" method="post">
             <input type="hidden" value="0" name="active">
             <div class="form-group">
@@ -996,7 +1073,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         if (!empty($result)) {
           ?>
           <h4><?=$lang['mailbox']['recipient_map']?>: <?=$result['recipient_map_old'];?></h4>
-          <br />
+          <br>
           <form class="form-horizontal" data-id="edit_recipient_map" role="form" method="post">
             <input type="hidden" value="0" name="active">
             <div class="form-group">
@@ -1042,7 +1119,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         if (!empty($result)) {
           ?>
           <h4><?=$lang['mailbox']['tls_policy_maps']?>: <?=$result['dest'];?></h4>
-          <br />
+          <br>
           <form class="form-horizontal" data-id="edit_tls_policy_maps" role="form" method="post">
             <input type="hidden" value="0" name="active">
             <div class="form-group">

@@ -188,6 +188,7 @@ mail_name = Postcow
 # Use custom_transport.pcre for custom transports
 transport_maps = pcre:/opt/postfix/conf/custom_transport.pcre,
   pcre:/opt/postfix/conf/local_transport,
+  proxy:mysql:/opt/postfix/conf/sql/mysql_relay_ne.cf,
   proxy:mysql:/opt/postfix/conf/sql/mysql_transport_maps.cf
 smtp_sasl_auth_soft_bounce = no
 postscreen_discard_ehlo_keywords = silent-discard, dsn

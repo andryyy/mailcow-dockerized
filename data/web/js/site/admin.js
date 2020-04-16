@@ -241,7 +241,7 @@ jQuery(function($){
         {"name":"chkbox","title":"","style":{"maxWidth":"60px","width":"60px"},"filterable": false,"sortable": false,"type":"html"},
         {"name":"queue_id","type":"text","title":"QID","style":{"width":"50px"}},
         {"name":"queue_name","type":"text","title":"Queue","style":{"width":"120px"}},
-        {"name":"arrival_time","sorted": true,"direction": "DESC","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.arrival_time,"style":{"width":"170px"}},
+        {"name":"arrival_time","sorted": true,"direction": "DESC","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.arrival_time,"style":{"width":"170px"}},
         {"name":"message_size","style":{"whiteSpace":"nowrap"},"title":lang.message_size,"formatter": function(value){
           return humanFileSize(value);
         }},
@@ -360,13 +360,22 @@ jQuery(function($){
   draw_transport_maps();
   draw_queue();
   // API IP check toggle
-  $("#skip_ip_check").click(function( event ) {
-   $("#skip_ip_check").not(this).prop('checked', false);
-    if ($("#skip_ip_check:checked").length > 0) {
-      $('#allow_from').prop('disabled', true);
+  $("#skip_ip_check_ro").click(function( event ) {
+   $("#skip_ip_check_ro").not(this).prop('checked', false);
+    if ($("#skip_ip_check_ro:checked").length > 0) {
+      $('#allow_from_ro').prop('disabled', true);
     }
     else {
-      $("#allow_from").removeAttr('disabled');
+      $("#allow_from_ro").removeAttr('disabled');
+    }
+  });
+  $("#skip_ip_check_rw").click(function( event ) {
+   $("#skip_ip_check_rw").not(this).prop('checked', false);
+    if ($("#skip_ip_check_rw:checked").length > 0) {
+      $('#allow_from_rw').prop('disabled', true);
+    }
+    else {
+      $("#allow_from_rw").removeAttr('disabled');
     }
   });
   // Relayhost

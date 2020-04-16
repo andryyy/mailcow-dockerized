@@ -292,7 +292,6 @@ mysql_checks() {
   trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
   while [ ${err_count} -lt ${THRESHOLD} ]; do
     touch /tmp/mysql-mailcow; echo "$(tail -50 /tmp/mysql-mailcow)" > /tmp/mysql-mailcow
-    host_ip=$(get_container_ip mysql-mailcow)
     err_c_cur=${err_count}
     /usr/lib/nagios/plugins/check_mysql -s /var/run/mysqld/mysqld.sock -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} 2>> /tmp/mysql-mailcow 1>&2; err_count=$(( ${err_count} + $? ))
     /usr/lib/nagios/plugins/check_mysql_query -s /var/run/mysqld/mysqld.sock -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} -q "SELECT COUNT(*) FROM information_schema.tables" 2>> /tmp/mysql-mailcow 1>&2; err_count=$(( ${err_count} + $? ))
@@ -302,6 +301,30 @@ mysql_checks() {
     if [[ $? == 10 ]]; then
       diff_c=0
       sleep 1
+    else
+      diff_c=0
+      sleep $(( ( RANDOM % 60 ) + 20 ))
+    fi
+  done
+  return 1
+}
+
+mysql_repl_checks() {
+  err_count=0
+  diff_c=0
+  THRESHOLD=${MYSQL_REPLICATION_THRESHOLD}
+  # Reduce error count by 2 after restarting an unhealthy container
+  trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
+  while [ ${err_count} -lt ${THRESHOLD} ]; do
+    touch /tmp/mysql_repl_checks; echo "$(tail -50 /tmp/mysql_repl_checks)" > /tmp/mysql_repl_checks
+    err_c_cur=${err_count}
+    /usr/lib/nagios/plugins/check_mysql_slavestatus.sh -S /var/run/mysqld/mysqld.sock -u root -p ${DBROOT} 2>> /tmp/mysql_repl_checks 1>&2; err_count=$(( ${err_count} + $? ))
+    [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
+    [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
+    progress "MySQL/MariaDB replication" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
+    if [[ $? == 10 ]]; then
+      diff_c=0
+      sleep 60
     else
       diff_c=0
       sleep $(( ( RANDOM % 60 ) + 20 ))
@@ -404,6 +427,33 @@ dovecot_checks() {
     [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
     [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
     progress "Dovecot" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
+    if [[ $? == 10 ]]; then
+      diff_c=0
+      sleep 1
+    else
+      diff_c=0
+      sleep $(( ( RANDOM % 60 ) + 20 ))
+    fi
+  done
+  return 1
+}
+
+dovecot_repl_checks() {
+  err_count=0
+  diff_c=0
+  THRESHOLD=${DOVECOT_REPL_THRESHOLD}
+  D_REPL_STATUS=$(redis-cli -h redis -r GET DOVECOT_REPL_HEALTH)
+  # Reduce error count by 2 after restarting an unhealthy container
+  trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
+  while [ ${err_count} -lt ${THRESHOLD} ]; do
+    err_c_cur=${err_count}
+    D_REPL_STATUS=$(redis-cli --raw -h redis GET DOVECOT_REPL_HEALTH)
+    if [[ "${D_REPL_STATUS}" != "1" ]]; then
+      err_count=$(( ${err_count} + 1 ))
+    fi
+    [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
+    [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
+    progress "Dovecot replication" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
     if [[ $? == 10 ]]; then
       diff_c=0
       sleep 1
@@ -670,6 +720,20 @@ echo "Spawned external_checks with PID ${PID}"
 BACKGROUND_TASKS+=(${PID})
 fi
 
+if [[ ${WATCHDOG_MYSQL_REPLICATION_CHECKS} =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+(
+while true; do
+  if ! mysql_repl_checks; then
+    log_msg "MySQL replication check hit error limit"
+    echo mysql_repl_checks > /tmp/com_pipe
+  fi
+done
+) &
+PID=$!
+echo "Spawned mysql_repl_checks with PID ${PID}"
+BACKGROUND_TASKS+=(${PID})
+fi
+
 (
 while true; do
   if ! mysql_checks; then
@@ -768,6 +832,18 @@ done
 ) &
 PID=$!
 echo "Spawned dovecot_checks with PID ${PID}"
+BACKGROUND_TASKS+=(${PID})
+
+(
+while true; do
+  if ! dovecot_repl_checks; then
+    log_msg "Dovecot hit error limit"
+    echo dovecot_repl_checks > /tmp/com_pipe
+  fi
+done
+) &
+PID=$!
+echo "Spawned dovecot_repl_checks with PID ${PID}"
 BACKGROUND_TASKS+=(${PID})
 
 (
@@ -885,6 +961,12 @@ while true; do
   elif [[ ${com_pipe_answer} == "external_checks" ]]; then
     log_msg "Your mailcow is an open relay!"
     [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please stop mailcow now and check your network configuration!"
+  elif [[ ${com_pipe_answer} == "mysql_repl_checks" ]]; then
+    log_msg "MySQL replication is not working properly"
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
+  elif [[ ${com_pipe_answer} == "dovecot_repl_checks" ]]; then
+    log_msg "Dovecot replication is not working properly" "Please check doveadm replicator status"
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
   elif [[ ${com_pipe_answer} == "acme-mailcow" ]]; then
     log_msg "acme-mailcow did not complete successfully"
     [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check acme-mailcow for further information."

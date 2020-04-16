@@ -24,6 +24,9 @@
         "apps": "Apps"
     },
     "danger": {
+        "pushover_token": "Pushover Token hat das falsche Format",
+        "pushover_key": "Pushover Key hat das falsche Format",
+        "pushover_credentials_missing": "Pushover Token und/oder Key fehlen",
         "invalid_filter_type": "Ungültiger Filtertyp",
         "file_open_error": "Datei kann nicht zum Schreiben geöffnet werden",
         "transport_dest_exists": "Transport Maps Ziel \"%s\" existiert bereits",
@@ -135,6 +138,8 @@
         "extra_acl_invalid_domain": "Externe Absenderadresse \"%s\" verwendet eine ungültige Domain"
     },
     "success": {
+        "dovecot_restart_success": "Dovecot wurde erfolgreich neu gestartet",
+        "pushover_settings_edited": "Pushover Konfiguration gespeichert, bitte den Zugang im Anschluss verifizieren.",
         "global_filter_written": "Filterdatei wurde erfolreich geschrieben",
         "learned_ham": "ID %s wurde erfolreich als Ham gelernt",
         "verified_totp_login": "TOTP Anmeldung verifiziert",
@@ -213,6 +218,7 @@
         "no_action": "Keine Aktion anwendbar"
     },
     "warning": {
+        "dovecot_restart_failed": "Dovecot wurde nicht erfolgreich neu gestartet, bitte prüfen Sie die Logs.",
         "domain_added_sogo_failed": "Domain wurde hinzugefügt, aber SOGo konnte nicht neugestartet werden",
         "cannot_delete_self": "Kann derzeit eingeloggten Benutzer nicht entfernen",
         "no_active_admin": "Kann letzten aktiven Administrator nicht deaktivieren",
@@ -220,11 +226,22 @@
         "fuzzy_learn_error": "Fuzzy Lernfehler: %s",
         "ip_invalid": "Ungültige IP übersprungen: %s",
         "session_token": "Formular-Token ungültig: Token stimmt nicht überein",
-        "session_ua": "Formular-Token ungültig: User-Agent-Validierungsfehler"
+        "session_ua": "Formular-Token ungültig: User-Agent-Validierungsfehler",
+        "quota_exceeded_scope": "Domain-Quota erschöpft: Es können nur noch unlimiterte Mailboxen in dieser Domain erstellt werden."
     },
     "user": {
+        "pushover_info": "Push-Benachrichtungen werden angewendet auf alle nicht-Spam Nachrichten zugestellt an <b>%s</b>, einschließlich Alias-Adressen (shared, non-shared, tagged).",
+        "verify": "Verifizieren",
+        "pushover_verify": "Verbindung verifizieren",
+        "title": "Title",
+        "pushover_title": "Notification Titel",
+        "text": "Text",
+        "pushover_text": "Notification Text",
+        "pushover_vars": "Verwendbare Variablen für Titel und Text (Datenschutzrichtlinien beachten)",
+        "pushover_sender_array": "Nur folgende Sender E-Mail-Adressen berücksichtigen <small>(getrennt durch Komma)</small>",
         "last_mail_login": "Letzter Mail-Login",
         "no_last_login": "Keine letzte UI Anmeldung gespeichert",
+        "save": "Änderungen speichern",
         "generate": "generieren",
         "apple_connection_profile": "Apple Verbindungsprofil",
         "apple_connection_profile_mailonly": "Dieses Verbindungsprofil beinhaltet IMAP und SMTP Konfigurationen für ein Apple Gerät.",
@@ -333,6 +350,15 @@
         "spam_score_reset": "Auf Server-Standard zurücksetzen"
     },
     "admin": {
+        "pushover_info": "Push-Benachrichtungen werden angewendet auf alle nicht-Spam Nachrichten zugestellt an <b>%s</b>, einschließlich Alias-Adressen (shared, non-shared, tagged).",
+        "verify": "Verifizieren",
+        "pushover_verify": "Verbindung verifizieren",
+        "title": "Title",
+        "pushover_title": "Notification Titel",
+        "text": "Text",
+        "pushover_text": "Notification Text",
+        "pushover_vars": "Verwendbare Variablen für Titel und Text (Datenschutzrichtlinien beachten)",
+        "pushover_sender_array": "Nur folgende Sender E-Mail-Adressen berücksichtigen <small>(getrennt durch Komma)</small>",
         "spamfilter": "Spamfilter",
         "domain_s": "Domain(s)",
         "rspamd-com_settings": "Ein Name wird automatisch generiert. Beispielinhalte zur Einsicht stehen nachstehend bereit. Siehe auch <a href=\"https://rspamd.com/doc/configuration/settings.html#settings-structure\" target=\"_blank\">Rspamd docs</a>",
@@ -571,6 +597,7 @@
         "notified": "Benachrichtigt"
     },
     "mailbox": {
+        "stats": "Statistik",
         "last_mail_login": "Letzter Mail-Login",
         "table_size": "Tabellengröße",
         "table_size_show_n": "Zeige %s Einträge",
@@ -636,7 +663,7 @@
         "last_run": "Letzte Ausführung",
         "last_run_reset": "Als nächstes ausführen",
         "excludes": "Ausschlüsse",
-        "sieve_info": "Es können mehrere Filter pro Benutzer existieren, aber nur ein Filter eines Typs (Pre-/Postfilter) kann gleichzeitig aktiv sein.<br>\r\nDie Ausführung erfolgt in nachstehender Reihenfolge. Ein fehlgeschlagenes Script sowie der Befehl \"keep;\" stoppen die weitere Verarbeitung <b>nicht</b>.<br><br>Global sieve prefilter → Prefilter → User scripts → Postfilter → Global sieve postfilter",
+        "sieve_info": "Es können mehrere Filter pro Benutzer existieren, aber nur ein Filter eines Typs (Pre-/Postfilter) kann gleichzeitig aktiv sein.<br>\r\nDie Ausführung erfolgt in nachstehender Reihenfolge. Ein fehlgeschlagenes Script sowie der Befehl \"keep;\" stoppen die weitere Verarbeitung <b>nicht</b>. Änderungen an globalen Sieve-Filtern bewirken einen Neustart von Dovecot.<br><br>Global sieve prefilter → Prefilter → User scripts → Postfilter → Global sieve postfilter",
         "sogo_visible": "Alias Sichtbarkeit in SOGo",
         "sogo_visible_y": "Alias in SOGo anzeigen",
         "sogo_visible_n": "Alias in SOGo verbergen",
@@ -698,6 +725,8 @@
         "sieve_preset_7": "Weiterleiten und behalten oder verwerfen"
     },
     "edit": {
+        "evaluate_x_prio": "Hohe Priorität eskalieren [<code>X-Priority: 1</code>]",
+        "only_x_prio": "Nur Mail mit hoher Priorität berücksichtigen [<code>X-Priority: 1</code>]",
         "generate": "generieren",
         "app_name": "App Name",
         "app_passwd": "App Passwörter",
@@ -741,7 +770,9 @@
         "backup_mx_options": "Backup MX Optionen",
         "relay_domain": "Diese Domain relayen",
         "relay_all": "Alle Empfänger-Adressen relayen",
-        "relay_all_info": "<small>Wenn <b>nicht</b> alle Empfänger-Adressen relayt werden sollen, müssen \"blinde\" Mailboxen für jede Adresse, die relayt werden soll, erstellen werden.</small>",
+        "relay_all_info": "↪ Wenn <b>nicht</b> alle Empfänger-Adressen relayt werden sollen, müssen \"blinde\" Mailboxen für jede Adresse, die relayt werden soll, erstellen werden.",
+        "relay_unknown_only": "Nur nicht-lokale Mailboxen relayen. Existente Mailboxen werden weiterhin lokal zugestellt.",
+        "relay_transport_info": "<div class=\"label label-info\">Info</div> Transport Maps können erstellt werden, um  individuelle Ziele für eine Relay Domain zu definieren.",
         "full_name": "Voller Name",
         "quota_mb": "Speicherplatz (MiB)",
         "sender_acl": "Darf Nachrichten versenden als",
@@ -820,8 +851,10 @@
         "domain_quota_m": "Domain Speicherplatz gesamt (MiB)",
         "backup_mx_options": "Backup MX Optionen",
         "relay_all": "Alle Empfänger-Adressen relayen",
-        "relay_domain": "Relay Domain",
-        "relay_all_info": "<small>Wenn Sie <b>nicht</b> alle Empfänger-Adressen relayen möchten, müssen Sie eine Mailbox für jede Adresse, die relayt werden soll, erstellen.</small>",
+        "relay_domain": "Diese Domain relayen",
+        "relay_all_info": "↪ Wenn <b>nicht</b> alle Empfänger-Adressen relayt werden sollen, müssen \"blinde\" Mailboxen für jede Adresse, die relayt werden soll, erstellen werden.",
+        "relay_unknown_only": "Nur nicht-lokale Mailboxen relayen. Existente Mailboxen werden weiterhin lokal zugestellt.",
+        "relay_transport_info": "<div class=\"label label-info\">Info</div> Transport Maps können erstellt werden, um  individuelle Ziele für eine Relay Domain zu definieren.",
         "alias_address": "Alias-Adresse(n)",
         "alias_address_info": "<small>Vollständige E-Mail-Adresse(n) oder @example.com, um alle Nachrichten einer Domain weiterzuleiten. Getrennt durch Komma. <b>Nur eigene Domains</b>.</small>",
         "alias_domain_info": "<small>Nur gültige Domains. Getrennt durch Komma.</small>",
@@ -852,6 +885,7 @@
         "relayhost_wrapped_tls_info": "Bitte <b>keine</b> TLS-wrapped Ports verwenden (etwa SMTPS via Port 465/tcp).<br>\r\nDer Transport wird stattdessen STARTTLS anfordern, um TLS zu verwenden. TLS kann unter \"TLS Policy Maps\" erzwungen werden."
     },
     "acl": {
+        "pushover": "Pushover",
         "spam_alias": "Temporäre E-Mail Aliasse",
         "tls_policy": "Verschlüsselungsrichtlinie",
         "spam_score": "Spam-Bewertung",

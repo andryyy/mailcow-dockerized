@@ -147,6 +147,11 @@
             <li class="logged-in-as"><a href="#" onclick="logout.submit()"><b class="username-lia"><?= htmlspecialchars($_SESSION['mailcow_cc_username']); ?> <span class="text-info">(<?= htmlspecialchars($_SESSION['dual-login']['username']); ?>)</span> </b><span class="glyphicon glyphicon-log-out"></span></a></li>
           <?php
           endif;
+          if (!preg_match('/y|yes/i', getenv('MASTER'))):
+          ?>
+            <li class="text-warning slave-info">[ slave ]</li>
+          <?php
+          endif;
           ?>
         </ul>
       </div><!--/.nav-collapse -->

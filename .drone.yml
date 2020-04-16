@@ -10,16 +10,21 @@ clone:
   disable: true
 
 steps:
-
-- name: download-tests
+- name: prepare-tests
   pull: default
   image: timovibritannia/ansible
   commands:
   - git clone https://github.com/mailcow/mailcow-integration-tests.git --branch $(curl -sL https://api.github.com/repos/mailcow/mailcow-integration-tests/releases/latest | jq -r '.tag_name') --single-branch .
+  - chmod +x ci.sh
+  - chmod +x ci-ssh.sh
+  - chmod +x ci-piprequierments.sh
+  - ./ci.sh
   - wget -O group_vars/all/secrets.yml $SECRETS_DOWNLOAD_URL --quiet
   environment:
     SECRETS_DOWNLOAD_URL:
       from_secret: SECRETS_DOWNLOAD_URL
+    VAULT_PW:
+      from_secret: VAULT_PW
   when:
     branch:
     - master
@@ -41,14 +46,12 @@ steps:
   pull: default
   image: timovibritannia/ansible
   commands:
-  - chmod +x ci.sh
-  - ./ci.sh
+  - ./ci-piprequierments.sh
   - ansible-playbook mailcow-start-server.yml --diff
+  - ./ci-ssh.sh
   environment:
     ANSIBLE_HOST_KEY_CHECKING: false
     ANSIBLE_FORCE_COLOR: true
-    VAULT_PW:
-      from_secret: VAULT_PW
   when:
     branch:
     - master
@@ -59,15 +62,12 @@ steps:
   pull: default
   image: timovibritannia/ansible
   commands:
-  - chmod +x ci.sh
-  - ./ci.sh
   - sleep 120
+  - ./ci-piprequierments.sh
   - ansible-playbook mailcow-setup-server.yml --private-key /drone/src/id_ssh_rsa --diff
   environment:
     ANSIBLE_HOST_KEY_CHECKING: false
     ANSIBLE_FORCE_COLOR: true
-    VAULT_PW:
-      from_secret: VAULT_PW
   when:
     branch:
     - master
@@ -78,14 +78,11 @@ steps:
   pull: default
   image: timovibritannia/ansible
   commands:
-  - chmod +x ci.sh
-  - ./ci.sh
+  - ./ci-piprequierments.sh
   - ansible-playbook mailcow-integration-tests.yml --private-key /drone/src/id_ssh_rsa --diff
   environment:
     ANSIBLE_HOST_KEY_CHECKING: false
     ANSIBLE_FORCE_COLOR: true
-    VAULT_PW:
-      from_secret: VAULT_PW
   when:
     branch:
     - master
@@ -96,14 +93,11 @@ steps:
   pull: default
   image: timovibritannia/ansible
   commands:
-  - chmod +x ci.sh
-  - ./ci.sh
+  - ./ci-piprequierments.sh
   - ansible-playbook mailcow-delete-server.yml --diff
   environment:
     ANSIBLE_HOST_KEY_CHECKING: false
     ANSIBLE_FORCE_COLOR: true
-    VAULT_PW:
-      from_secret: VAULT_PW
   when:
     branch:
     - master
@@ -112,8 +106,9 @@ steps:
     status:
     - failure
     - success
+
 ---
 kind: signature
-hmac: d0ded978bd57646ae10307a3e7fd6584658e285929596ad1ee391cf7330d6338
+hmac: 78793b0d115828cf74f6dbac3341205c6d48ef2e59661529f3412f2fac3831a9
 
 ...

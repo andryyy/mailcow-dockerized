@@ -71,21 +71,23 @@ $(document).ready(function() {
   });
   // Auto-fill domain quota when adding new domain
   auto_fill_quota = function(domain) {
-		$.get("/api/v1/get/domain/" + domain, function(data){
+    $.get("/api/v1/get/domain/" + domain, function(data){
       var result = $.parseJSON(JSON.stringify(data));
       def_new_mailbox_quota = ( result.def_new_mailbox_quota / 1048576);
       max_new_mailbox_quota = ( result.max_new_mailbox_quota / 1048576);
-			if (max_new_mailbox_quota != '0') {
-				$("#quotaBadge").html('max. ' +  max_new_mailbox_quota + ' MiB');
-				$('#addInputQuota').attr({"disabled": false, "value": "", "type": "number", "max": max_new_mailbox_quota});
-				$('#addInputQuota').val(def_new_mailbox_quota);
-			}
-			else {
-				$("#quotaBadge").html('max. ' + max_new_mailbox_quota + ' MiB');
-				$('#addInputQuota').attr({"disabled": true, "value": "", "type": "text", "value": "n/a"});
-				$('#addInputQuota').val(max_new_mailbox_quota);
-			}
-		});
+      if (max_new_mailbox_quota != '0') {
+        $('.addInputQuotaExhausted').hide();
+        $("#quotaBadge").html('max. ' +  max_new_mailbox_quota + ' MiB');
+        $('#addInputQuota').attr({"disabled": false, "value": "", "type": "number", "max": max_new_mailbox_quota});
+        $('#addInputQuota').val(def_new_mailbox_quota);
+      }
+      else {
+        $('.addInputQuotaExhausted').show();
+        $("#quotaBadge").html('max. ' + max_new_mailbox_quota + ' MiB');
+        $('#addInputQuota').attr({"disabled": true, "value": "", "type": "text", "value": "n/a"});
+        $('#addInputQuota').val(max_new_mailbox_quota);
+      }
+    });
   }
 	$('#addSelectDomain').on('change', function() {
     auto_fill_quota($('#addSelectDomain').val());
@@ -202,6 +204,7 @@ jQuery(function($){
   function escapeHtml(n){return String(n).replace(/[&<>"'`=\/]/g,function(n){return entityMap[n]})}
   // http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
   function humanFileSize(i){if(Math.abs(i)<1024)return i+" B";var B=["KiB","MiB","GiB","TiB","PiB","EiB","ZiB","YiB"],e=-1;do{i/=1024,++e}while(Math.abs(i)>=1024&&e<B.length-1);return i.toFixed(1)+" "+B[e]}
+  function unix_time_format(i){return""==i?lang.no:new Date(i?1e3*i:0).toLocaleDateString(void 0,{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"})}
   $(".refresh_table").on('click', function(e) {
     e.preventDefault();
     var table_name = $(this).data('table');
@@ -243,8 +246,11 @@ jQuery(function($){
         "sortValue": function(value){
           res = value.split("/");
           return Number(res[0]);
-        },
-        },
+        }},
+        {"name":"stats","sortable": false,"style":{"whiteSpace":"nowrap"},"title":lang.stats,"formatter": function(value){
+          res = value.split("/");
+          return '<span class="glyphicon glyphicon-file" aria-hidden="true"></span> ' + res[0] + ' / ' + humanFileSize(res[1]);
+        }},
         {"name":"def_quota_for_mbox","title":lang.mailbox_defquota,"breakpoints":"xs sm md","style":{"width":"125px"}},
         {"name":"max_quota_for_mbox","title":lang.mailbox_quota,"breakpoints":"xs sm","style":{"width":"125px"}},
         {"name":"rl","title":"RL","breakpoints":"xs sm md lg","style":{"maxWidth":"100px","width":"100px"}},
@@ -264,7 +270,8 @@ jQuery(function($){
           $.each(data, function (i, item) {
             item.aliases = item.aliases_in_domain + " / " + item.max_num_aliases_for_domain;
             item.mailboxes = item.mboxes_in_domain + " / " + item.max_num_mboxes_for_domain;
-            item.quota = item.quota_used_in_domain + "/" + item.max_quota_for_domain;
+            item.quota = item.quota_used_in_domain + "/" + item.max_quota_for_domain + "/" + item.bytes_total;
+            item.stats = item.msgs_total + "/" + item.bytes_total;
             if (!item.rl) {
               item.rl = '∞';
             } else {
@@ -285,7 +292,13 @@ jQuery(function($){
             }
             item.action += '<a href="#dnsInfoModal" class="btn btn-xs btn-info" data-toggle="modal" data-domain="' + encodeURIComponent(item.domain_name) + '"><span class="glyphicon glyphicon-question-sign"></span> DNS</a></div>';
             if (item.backupmx_int == 1) {
-              item.domain_name = '<span class="glyphicon glyphicon-export"></span> ' + item.domain_name;
+              if (item.relay_unknown_only_int == 1) {
+                item.domain_name = '<div class="label label-info">Relay Non-Local</div> ' + item.domain_name;
+              } else if (item.relay_all_recipients_int == 1) {
+                item.domain_name = '<div class="label label-info">Relay All</div> ' + item.domain_name;
+              } else {
+                item.domain_name = '<div class="label label-info">Relay</div> ' + item.domain_name;
+              }
             }
           });
         }
@@ -343,15 +356,24 @@ jQuery(function($){
         {"name":"spam_aliases","filterable": false,"title":lang.spam_aliases,"breakpoints":"all"},
         {"name":"tls_enforce_in","filterable": false,"title":lang.tls_enforce_in,"breakpoints":"all"},
         {"name":"tls_enforce_out","filterable": false,"title":lang.tls_enforce_out,"breakpoints":"all"},
-        {"name":"last_mail_login","breakpoints":"xs sm","formatter":function unix_time_format(tm) { if (tm == '') { return lang.no; } else { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString(); }},"title":lang.last_mail_login,"style":{"width":"170px"}},
+        {"name":"last_mail_login","breakpoints":"xs sm","title":lang.last_mail_login,"style":{"width":"170px"},
+        "sortValue": function(value){
+          res = value.split("/");
+          return Math.max(res[0], res[1]);
+        },
+        "formatter": function(value){
+          res = value.split("/");
+          return '<div class="label label-last">IMAP @ ' + unix_time_format(Number(res[0])) + '</div> ' +
+            '<div class="label label-last">POP3 @ ' + unix_time_format(Number(res[1])) + '</div>';
+        }},
         {"name":"quarantine_notification","filterable": false,"title":lang.quarantine_notification,"breakpoints":"all"},
         {"name":"in_use","filterable": false,"type":"html","title":lang.in_use,"sortValue": function(value){
-          return Number($(value).find(".progress-bar").attr('aria-valuenow'));
+          return Number($(value).find(".progress-bar-mailbox").attr('aria-valuenow'));
         },
         },
         {"name":"messages","filterable": false,"title":lang.msg_num,"breakpoints":"xs sm md"},
         {"name":"rl","title":"RL","breakpoints":"all","style":{"width":"125px"}},
-        {"name":"active","filterable": false,"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
         {"name":"action","filterable": false,"sortable": false,"style":{"min-width":"290px","text-align":"right"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
       ],
       "empty": lang.empty,
@@ -366,6 +388,7 @@ jQuery(function($){
           $.each(data, function (i, item) {
             item.quota = item.quota_used + "/" + item.quota;
             item.max_quota_for_mbox = humanFileSize(item.max_quota_for_mbox);
+            item.last_mail_login = item.last_imap_login + '/' + item.last_pop3_login;
             if (!item.rl) {
               item.rl = '∞';
             } else {
@@ -405,7 +428,7 @@ jQuery(function($){
               '</div>';
             }
             item.in_use = '<div class="progress">' +
-              '<div class="progress-bar progress-bar-' + item.percent_class + ' role="progressbar" aria-valuenow="' + item.percent_in_use + '" aria-valuemin="0" aria-valuemax="100" ' +
+              '<div class="progress-bar-mailbox progress-bar progress-bar-' + item.percent_class + '" role="progressbar" aria-valuenow="' + item.percent_in_use + '" aria-valuemin="0" aria-valuemax="100" ' +
               'style="min-width:2em;width:' + item.percent_in_use + '%">' + item.percent_in_use + '%' + '</div></div>';
             item.username = escapeHtml(item.username);
           });
@@ -734,7 +757,7 @@ jQuery(function($){
         {"name":"public_comment","title":lang.public_comment,"breakpoints":"all"},
         {"name":"private_comment","title":lang.private_comment,"breakpoints":"all"},
         {"name":"sogo_visible","title":lang.sogo_visible,"breakpoints":"all"},
-        {"name":"active","filterable": false,"style":{"maxWidth":"50px","width":"70px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
       "empty": lang.empty,
@@ -828,7 +851,7 @@ jQuery(function($){
         {"name":"chkbox","title":"","style":{"maxWidth":"60px","width":"60px"},"filterable": false,"sortable": false,"type":"html"},
         {"sorted": true,"name":"alias_domain","title":lang.alias,"style":{"width":"250px"}},
         {"name":"target_domain","title":lang.target_domain,"type":"html"},
-        {"name":"active","filterable": false,"style":{"maxWidth":"50px","width":"70px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"250px","width":"250px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
       "empty": lang.empty,

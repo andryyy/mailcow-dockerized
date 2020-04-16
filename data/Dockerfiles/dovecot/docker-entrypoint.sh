@@ -7,6 +7,20 @@ while ! mysqladmin status --socket=/var/run/mysqld/mysqld.sock -u${DBUSER} -p${D
   sleep 2
 done
 
+# Do not attempt to write to slave
+if [[ ! -z ${REDIS_SLAVEOF_IP} ]]; then
+  REDIS_CMDLINE="redis-cli -h ${REDIS_SLAVEOF_IP} -p ${REDIS_SLAVEOF_PORT}"
+else
+  REDIS_CMDLINE="redis-cli -h redis -p 6379"
+fi
+
+until [[ $(${REDIS_CMDLINE} PING) == "PONG" ]]; do
+  echo "Waiting for Redis..."
+  sleep 2
+done
+
+${REDIS_CMDLINE} SET DOVECOT_REPL_HEALTH 1 > /dev/null
+
 # Create missing directories
 [[ ! -d /etc/dovecot/sql/ ]] && mkdir -p /etc/dovecot/sql/
 [[ ! -d /etc/dovecot/lua/ ]] && mkdir -p /etc/dovecot/lua/
@@ -44,7 +58,7 @@ EOF
 # Write last logins to Redis
 if [[ ! -z ${REDIS_SLAVEOF_IP} ]]; then
   cp /etc/syslog-ng/syslog-ng-redis_slave.conf /etc/syslog-ng/syslog-ng.conf
-  echo -n "redis:host=${REDIS_SLAVEOF_IP}:port={REDIS_SLAVEOF_PORT}" > /etc/dovecot/last_login
+  echo -n "redis:host=${REDIS_SLAVEOF_IP}:port=${REDIS_SLAVEOF_PORT}" > /etc/dovecot/last_login
 else
   echo -n "redis:host=${IPV4_NETWORK}.249:port=6379" > /etc/dovecot/last_login
 fi
@@ -292,7 +306,8 @@ chmod +x /usr/lib/dovecot/sieve/rspamd-pipe-ham \
   /usr/local/bin/clean_q_aged.sh \
   /usr/local/bin/maildir_gc.sh \
   /usr/local/sbin/stop-supervisor.sh \
-  /usr/local/bin/quota_notify.py
+  /usr/local/bin/quota_notify.py \
+  /usr/local/bin/repl_health.sh
 
 if [[ "${MASTER}" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
 # Setup cronjobs
@@ -304,13 +319,16 @@ echo '30 1 * * *   root  /usr/local/bin/sa-rules.sh  >> /dev/console 2>&1' > /et
 echo '0 2 * * *    root  /usr/bin/curl http://solr:8983/solr/dovecot-fts/update?optimize=true >> /dev/console 2>&1' > /etc/cron.d/solr-optimize
 echo '*/20 * * * * vmail /usr/local/bin/quarantine_notify.py >> /dev/console 2>&1' > /etc/cron.d/quarantine_notify
 echo '15 4 * * * vmail /usr/local/bin/clean_q_aged.sh >> /dev/console 2>&1' > /etc/cron.d/clean_q_aged
-# Fix more than 1 hardlink issue
-touch /etc/crontab /etc/cron.*/*
+echo '*/5 * * * *  vmail /usr/local/bin/repl_health.sh >> /dev/console 2>&1' > /etc/cron.d/repl_health
 else
 echo '25 * * * *   vmail /usr/local/bin/maildir_gc.sh >> /dev/console 2>&1' > /etc/cron.d/maildir_gc
 echo '30 1 * * *   root  /usr/local/bin/sa-rules.sh  >> /dev/console 2>&1' > /etc/cron.d/sa-rules
 echo '0 2 * * *    root  /usr/bin/curl http://solr:8983/solr/dovecot-fts/update?optimize=true >> /dev/console 2>&1' > /etc/cron.d/solr-optimize
+echo '*/5 * * * *  vmail /usr/local/bin/repl_health.sh >> /dev/console 2>&1' > /etc/cron.d/repl_health
 fi
+
+# Fix more than 1 hardlink issue
+touch /etc/crontab /etc/cron.*/*
 
 # Clean old PID if any
 [[ -f /var/run/dovecot/master.pid ]] && rm /var/run/dovecot/master.pid

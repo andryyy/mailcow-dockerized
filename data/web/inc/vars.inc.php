@@ -129,9 +129,14 @@ $DOCKER_TIMEOUT = 60;
 // Anonymize IPs logged via UI
 $ANONYMIZE_IPS = true;
 
+// Split DKIM key notation (bind format)
+$SPLIT_DKIM_255 = false;
+
 // OAuth2 settings
 $REFRESH_TOKEN_LIFETIME = 2678400;
 $ACCESS_TOKEN_LIFETIME = 86400;
+// Logout from mailcow after first OAuth2 session profile request
+$OAUTH2_FORGET_SESSION_AFTER_LOGIN = false;
 
 // MAILBOX_DEFAULT_ATTRIBUTES define default attributes for new mailboxes
 // These settings will not change existing mailboxes
@@ -154,6 +159,10 @@ $MAILBOX_DEFAULT_ATTRIBUTES['quarantine_notification'] = 'hourly';
 // Default mailbox format, should not be changed unless you know exactly, what you do, keep the trailing ":"
 // Check dovecot.conf for further changes (e.g. shared namespace)
 $MAILBOX_DEFAULT_ATTRIBUTES['mailbox_format'] = 'maildir:';
+
+// Show last IMAP and POP3 logins
+$SHOW_LAST_LOGIN = true;
+
 
 // Set visible Rspamd maps in mailcow UI, do not change unless you know what you are doing
 $RSPAMD_MAPS = array(

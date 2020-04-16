@@ -1,17 +1,8 @@
 <?php
 /*
-edit/alias => POST data:
-  {
-    address: {a, b, c},   (where a, b, c represent alias addresses)
-    active: 1             (0 or 1)
-  }
-
-delete/alias => POST data:
-  {
-    address: {a, b, c},   (where a, b, c represent alias addresses)
-  }
-
+   see /api
 */
+
 header('Content-Type: application/json');
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
 error_reporting(0);
@@ -103,6 +94,14 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
 
     switch ($action) {
       case "add":
+        if ($_SESSION['mailcow_cc_api_access'] == 'ro' || isset($_SESSION['pending_mailcow_cc_username'])) {
+          http_response_code(403);
+          echo json_encode(array(
+              'type' => 'error',
+              'msg' => 'API read/write access denied'
+          ));
+          exit();
+        }
         function process_add_return($return) {
           $generic_failure = json_encode(array(
             'type' => 'error',
@@ -136,6 +135,7 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
           ));
           exit();
         }
+        
         switch ($category) {
           case "time_limited_alias":
             process_add_return(mailbox('add', 'time_limited_alias', $attr));
@@ -236,866 +236,6 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
           exit();
         }
         switch ($category) {
-          case "rspamd":
-            switch ($object) {
-              case "actions":
-                $curl = curl_init();
-                curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
-                curl_setopt($curl, CURLOPT_URL,"http://rspamd/stat");
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                $data = curl_exec($curl);
-                if ($data) {
-                  $return = array();
-                  $stats_array = json_decode($data, true)['actions'];
-                  $stats_array['soft reject'] = $stats_array['soft reject'] + $stats_array['greylist'];
-                  unset($stats_array['greylist']);
-                  foreach ($stats_array as $action => $count) {
-                    $return[] = array($action, $count);
-                  }
-                  echo json_encode($return, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-                }
-                elseif (!isset($data) || empty($data)) {
-                  echo '{}';
-                }
-              break;
-            }
-          break;
-
-          case "domain":
-            switch ($object) {
-              case "all":
-                $domains = mailbox('get', 'domains');
-                if (!empty($domains)) {
-                  foreach ($domains as $domain) {
-                    if ($details = mailbox('get', 'domain_details', $domain)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = mailbox('get', 'domain_details', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-
-          case "app-passwd":
-            switch ($object) {
-              case "all":
-                if (empty($extra)) {
-                  $app_passwds = app_passwd('get');
-                }
-                else {
-                  $app_passwds = app_passwd('get', array('username' => $extra));
-                }
-                if (!empty($app_passwds)) {
-                  foreach ($app_passwds as $app_passwd) {
-                    $details = app_passwd('details', array('id' => $app_passwd['id']));
-                    if ($details !== false) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = app_passwd('details', array('id' => $object['id']));
-                process_get_return($data);
-              break;
-            }
-          break;
-
-          case "mailq":
-            switch ($object) {
-              case "all":
-                $mailq = mailq('get');
-                if (!empty($mailq)) {
-                  echo $mailq;
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-            }
-          break;
-
-          case "global_filters":
-            $global_filters = mailbox('get', 'global_filter_details');
-            switch ($object) {
-              case "all":
-                if (!empty($global_filters)) {
-                  process_get_return($global_filters);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-              case "prefilter":
-                if (!empty($global_filters['prefilter'])) {
-                  process_get_return($global_filters['prefilter']);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-              case "postfilter":
-                if (!empty($global_filters['postfilter'])) {
-                  process_get_return($global_filters['postfilter']);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-            }
-          break;
-
-          case "rl-domain":
-            switch ($object) {
-              case "all":
-                $domains = array_merge(mailbox('get', 'domains'), mailbox('get', 'alias_domains'));
-                if (!empty($domains)) {
-                  foreach ($domains as $domain) {
-                    if ($details = ratelimit('get', 'domain', $domain)) {
-                      $details['domain'] = $domain;
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = ratelimit('get', 'domain', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-
-          case "rl-mbox":
-            switch ($object) {
-              case "all":
-                $domains = mailbox('get', 'domains');
-                if (!empty($domains)) {
-                  foreach ($domains as $domain) {
-                    $mailboxes = mailbox('get', 'mailboxes', $domain);
-                    if (!empty($mailboxes)) {
-                      foreach ($mailboxes as $mailbox) {
-                        if ($details = ratelimit('get', 'mailbox', $mailbox)) {
-                          $details['mailbox'] = $mailbox;
-                          $data[] = $details;
-                        }
-                        else {
-                          continue;
-                        }
-                      }
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = ratelimit('get', 'mailbox', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-
-          case "relayhost":
-            switch ($object) {
-              case "all":
-                $relayhosts = relayhost('get');
-                if (!empty($relayhosts)) {
-                  foreach ($relayhosts as $relayhost) {
-                    if ($details = relayhost('details', $relayhost['id'])) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = relayhost('details', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-
-          case "transport":
-            switch ($object) {
-              case "all":
-                $transports = transport('get');
-                if (!empty($transports)) {
-                  foreach ($transports as $transport) {
-                    if ($details = transport('details', $transport['id'])) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = transport('details', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-
-          case "rsetting":
-            switch ($object) {
-              case "all":
-                $rsettings = rsettings('get');
-                if (!empty($rsettings)) {
-                  foreach ($rsettings as $rsetting) {
-                    if ($details = rsettings('details', $rsetting['id'])) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = rsetting('details', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-
-          case "oauth2-client":
-            switch ($object) {
-              case "all":
-                $clients = oauth2('get', 'clients');
-                if (!empty($clients)) {
-                  foreach ($clients as $client) {
-                    if ($details = oauth2('details', 'client', $client)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = oauth2('details', 'client', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-
-          case "logs":
-            switch ($object) {
-              case "dovecot":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('dovecot-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('dovecot-mailcow');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "ratelimited":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('ratelimited', $extra);
-                }
-                else {
-                  $logs = get_logs('ratelimited');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "netfilter":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('netfilter-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('netfilter-mailcow');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "postfix":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('postfix-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('postfix-mailcow');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "autodiscover":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('autodiscover-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('autodiscover-mailcow');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "sogo":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('sogo-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('sogo-mailcow');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "ui":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('mailcow-ui', $extra);
-                }
-                else {
-                  $logs = get_logs('mailcow-ui');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "watchdog":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('watchdog-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('watchdog-mailcow');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "acme":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('acme-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('acme-mailcow');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "api":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('api-mailcow', $extra);
-                }
-                else {
-                  $logs = get_logs('api-mailcow');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              case "rspamd-history":
-                // 0 is first record, so empty is fine
-                if (isset($extra)) {
-                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
-                  $logs = get_logs('rspamd-history', $extra);
-                }
-                else {
-                  $logs = get_logs('rspamd-history');
-                }
-                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
-              break;
-              // return no route found if no case is matched
-              default:
-                http_response_code(404);
-                echo json_encode(array(
-                  'type' => 'error',
-                  'msg' => 'route not found'
-                ));
-                exit();
-            }
-          break;
-          case "mailbox":
-            switch ($object) {
-              case "all":
-                if (empty($extra)) {
-                  $domains = mailbox('get', 'domains');
-                }
-                else {
-                  $domains = array($extra);
-                }
-                if (!empty($domains)) {
-                  foreach ($domains as $domain) {
-                    $mailboxes = mailbox('get', 'mailboxes', $domain);
-                    if (!empty($mailboxes)) {
-                      foreach ($mailboxes as $mailbox) {
-                        if ($details = mailbox('get', 'mailbox_details', $mailbox)) {
-                          $data[] = $details;
-                        }
-                        else {
-                          continue;
-                        }
-                      }
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $data = mailbox('get', 'mailbox_details', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "syncjobs":
-            switch ($object) {
-              case "all":
-                $domains = mailbox('get', 'domains');
-                if (!empty($domains)) {
-                  foreach ($domains as $domain) {
-                    $mailboxes = mailbox('get', 'mailboxes', $domain);
-                    if (!empty($mailboxes)) {
-                      foreach ($mailboxes as $mailbox) {
-                        $syncjobs = mailbox('get', 'syncjobs', $mailbox);
-                        if (!empty($syncjobs)) {
-                          foreach ($syncjobs as $syncjob) {
-                            if (isset($extra)) {
-                              $details = mailbox('get', 'syncjob_details', $syncjob, explode(',', $extra));
-                            }
-                            else {
-                              $details = mailbox('get', 'syncjob_details', $syncjob);
-                            }
-                            if ($details) {
-                              $data[] = $details;
-                            }
-                            else {
-                              continue;
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $syncjobs = mailbox('get', 'syncjobs', $object);
-                if (!empty($syncjobs)) {
-                  foreach ($syncjobs as $syncjob) {
-                    if (isset($extra)) {
-                      $details = mailbox('get', 'syncjob_details', $syncjob, explode(',', $extra));
-                    }
-                    else {
-                      $details = mailbox('get', 'syncjob_details', $syncjob);
-                    }
-                    if ($details) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                }
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "active-user-sieve":
-            if (isset($object)) {
-              $sieve_filter = mailbox('get', 'active_user_sieve', $object);
-              if (!empty($sieve_filter)) {
-                $data[] = $sieve_filter;
-              }
-            }
-            process_get_return($data);
-          break;
-          case "filters":
-            switch ($object) {
-              case "all":
-                $domains = mailbox('get', 'domains');
-                if (!empty($domains)) {
-                  foreach ($domains as $domain) {
-                    $mailboxes = mailbox('get', 'mailboxes', $domain);
-                    if (!empty($mailboxes)) {
-                      foreach ($mailboxes as $mailbox) {
-                        $filters = mailbox('get', 'filters', $mailbox);
-                        if (!empty($filters)) {
-                          foreach ($filters as $filter) {
-                            if ($details = mailbox('get', 'filter_details', $filter)) {
-                              $data[] = $details;
-                            }
-                            else {
-                              continue;
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                $filters = mailbox('get', 'filters', $object);
-                if (!empty($filters)) {
-                  foreach ($filters as $filter) {
-                    if ($details = mailbox('get', 'filter_details', $filter)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                }
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "bcc":
-            switch ($object) {
-              case "all":
-                $bcc_items = bcc('get');
-                if (!empty($bcc_items)) {
-                  foreach ($bcc_items as $bcc_item) {
-                    if ($details = bcc('details', $bcc_item)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                }
-                process_get_return($data);
-              break;
-              default:
-                $data = bcc('details', $object);
-                if (!empty($data)) {
-                  $data[] = $details;
-                }
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "recipient_map":
-            switch ($object) {
-              case "all":
-                $recipient_map_items = recipient_map('get');
-                if (!empty($recipient_map_items)) {
-                  foreach ($recipient_map_items as $recipient_map_item) {
-                    if ($details = recipient_map('details', $recipient_map_item)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                }
-                process_get_return($data);
-              break;
-              default:
-                $data = recipient_map('details', $object);
-                if (!empty($data)) {
-                  $data[] = $details;
-                }
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "tls-policy-map":
-            switch ($object) {
-              case "all":
-                $tls_policy_maps_items = tls_policy_maps('get');
-                if (!empty($tls_policy_maps_items)) {
-                  foreach ($tls_policy_maps_items as $tls_policy_maps_item) {
-                    if ($details = tls_policy_maps('details', $tls_policy_maps_item)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                }
-                process_get_return($data);
-              break;
-              default:
-                $data = tls_policy_maps('details', $object);
-                if (!empty($data)) {
-                  $data[] = $details;
-                }
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "policy_wl_mailbox":
-            switch ($object) {
-              default:
-                $data = policy('get', 'mailbox', $object)['whitelist'];
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "policy_bl_mailbox":
-            switch ($object) {
-              default:
-                $data = policy('get', 'mailbox', $object)['blacklist'];
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "policy_wl_domain":
-            switch ($object) {
-              default:
-                $data = policy('get', 'domain', $object)['whitelist'];
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "policy_bl_domain":
-            switch ($object) {
-              default:
-                $data = policy('get', 'domain', $object)['blacklist'];
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "time_limited_aliases":
-            switch ($object) {
-              default:
-                $data = mailbox('get', 'time_limited_aliases', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "fail2ban":
-            switch ($object) {
-              default:
-                $data = fail2ban('get');
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "resource":
-            switch ($object) {
-              case "all":
-                $domains = mailbox('get', 'domains');
-                if (!empty($domains)) {
-                  foreach ($domains as $domain) {
-                    $resources = mailbox('get', 'resources', $domain);
-                    if (!empty($resources)) {
-                      foreach ($resources as $resource) {
-                        if ($details = mailbox('get', 'resource_details', $resource)) {
-                          $data[] = $details;
-                        }
-                        else {
-                          continue;
-                        }
-                      }
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-              default:
-                $data = mailbox('get', 'resource_details', $object);
-                process_get_return($data);
-              break;
-            }
-          break;
-          case "fwdhost":
-            switch ($object) {
-              case "all":
-                process_get_return(fwdhost('get'));
-              break;
-              default:
-                process_get_return(fwdhost('details', $object));
-              break;
-            }
-          break;
-          case "quarantine":
-            // "all" will not print details
-            switch ($object) {
-              case "all":
-                process_get_return(quarantine('get'));
-              break;
-              default:
-                process_get_return(quarantine('details', $object));
-              break;
-            }
-          break;
-          case "alias-domain":
-            switch ($object) {
-              case "all":
-                $alias_domains = mailbox('get', 'alias_domains');
-                if (!empty($alias_domains)) {
-                  foreach ($alias_domains as $alias_domain) {
-                    if ($details = mailbox('get', 'alias_domain_details', $alias_domain)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                }
-                process_get_return($data);
-              break;
-              default:
-                process_get_return(mailbox('get', 'alias_domain_details', $object));
-              break;
-            }
-          break;
-          case "alias":
-            switch ($object) {
-              case "all":
-                if (empty($extra)) {
-                  $domains = array_merge(mailbox('get', 'domains'), mailbox('get', 'alias_domains'));
-                }
-                else {
-                  $domains = array($extra);
-                }
-                if (!empty($domains)) {
-                  foreach ($domains as $domain) {
-                    $aliases = mailbox('get', 'aliases', $domain);
-                    if (!empty($aliases)) {
-                      foreach ($aliases as $alias) {
-                        if ($details = mailbox('get', 'alias_details', $alias)) {
-                          $data[] = $details;
-                        }
-                        else {
-                          continue;
-                        }
-                      }
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                process_get_return(mailbox('get', 'alias_details', $object));
-              break;
-            }
-          break;
-          case "domain-admin":
-            switch ($object) {
-              case "all":
-                $domain_admins = domain_admin('get');
-                if (!empty($domain_admins)) {
-                  foreach ($domain_admins as $domain_admin) {
-                    if ($details = domain_admin('details', $domain_admin)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                process_get_return(domain_admin('details', $object));
-              break;
-            }
-          break;
-          case "admin":
-            switch ($object) {
-              case "all":
-                $admins = admin('get');
-                if (!empty($admins)) {
-                  foreach ($admins as $admin) {
-                    if ($details = admin('details', $admin)) {
-                      $data[] = $details;
-                    }
-                    else {
-                      continue;
-                    }
-                  }
-                  process_get_return($data);
-                }
-                else {
-                  echo '{}';
-                }
-              break;
-
-              default:
-                process_get_return(admin('details', $object));
-              break;
-            }
-          break;
           case "u2f-registration":
             header('Content-Type: application/javascript');
             if (($_SESSION["mailcow_cc_role"] == "admin" || $_SESSION["mailcow_cc_role"] == "domainadmin") && $_SESSION["mailcow_cc_username"] == $object) {
@@ -1106,6 +246,7 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
               echo 'var registeredKeys = ' . json_encode($sigs) . ';';
               echo 'var appId = req.appId;';
               echo 'var registerRequests = [{version: req.version, challenge: req.challenge}];';
+              return;
             }
             else {
               return;
@@ -1127,91 +268,964 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
               echo 'var appId = "' . $appId . '";';
               echo 'var challenge = ' . json_encode($challenge) . ';';
               echo 'var registeredKeys = ' . json_encode($registeredKey) . ';';
+              return;
             }
             else {
               return;
             }
           break;
-          case "dkim":
-            switch ($object) {
-              default:
-                $data = dkim('details', $object);
-                process_get_return($data);
+        }
+        if (!isset($_SESSION['pending_mailcow_cc_username'])) {
+          switch ($category) {
+            case "rspamd":
+              switch ($object) {
+                case "actions":
+                  $curl = curl_init();
+                  curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+                  curl_setopt($curl, CURLOPT_URL,"http://rspamd/stat");
+                  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                  $data = curl_exec($curl);
+                  if ($data) {
+                    $return = array();
+                    $stats_array = json_decode($data, true)['actions'];
+                    $stats_array['soft reject'] = $stats_array['soft reject'] + $stats_array['greylist'];
+                    unset($stats_array['greylist']);
+                    foreach ($stats_array as $action => $count) {
+                      $return[] = array($action, $count);
+                    }
+                    echo json_encode($return, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                  }
+                  elseif (!isset($data) || empty($data)) {
+                    echo '{}';
+                  }
                 break;
-            }
-          break;
-          case "presets":
-            switch ($object) {
-              case "rspamd":
-                process_get_return(presets('get', 'rspamd'));
-              break;
-              case "sieve":
-                process_get_return(presets('get', 'sieve'));
-              break;
-            }
-          break;
-          case "status":
-            switch ($object) {
-              case "containers":
-                $containers = (docker('info'));
-                foreach ($containers as $container => $container_info) {
-                  $container . ' (' . $container_info['Config']['Image'] . ')';
-                  $containerstarttime = ($container_info['State']['StartedAt']);
-                  $containerstate = ($container_info['State']['Status']);
-                  $containerimage = ($container_info['Config']['Image']);
-                  $temp[$container] = array(
-                    'type' => 'info',
-                    'container' => $container,
-                    'state' => $containerstate,
-                    'started_at' => $containerstarttime,
-                    'image' => $containerimage
-                  );
+              }
+            break;
+
+            case "domain":
+              switch ($object) {
+                case "all":
+                  $domains = mailbox('get', 'domains');
+                  if (!empty($domains)) {
+                    foreach ($domains as $domain) {
+                      if ($details = mailbox('get', 'domain_details', $domain)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = mailbox('get', 'domain_details', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+
+            case "app-passwd":
+              switch ($object) {
+                case "all":
+                  if (empty($extra)) {
+                    $app_passwds = app_passwd('get');
+                  }
+                  else {
+                    $app_passwds = app_passwd('get', array('username' => $extra));
+                  }
+                  if (!empty($app_passwds)) {
+                    foreach ($app_passwds as $app_passwd) {
+                      $details = app_passwd('details', array('id' => $app_passwd['id']));
+                      if ($details !== false) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = app_passwd('details', array('id' => $object['id']));
+                  process_get_return($data);
+                break;
+              }
+            break;
+
+            case "mailq":
+              switch ($object) {
+                case "all":
+                  $mailq = mailq('get');
+                  if (!empty($mailq)) {
+                    echo $mailq;
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+              }
+            break;
+
+            case "global_filters":
+              $global_filters = mailbox('get', 'global_filter_details');
+              switch ($object) {
+                case "all":
+                  if (!empty($global_filters)) {
+                    process_get_return($global_filters);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+                case "prefilter":
+                  if (!empty($global_filters['prefilter'])) {
+                    process_get_return($global_filters['prefilter']);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+                case "postfilter":
+                  if (!empty($global_filters['postfilter'])) {
+                    process_get_return($global_filters['postfilter']);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+              }
+            break;
+
+            case "rl-domain":
+              switch ($object) {
+                case "all":
+                  $domains = array_merge(mailbox('get', 'domains'), mailbox('get', 'alias_domains'));
+                  if (!empty($domains)) {
+                    foreach ($domains as $domain) {
+                      if ($details = ratelimit('get', 'domain', $domain)) {
+                        $details['domain'] = $domain;
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = ratelimit('get', 'domain', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+
+            case "rl-mbox":
+              switch ($object) {
+                case "all":
+                  $domains = mailbox('get', 'domains');
+                  if (!empty($domains)) {
+                    foreach ($domains as $domain) {
+                      $mailboxes = mailbox('get', 'mailboxes', $domain);
+                      if (!empty($mailboxes)) {
+                        foreach ($mailboxes as $mailbox) {
+                          if ($details = ratelimit('get', 'mailbox', $mailbox)) {
+                            $details['mailbox'] = $mailbox;
+                            $data[] = $details;
+                          }
+                          else {
+                            continue;
+                          }
+                        }
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = ratelimit('get', 'mailbox', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+
+            case "relayhost":
+              switch ($object) {
+                case "all":
+                  $relayhosts = relayhost('get');
+                  if (!empty($relayhosts)) {
+                    foreach ($relayhosts as $relayhost) {
+                      if ($details = relayhost('details', $relayhost['id'])) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = relayhost('details', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+
+            case "transport":
+              switch ($object) {
+                case "all":
+                  $transports = transport('get');
+                  if (!empty($transports)) {
+                    foreach ($transports as $transport) {
+                      if ($details = transport('details', $transport['id'])) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = transport('details', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+
+            case "rsetting":
+              switch ($object) {
+                case "all":
+                  $rsettings = rsettings('get');
+                  if (!empty($rsettings)) {
+                    foreach ($rsettings as $rsetting) {
+                      if ($details = rsettings('details', $rsetting['id'])) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = rsetting('details', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+
+            case "oauth2-client":
+              switch ($object) {
+                case "all":
+                  $clients = oauth2('get', 'clients');
+                  if (!empty($clients)) {
+                    foreach ($clients as $client) {
+                      if ($details = oauth2('details', 'client', $client)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = oauth2('details', 'client', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+
+            case "logs":
+              switch ($object) {
+                case "dovecot":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('dovecot-mailcow', $extra);
+                  }
+                  else {
+                    $logs = get_logs('dovecot-mailcow');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "ratelimited":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('ratelimited', $extra);
+                  }
+                  else {
+                    $logs = get_logs('ratelimited');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "netfilter":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('netfilter-mailcow', $extra);
+                  }
+                  else {
+                    $logs = get_logs('netfilter-mailcow');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "postfix":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('postfix-mailcow', $extra);
+                  }
+                  else {
+                    $logs = get_logs('postfix-mailcow');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "autodiscover":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('autodiscover-mailcow', $extra);
+                  }
+                  else {
+                    $logs = get_logs('autodiscover-mailcow');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "sogo":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('sogo-mailcow', $extra);
+                  }
+                  else {
+                    $logs = get_logs('sogo-mailcow');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "ui":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('mailcow-ui', $extra);
+                  }
+                  else {
+                    $logs = get_logs('mailcow-ui');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "watchdog":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('watchdog-mailcow', $extra);
+                  }
+                  else {
+                    $logs = get_logs('watchdog-mailcow');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "acme":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('acme-mailcow', $extra);
+                  }
+                  else {
+                    $logs = get_logs('acme-mailcow');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "api":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('api-mailcow', $extra);
+                  }
+                  else {
+                    $logs = get_logs('api-mailcow');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "rspamd-history":
+                  // 0 is first record, so empty is fine
+                  if (isset($extra)) {
+                    $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                    $logs = get_logs('rspamd-history', $extra);
+                  }
+                  else {
+                    $logs = get_logs('rspamd-history');
+                  }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                // return no route found if no case is matched
+                default:
+                  http_response_code(404);
+                  echo json_encode(array(
+                    'type' => 'error',
+                    'msg' => 'route not found'
+                  ));
+                  exit();
+              }
+            break;
+            case "mailbox":
+              switch ($object) {
+                case "all":
+                  if (empty($extra)) {
+                    $domains = mailbox('get', 'domains');
+                  }
+                  else {
+                    $domains = array($extra);
+                  }
+                  if (!empty($domains)) {
+                    foreach ($domains as $domain) {
+                      $mailboxes = mailbox('get', 'mailboxes', $domain);
+                      if (!empty($mailboxes)) {
+                        foreach ($mailboxes as $mailbox) {
+                          if ($details = mailbox('get', 'mailbox_details', $mailbox)) {
+                            $data[] = $details;
+                          }
+                          else {
+                            continue;
+                          }
+                        }
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $data = mailbox('get', 'mailbox_details', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "syncjobs":
+              switch ($object) {
+                case "all":
+                  $domains = mailbox('get', 'domains');
+                  if (!empty($domains)) {
+                    foreach ($domains as $domain) {
+                      $mailboxes = mailbox('get', 'mailboxes', $domain);
+                      if (!empty($mailboxes)) {
+                        foreach ($mailboxes as $mailbox) {
+                          $syncjobs = mailbox('get', 'syncjobs', $mailbox);
+                          if (!empty($syncjobs)) {
+                            foreach ($syncjobs as $syncjob) {
+                              if (isset($extra)) {
+                                $details = mailbox('get', 'syncjob_details', $syncjob, explode(',', $extra));
+                              }
+                              else {
+                                $details = mailbox('get', 'syncjob_details', $syncjob);
+                              }
+                              if ($details) {
+                                $data[] = $details;
+                              }
+                              else {
+                                continue;
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $syncjobs = mailbox('get', 'syncjobs', $object);
+                  if (!empty($syncjobs)) {
+                    foreach ($syncjobs as $syncjob) {
+                      if (isset($extra)) {
+                        $details = mailbox('get', 'syncjob_details', $syncjob, explode(',', $extra));
+                      }
+                      else {
+                        $details = mailbox('get', 'syncjob_details', $syncjob);
+                      }
+                      if ($details) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                  }
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "active-user-sieve":
+              if (isset($object)) {
+                $sieve_filter = mailbox('get', 'active_user_sieve', $object);
+                if (!empty($sieve_filter)) {
+                  $data[] = $sieve_filter;
                 }
-                echo json_encode($temp, JSON_UNESCAPED_SLASHES);
+              }
+              process_get_return($data);
+            break;
+            case "filters":
+              switch ($object) {
+                case "all":
+                  $domains = mailbox('get', 'domains');
+                  if (!empty($domains)) {
+                    foreach ($domains as $domain) {
+                      $mailboxes = mailbox('get', 'mailboxes', $domain);
+                      if (!empty($mailboxes)) {
+                        foreach ($mailboxes as $mailbox) {
+                          $filters = mailbox('get', 'filters', $mailbox);
+                          if (!empty($filters)) {
+                            foreach ($filters as $filter) {
+                              if ($details = mailbox('get', 'filter_details', $filter)) {
+                                $data[] = $details;
+                              }
+                              else {
+                                continue;
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  $filters = mailbox('get', 'filters', $object);
+                  if (!empty($filters)) {
+                    foreach ($filters as $filter) {
+                      if ($details = mailbox('get', 'filter_details', $filter)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                  }
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "bcc":
+              switch ($object) {
+                case "all":
+                  $bcc_items = bcc('get');
+                  if (!empty($bcc_items)) {
+                    foreach ($bcc_items as $bcc_item) {
+                      if ($details = bcc('details', $bcc_item)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                  }
+                  process_get_return($data);
+                break;
+                default:
+                  $data = bcc('details', $object);
+                  if (!empty($data)) {
+                    $data[] = $details;
+                  }
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "recipient_map":
+              switch ($object) {
+                case "all":
+                  $recipient_map_items = recipient_map('get');
+                  if (!empty($recipient_map_items)) {
+                    foreach ($recipient_map_items as $recipient_map_item) {
+                      if ($details = recipient_map('details', $recipient_map_item)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                  }
+                  process_get_return($data);
+                break;
+                default:
+                  $data = recipient_map('details', $object);
+                  if (!empty($data)) {
+                    $data[] = $details;
+                  }
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "tls-policy-map":
+              switch ($object) {
+                case "all":
+                  $tls_policy_maps_items = tls_policy_maps('get');
+                  if (!empty($tls_policy_maps_items)) {
+                    foreach ($tls_policy_maps_items as $tls_policy_maps_item) {
+                      if ($details = tls_policy_maps('details', $tls_policy_maps_item)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                  }
+                  process_get_return($data);
+                break;
+                default:
+                  $data = tls_policy_maps('details', $object);
+                  if (!empty($data)) {
+                    $data[] = $details;
+                  }
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "policy_wl_mailbox":
+              switch ($object) {
+                default:
+                  $data = policy('get', 'mailbox', $object)['whitelist'];
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "policy_bl_mailbox":
+              switch ($object) {
+                default:
+                  $data = policy('get', 'mailbox', $object)['blacklist'];
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "policy_wl_domain":
+              switch ($object) {
+                default:
+                  $data = policy('get', 'domain', $object)['whitelist'];
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "policy_bl_domain":
+              switch ($object) {
+                default:
+                  $data = policy('get', 'domain', $object)['blacklist'];
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "time_limited_aliases":
+              switch ($object) {
+                default:
+                  $data = mailbox('get', 'time_limited_aliases', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "fail2ban":
+              switch ($object) {
+                default:
+                  $data = fail2ban('get');
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "resource":
+              switch ($object) {
+                case "all":
+                  $domains = mailbox('get', 'domains');
+                  if (!empty($domains)) {
+                    foreach ($domains as $domain) {
+                      $resources = mailbox('get', 'resources', $domain);
+                      if (!empty($resources)) {
+                        foreach ($resources as $resource) {
+                          if ($details = mailbox('get', 'resource_details', $resource)) {
+                            $data[] = $details;
+                          }
+                          else {
+                            continue;
+                          }
+                        }
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+                default:
+                  $data = mailbox('get', 'resource_details', $object);
+                  process_get_return($data);
+                break;
+              }
+            break;
+            case "fwdhost":
+              switch ($object) {
+                case "all":
+                  process_get_return(fwdhost('get'));
+                break;
+                default:
+                  process_get_return(fwdhost('details', $object));
+                break;
+              }
+            break;
+            case "quarantine":
+              // "all" will not print details
+              switch ($object) {
+                case "all":
+                  process_get_return(quarantine('get'));
+                break;
+                default:
+                  process_get_return(quarantine('details', $object));
+                break;
+              }
+            break;
+            case "alias-domain":
+              switch ($object) {
+                case "all":
+                  $alias_domains = mailbox('get', 'alias_domains');
+                  if (!empty($alias_domains)) {
+                    foreach ($alias_domains as $alias_domain) {
+                      if ($details = mailbox('get', 'alias_domain_details', $alias_domain)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                  }
+                  process_get_return($data);
+                break;
+                default:
+                  process_get_return(mailbox('get', 'alias_domain_details', $object));
+                break;
+              }
+            break;
+            case "alias":
+              switch ($object) {
+                case "all":
+                  if (empty($extra)) {
+                    $domains = array_merge(mailbox('get', 'domains'), mailbox('get', 'alias_domains'));
+                  }
+                  else {
+                    $domains = array($extra);
+                  }
+                  if (!empty($domains)) {
+                    foreach ($domains as $domain) {
+                      $aliases = mailbox('get', 'aliases', $domain);
+                      if (!empty($aliases)) {
+                        foreach ($aliases as $alias) {
+                          if ($details = mailbox('get', 'alias_details', $alias)) {
+                            $data[] = $details;
+                          }
+                          else {
+                            continue;
+                          }
+                        }
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  process_get_return(mailbox('get', 'alias_details', $object));
+                break;
+              }
+            break;
+            case "domain-admin":
+              switch ($object) {
+                case "all":
+                  $domain_admins = domain_admin('get');
+                  if (!empty($domain_admins)) {
+                    foreach ($domain_admins as $domain_admin) {
+                      if ($details = domain_admin('details', $domain_admin)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  process_get_return(domain_admin('details', $object));
+                break;
+              }
+            break;
+            case "admin":
+              switch ($object) {
+                case "all":
+                  $admins = admin('get');
+                  if (!empty($admins)) {
+                    foreach ($admins as $admin) {
+                      if ($details = admin('details', $admin)) {
+                        $data[] = $details;
+                      }
+                      else {
+                        continue;
+                      }
+                    }
+                    process_get_return($data);
+                  }
+                  else {
+                    echo '{}';
+                  }
+                break;
+
+                default:
+                  process_get_return(admin('details', $object));
+                break;
+              }
+            break;
+            case "dkim":
+              switch ($object) {
+                default:
+                  $data = dkim('details', $object);
+                  process_get_return($data);
+                  break;
+              }
+            break;
+            case "presets":
+              switch ($object) {
+                case "rspamd":
+                  process_get_return(presets('get', 'rspamd'));
+                break;
+                case "sieve":
+                  process_get_return(presets('get', 'sieve'));
+                break;
+              }
+            break;
+            case "status":
+              switch ($object) {
+                case "containers":
+                  $containers = (docker('info'));
+                  foreach ($containers as $container => $container_info) {
+                    $container . ' (' . $container_info['Config']['Image'] . ')';
+                    $containerstarttime = ($container_info['State']['StartedAt']);
+                    $containerstate = ($container_info['State']['Status']);
+                    $containerimage = ($container_info['Config']['Image']);
+                    $temp[$container] = array(
+                      'type' => 'info',
+                      'container' => $container,
+                      'state' => $containerstate,
+                      'started_at' => $containerstarttime,
+                      'image' => $containerimage
+                    );
+                  }
+                  echo json_encode($temp, JSON_UNESCAPED_SLASHES);
+                break;
+                case "vmail":
+                  $exec_fields_vmail = array('cmd' => 'system', 'task' => 'df', 'dir' => '/var/vmail');
+                  $vmail_df = explode(',', json_decode(docker('post', 'dovecot-mailcow', 'exec', $exec_fields_vmail), true));
+                  $temp = array(
+                    'type' => 'info',
+                    'disk' => $vmail_df[0],
+                    'used' => $vmail_df[2],
+                    'total'=> $vmail_df[1],
+                    'used_percent' => $vmail_df[4]
+                  );
+                  echo json_encode($temp, JSON_UNESCAPED_SLASHES);
               break;
-              case "vmail":
-                $exec_fields_vmail = array('cmd' => 'system', 'task' => 'df', 'dir' => '/var/vmail');
-                $vmail_df = explode(',', json_decode(docker('post', 'dovecot-mailcow', 'exec', $exec_fields_vmail), true));
-                $temp = array(
+              case "solr":
+                $solr_status = solr_status();
+                $solr_size = ($solr_status['status']['dovecot-fts']['index']['size']);
+                $solr_documents = ($solr_status['status']['dovecot-fts']['index']['numDocs']);
+                if (strtolower(getenv('SKIP_SOLR')) != 'n') {
+                  $solr_enabled = false;
+                }
+                else {
+                  $solr_enabled = true;
+                }
+                echo json_encode(array(
                   'type' => 'info',
-                  'disk' => $vmail_df[0],
-                  'used' => $vmail_df[2],
-                  'total'=> $vmail_df[1],
-                  'used_percent' => $vmail_df[4]
-                );
-                echo json_encode($temp, JSON_UNESCAPED_SLASHES);
-            break;
-            case "solr":
-              $solr_status = solr_status();
-              $solr_size = ($solr_status['status']['dovecot-fts']['index']['size']);
-              $solr_documents = ($solr_status['status']['dovecot-fts']['index']['numDocs']);
-              if (strtolower(getenv('SKIP_SOLR')) != 'n') {
-                $solr_enabled = false;
+                  'solr_enabled' => $solr_enabled,
+                  'solr_size' => $solr_size,
+                  'solr_documents' => $solr_documents
+                ));
+              break;
               }
-              else {
-                $solr_enabled = true;
-              }
-              echo json_encode(array(
-                'type' => 'info',
-                'solr_enabled' => $solr_enabled,
-                'solr_size' => $solr_size,
-                'solr_documents' => $solr_documents
-              ));
             break;
-            }
           break;
-        break;
-        // return no route found if no case is matched
-        default:
-          http_response_code(404);
-          echo json_encode(array(
-            'type' => 'error',
-            'msg' => 'route not found'
-          ));
-          exit();
+          // return no route found if no case is matched
+          default:
+            http_response_code(404);
+            echo json_encode(array(
+              'type' => 'error',
+              'msg' => 'route not found'
+            ));
+            exit();
+          }
         }
       break;
       case "delete":
+        if ($_SESSION['mailcow_cc_api_access'] == 'ro' || isset($_SESSION['pending_mailcow_cc_username'])) {
+          http_response_code(403);
+          echo json_encode(array(
+              'type' => 'error',
+              'msg' => 'API read/write access denied'
+          ));
+          exit();
+        }
         function process_delete_return($return) {
           $generic_failure = json_encode(array(
             'type' => 'error',
@@ -1338,6 +1352,14 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
         }
       break;
       case "edit":
+        if ($_SESSION['mailcow_cc_api_access'] == 'ro' || isset($_SESSION['pending_mailcow_cc_username'])) {
+          http_response_code(403);
+          echo json_encode(array(
+              'type' => 'error',
+              'msg' => 'API read/write access denied'
+          ));
+          exit();
+        }
         function process_edit_return($return) {
           $generic_failure = json_encode(array(
             'type' => 'error',
@@ -1375,6 +1397,12 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
         switch ($category) {
           case "bcc":
             process_edit_return(bcc('edit', array_merge(array('id' => $items), $attr)));
+          break;
+          case "pushover":
+            process_edit_return(pushover('edit', array_merge(array('username' => $items), $attr)));
+          break;
+          case "pushover-test":
+            process_edit_return(pushover('test', array_merge(array('username' => $items), $attr)));
           break;
           case "oauth2-client":
             process_edit_return(oauth2('edit', 'client', array_merge(array('id' => $items), $attr)));

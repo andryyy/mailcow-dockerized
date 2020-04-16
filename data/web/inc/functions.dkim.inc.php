@@ -245,7 +245,13 @@ function dkim($_action, $_data = null) {
         else {
           $dkimdata['length'] = ">= 8192";
         }
-        $dkimdata['dkim_txt'] = 'v=DKIM1;k=rsa;t=s;s=email;p=' . $redis_dkim_key_data;
+        if ($GLOBALS['SPLIT_DKIM_255'] === true) {
+          $dkim_txt_tmp = str_split('v=DKIM1;k=rsa;t=s;s=email;p=' . $redis_dkim_key_data, 255);
+          $dkimdata['dkim_txt'] = sprintf('"%s"', implode('" "', $dkim_txt_tmp ) );
+        }
+        else {
+          $dkimdata['dkim_txt'] = 'v=DKIM1;k=rsa;t=s;s=email;p=' . $redis_dkim_key_data;
+        }
         $dkimdata['dkim_selector'] = $redis->hGet('DKIM_SELECTORS', $_data);
         if ($GLOBALS['SHOW_DKIM_PRIV_KEYS']) {
           $dkimdata['privkey'] = base64_encode($redis->hGet('DKIM_PRIV_KEYS', $dkimdata['dkim_selector'] . '.' . $_data));

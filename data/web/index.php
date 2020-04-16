@@ -83,11 +83,11 @@ $_SESSION['index_query_string'] = $_SERVER['QUERY_STRING'];
             endif;
             ?>
           <?php if(!isset($_SESSION['oauth2_request'])): ?>
-          <legend><?=$UI_TEXTS['apps_name'];?></legend>
+          <legend><span class="glyphicon glyphicon-link" aria-hidden="true"></span> <?=$UI_TEXTS['apps_name'];?></legend>
           <?php
           foreach ($MAILCOW_APPS as $app):
           ?>
-            <a href="<?= htmlspecialchars($app['link']); ?>" role="button" title="<?= htmlspecialchars($app['description']); ?>" class="btn btn-lg btn-default"><?= htmlspecialchars($app['name']); ?></a>&nbsp;
+            <a href="<?= htmlspecialchars($app['link']); ?>" role="button" style="margin-bottom:3pt" title="<?= htmlspecialchars($app['description']); ?>" class="btn btn-primary"><?= htmlspecialchars($app['name']); ?></a>&nbsp;
           <?php
           endforeach;
           $app_links = customize('get', 'app_links');
@@ -95,7 +95,7 @@ $_SESSION['index_query_string'] = $_SERVER['QUERY_STRING'];
             foreach ($app_links as $row) {
               foreach ($row as $key => $val):
             ?>
-              <a href="<?= htmlspecialchars($val); ?>" role="button" class="btn btn-lg btn-default"><?= htmlspecialchars($key); ?></a>&nbsp;
+              <a href="<?= htmlspecialchars($val); ?>" role="button" style="margin-bottom:3pt" class="btn btn-primary"><?= htmlspecialchars($key); ?></a>&nbsp;
             <?php 
               endforeach;
             }

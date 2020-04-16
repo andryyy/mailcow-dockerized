@@ -57,7 +57,7 @@ jQuery(function($){
         {"name":"score","title": lang.spam_score, "type": "text"},
         {"name":"notified","title":lang.notified, "type": "text"},
         {"name":"created","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.received,"style":{"width":"170px"}},
-        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right"},"style":{"width":"220px"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
+        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right"},"style":{"min-width":"200px"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
       ],
       "rows": $.ajax({
         dataType: 'json',

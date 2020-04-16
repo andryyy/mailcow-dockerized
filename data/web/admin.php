@@ -81,8 +81,8 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
           </div>
         </div>
 
-        <legend data-target="#license" class="arrow-toggle" unselectable="on" data-toggle="collapse">
-          <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-menu-down"></span> <?=$lang['admin']['guid_and_license'];?>
+        <legend style="cursor:pointer;" data-target="#license" class="arrow-toggle" unselectable="on" data-toggle="collapse">
+          <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-menu-up"></span> <?=$lang['admin']['guid_and_license'];?>
         </legend>
         <div id="license" class="collapse in">
         <form class="form-horizontal" autocapitalize="none" autocorrect="off" role="form" method="post">
@@ -113,50 +113,112 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
         </form>
         </div>
 
-        <legend data-target="#api" class="arrow-toggle" unselectable="on" data-toggle="collapse">
-          <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-menu-down"></span> API
+        <legend style="margin-top:20px">
+          <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-wrench"></span> API
         </legend>
         <?php
-        $api = admin_api('get');
+        $api_ro = admin_api('ro', 'get');
+        $api_rw = admin_api('rw', 'get');
         ?>
-        <div id="api" class="collapse">
-        <form class="form-horizontal" autocapitalize="none" autocorrect="off" role="form" method="post">
-          <div class="form-group">
-            <label class="control-label col-sm-3" for="allow_from"><?=$lang['admin']['api_allow_from'];?>:</label>
-            <div class="col-sm-9">
-              <textarea class="form-control" rows="5" name="allow_from" id="allow_from" <?=($api['skip_ip_check'] == 1) ? 'disabled' : null;?> required><?=htmlspecialchars($api['allow_from']);?></textarea>
+        <div class="panel-group" id="accordion">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#api-ro">
+                ⇇ Read-Only Access</a>
+              </h4>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-              <label>
-                <input type="checkbox" id="skip_ip_check" name="skip_ip_check" <?=($api['skip_ip_check'] == 1) ? 'checked' : null;?>> <?=$lang['admin']['api_skip_ip_check'];?>
-              </label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-sm-3" for="admin_api_key"><?=$lang['admin']['api_key'];?>:</label>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" placeholder="-" value="<?=htmlspecialchars($api['api_key']);?>" readonly>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-              <label>
-                <input type="checkbox" name="active" <?=($api['active'] == 1) ? 'checked' : null;?>> <?=$lang['admin']['activate_api'];?>
-              </label>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-              <p class="help-block"><?=$lang['admin']['api_info'];?></p>
-              <div class="btn-group">
-                <button class="btn btn-default" name="admin_api" type="submit" href="#"><span class="glyphicon glyphicon-check"></span> <?=$lang['admin']['save'];?></button>
-                <button class="btn btn-info" name="admin_api_regen_key" type="submit" href="#"><?=$lang['admin']['regen_api_key'];?></button>
+            <div id="api-ro" class="panel-collapse collapse">
+              <div class="panel-body">
+                <form class="form-horizontal" autocapitalize="none" autocorrect="off" role="form" method="post">
+                  <div class="form-group">
+                    <label class="control-label col-sm-3" for="allow_from_ro"><?=$lang['admin']['api_allow_from'];?>:</label>
+                    <div class="col-sm-9">
+                      <textarea class="form-control" rows="2" name="allow_from" id="allow_from_ro" <?=($api_ro['skip_ip_check'] == 1) ? 'disabled' : null;?> required><?=htmlspecialchars($api_ro['allow_from']);?></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                      <label>
+                        <input type="checkbox" name="skip_ip_check" id="skip_ip_check_ro" <?=($api_ro['skip_ip_check'] == 1) ? 'checked' : null;?>> <?=$lang['admin']['api_skip_ip_check'];?>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-3"><?=$lang['admin']['api_key'];?>:</label>
+                    <div class="col-sm-9">
+                      <pre><?=(empty(htmlspecialchars($api_ro['api_key']))) ? '-' : htmlspecialchars($api_ro['api_key']);?></pre>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                      <label>
+                        <input type="checkbox" name="active" <?=($api_ro['active'] == 1) ? 'checked' : null;?>> <?=$lang['admin']['activate_api'];?>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                      <p class="help-block"><?=$lang['admin']['api_info'];?></p>
+                      <div class="btn-group">
+                        <button class="btn btn-sm btn-default" name="admin_api[ro]" type="submit" href="#"><span class="glyphicon glyphicon-check"></span> <?=$lang['admin']['save'];?></button>
+                        <button class="btn btn-sm btn-primary" name="admin_api_regen_key[ro]" type="submit" href="#"><?=$lang['admin']['regen_api_key'];?></button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
-        </form>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#api-rw">
+                ⇄ Read-Write Access</a>
+              </h4>
+            </div>
+            <div id="api-rw" class="panel-collapse collapse">
+              <div class="panel-body">
+                <form class="form-horizontal" autocapitalize="none" autocorrect="off" role="form" method="post">
+                  <div class="form-group">
+                    <label class="control-label col-sm-3" for="allow_from_rw"><?=$lang['admin']['api_allow_from'];?>:</label>
+                    <div class="col-sm-9">
+                      <textarea class="form-control" rows="2" name="allow_from" id="allow_from_rw" <?=($api_rw['skip_ip_check'] == 1) ? 'disabled' : null;?> required><?=htmlspecialchars($api_rw['allow_from']);?></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                      <label>
+                        <input type="checkbox" name="skip_ip_check" id="skip_ip_check_rw" <?=($api_rw['skip_ip_check'] == 1) ? 'checked' : null;?>> <?=$lang['admin']['api_skip_ip_check'];?>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-3" for="admin_api_key"><?=$lang['admin']['api_key'];?>:</label>
+                    <div class="col-sm-9">
+                      <pre><?=(empty(htmlspecialchars($api_rw['api_key']))) ? '-' : htmlspecialchars($api_rw['api_key']);?></pre>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                      <label>
+                        <input type="checkbox" name="active" <?=($api_rw['active'] == 1) ? 'checked' : null;?>> <?=$lang['admin']['activate_api'];?>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                      <p class="help-block"><?=$lang['admin']['api_info'];?></p>
+                      <div class="btn-group">
+                        <button class="btn btn-sm btn-default" name="admin_api[rw]" type="submit" href="#"><span class="glyphicon glyphicon-check"></span> <?=$lang['admin']['save'];?></button>
+                        <button class="btn btn-sm btn-primary" name="admin_api_regen_key[rw]" type="submit" href="#"><?=$lang['admin']['regen_api_key'];?></button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>

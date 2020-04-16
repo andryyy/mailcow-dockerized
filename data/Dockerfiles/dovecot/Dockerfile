@@ -117,6 +117,7 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY stop-supervisor.sh /usr/local/sbin/stop-supervisor.sh
 COPY quarantine_notify.py /usr/local/bin/quarantine_notify.py
 COPY quota_notify.py /usr/local/bin/quota_notify.py
+COPY repl_health.sh /usr/local/bin/repl_health.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf

@@ -45,6 +45,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             <div class="col-sm-10">
             <input type="text" class="form-control" name="quota" min="0" max="" id="addInputQuota" disabled value="<?=$lang['add']['select_domain'];?>" required>
             <small class="help-block">0 = ∞</small>
+            <div class="label label-warning addInputQuotaExhausted" style="display:none;"><?=$lang['warning']['quota_exceeded_scope'];?></div>
             </div>
           </div>
           <div class="form-group">
@@ -162,10 +163,14 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             <label class="control-label col-sm-2"><?=$lang['add']['backup_mx_options'];?></label>
             <div class="col-sm-10">
               <div class="checkbox">
-              <label><input type="checkbox" value="1" name="backupmx"> <?=$lang['add']['relay_domain'];?></label>
-              <br />
-              <label><input type="checkbox" value="1" name="relay_all_recipients"> <?=$lang['add']['relay_all'];?></label>
-              <p><?=$lang['add']['relay_all_info'];?></p>
+                <label><input type="checkbox" value="1" name="backupmx"> <?=$lang['add']['relay_domain'];?></label>
+                <br>
+                <label><input type="checkbox" value="1" name="relay_all_recipients"> <?=$lang['add']['relay_all'];?></label>
+                <p><?=$lang['add']['relay_all_info'];?></p>
+                <label><input type="checkbox" value="1" name="relay_unknown_only" <?=(isset($result['relay_unknown_only_int']) && $result['relay_unknown_only_int']=="1") ? "checked" : null;?>> <?=$lang['add']['relay_unknown_only'];?></label>
+                <br>
+                <p><?=$lang['add']['relay_transport_info'];?></p>
+                <hr style="margin:25px 0px 0px 0px">
               </div>
             </div>
           </div>

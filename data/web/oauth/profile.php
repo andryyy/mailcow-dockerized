@@ -24,6 +24,10 @@ if (!empty($mailbox)) {
     ));
     exit;
   }
+  if ($GLOBALS['OAUTH2_FORGET_SESSION_AFTER_LOGIN'] === true) {
+    session_unset();
+    session_destroy();
+  }
 }
 echo json_encode(array(
   'success' => false

@@ -11,10 +11,8 @@ table.footable>tbody>tr.footable-empty>td {
 .table-responsive {
   overflow: inherit !important;
 }
-@media screen and (max-width: 767px) {
-  .table-responsive {
-    overflow-x: scroll !important;
-  }
+.table-responsive {
+  overflow-x: scroll !important;
 }
 .btn-group {
   width: max-content;
@@ -58,4 +56,8 @@ table tbody tr {
 }
 table tbody tr td input[type="checkbox"] {
   cursor: pointer;
+}
+.label-last {
+  color: #c7254e !important;
+  background-color: #f9f2f4 !important;
 }

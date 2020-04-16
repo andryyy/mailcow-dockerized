@@ -114,15 +114,11 @@ done
 fi
 
 # Set API options if env vars are not empty
-if [[ ${API_ALLOW_FROM} != "invalid" ]] && \
-  [[ ${API_KEY} != "invalid" ]] && \
-  [[ ! -z ${API_KEY} ]] && \
-  [[ ! -z ${API_ALLOW_FROM} ]]; then
+if [[ ${API_ALLOW_FROM} != "invalid" ]] && [[ ! -z ${API_ALLOW_FROM} ]]; then
   IFS=',' read -r -a API_ALLOW_FROM_ARR <<< "${API_ALLOW_FROM}"
   declare -a VALIDATED_API_ALLOW_FROM_ARR
   REGEX_IP6='^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$'
   REGEX_IP4='^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'
-
   for IP in "${API_ALLOW_FROM_ARR[@]}"; do
     if [[ ${IP} =~ ${REGEX_IP6} ]] || [[ ${IP} =~ ${REGEX_IP4} ]]; then
       VALIDATED_API_ALLOW_FROM_ARR+=("${IP}")
@@ -130,10 +126,18 @@ if [[ ${API_ALLOW_FROM} != "invalid" ]] && \
   done
   VALIDATED_IPS=$(array_by_comma ${VALIDATED_API_ALLOW_FROM_ARR[*]})
   if [[ ! -z ${VALIDATED_IPS} ]]; then
-    mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} << EOF
-DELETE FROM api;
-INSERT INTO api (api_key, active, allow_from) VALUES ("${API_KEY}", "1", "${VALIDATED_IPS}");
+    if [[ ${API_KEY} != "invalid" ]] && [[ ! -z ${API_KEY} ]]; then
+      mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} << EOF
+DELETE FROM api WHERE access = 'rw';
+INSERT INTO api (api_key, active, allow_from, access) VALUES ("${API_KEY}", "1", "${VALIDATED_IPS}", "rw");
 EOF
+    fi
+    if [[ ${API_KEY_READ_ONLY} != "invalid" ]] && [[ ! -z ${API_KEY_READ_ONLY} ]]; then
+      mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} << EOF
+DELETE FROM api WHERE access = 'ro';
+INSERT INTO api (api_key, active, allow_from, access) VALUES ("${API_KEY_READ_ONLY}", "1", "${VALIDATED_IPS}", "ro");
+EOF
+    fi
   fi
 fi
 

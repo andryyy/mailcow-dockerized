@@ -3,13 +3,21 @@ function init_db_schema() {
   try {
     global $pdo;
 
-    $db_version = "05032020_0715";
+    $db_version = "16042020_1004";
 
     $stmt = $pdo->query("SHOW TABLES LIKE 'versions'");
     $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
     if ($num_results != 0) {
       $stmt = $pdo->query("SELECT `version` FROM `versions` WHERE `application` = 'db_schema'");
       if ($stmt->fetch(PDO::FETCH_ASSOC)['version'] == $db_version) {
+        return true;
+      }
+      if (!preg_match('/y|yes/i', getenv('MASTER'))) {
+        $_SESSION['return'][] = array(
+          'type' => 'warning',
+          'log' => array(__FUNCTION__),
+          'msg' => 'Database not initialized: not running db_init on slave.'
+        );
         return true;
       }
     }
@@ -173,6 +181,7 @@ function init_db_schema() {
           "skip_ip_check" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
           "modified" => "DATETIME ON UPDATE NOW(0)",
+          "access" => "ENUM('ro', 'rw') NOT NULL DEFAULT 'rw'",
           "active" => "TINYINT(1) NOT NULL DEFAULT '1'"
         ),
         "keys" => array(
@@ -210,6 +219,7 @@ function init_db_schema() {
           "backupmx" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "gal" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "relay_all_recipients" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "relay_unknown_only" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
           "modified" => "DATETIME ON UPDATE CURRENT_TIMESTAMP",
           "active" => "TINYINT(1) NOT NULL DEFAULT '1'"
@@ -364,6 +374,7 @@ function init_db_schema() {
           "syncjobs" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "eas_reset" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "sogo_profile_reset" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "pushover" => "TINYINT(1) NOT NULL DEFAULT '0'",
           // quarantine is for quarantine actions, todo: rename
           "quarantine" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "quarantine_attachments" => "TINYINT(1) NOT NULL DEFAULT '1'",
@@ -524,6 +535,7 @@ function init_db_schema() {
           "sogo_access" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "app_passwds" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "bcc_maps" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "pushover" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "filters" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "ratelimit" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "spam_policy" => "TINYINT(1) NOT NULL DEFAULT '1'",
@@ -816,6 +828,24 @@ function init_db_schema() {
         "keys" => array(
           "primary" => array(
             "" => array("c_folder_id", "c_name")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "pushover" => array(
+        "cols" => array(
+          "username" => "VARCHAR(255) NOT NULL",
+          "key" => "VARCHAR(255) NOT NULL",
+          "token" => "VARCHAR(255) NOT NULL",
+          "attributes" => "JSON",
+          "title" => "TEXT",
+          "text" => "TEXT",
+          "senders" => "TEXT",
+          "active" => "TINYINT(1) NOT NULL DEFAULT '1'"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("username")
           )
         ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
@@ -1114,6 +1144,11 @@ function init_db_schema() {
     $stmt = $pdo->query("DELETE FROM `da_acl` WHERE `username` NOT IN (SELECT `username`FROM `domain_admins`);");
 
     // Migrate attributes
+    // pushover
+    $stmt = $pdo->query("UPDATE `pushover` SET `attributes` = '{}' WHERE `attributes` = '' OR `attributes` IS NULL;");
+    $stmt = $pdo->query("UPDATE `pushover` SET `attributes` =  JSON_SET(`attributes`, '$.evaluate_x_prio', \"0\") WHERE JSON_EXTRACT(`attributes`, '$.evaluate_x_prio') IS NULL;");
+    $stmt = $pdo->query("UPDATE `pushover` SET `attributes` =  JSON_SET(`attributes`, '$.only_x_prio', \"0\") WHERE JSON_EXTRACT(`attributes`, '$.only_x_prio') IS NULL;");
+    // mailbox
     $stmt = $pdo->query("UPDATE `mailbox` SET `attributes` = '{}' WHERE `attributes` = '' OR `attributes` IS NULL;");
     $stmt = $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.force_pw_update', \"0\") WHERE JSON_EXTRACT(`attributes`, '$.force_pw_update') IS NULL;");
     $stmt = $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.sogo_access', \"1\") WHERE JSON_EXTRACT(`attributes`, '$.sogo_access') IS NULL;");

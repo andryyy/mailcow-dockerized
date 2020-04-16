@@ -30,6 +30,9 @@
         "unlimited_quota_acl": "Unlimited quota prohibited by ACL",
         "mysql_error": "MySQL error: %s",
         "redis_error": "Redis error: %s",
+        "pushover_token": "Pushover token has a wrong format",
+        "pushover_key": "Pushover key has a wrong format",
+        "pushover_credentials_missing": "Pushover token and or key missing",
         "unknown_tfa_method": "Unknown TFA method",
         "totp_verification_failed": "TOTP verification failed",
         "u2f_verification_failed": "U2F verification failed: %s",
@@ -135,6 +138,8 @@
         "extra_acl_invalid_domain": "External sender \"%s\" uses an invalid domain"
     },
     "success": {
+        "dovecot_restart_success": "Dovecot was restarted successfully",
+        "pushover_settings_edited": "Pushover settings successfully set, please verify credentials.",
         "global_filter_written": "Filter was successfully written to file",
         "learned_ham": "Successfully learned ID % as ham",
         "verified_totp_login": "Verified TOTP login",
@@ -213,6 +218,7 @@
         "no_action": "No action applicable"
     },
     "warning": {
+        "dovecot_restart_failed": "Dovecot failed to restart, please check the logs",
         "domain_added_sogo_failed": "Added domain but failed to restart SOGo, please check your server logs.",
         "session_ua": "Form token invalid: User-Agent validation error",
         "session_token": "Form token invalid: Token mismatch",
@@ -220,11 +226,22 @@
         "no_active_admin": "Cannot deactivate last active admin",
         "hash_not_found": "Hash not found or already deleted",
         "fuzzy_learn_error": "Fuzzy hash learn error: %s",
-        "ip_invalid": "Skipped invalid IP: %s"
+        "ip_invalid": "Skipped invalid IP: %s",
+        "quota_exceeded_scope": "Domain quota exceeded: Only unlimited mailboxes can be created in this domain scope."
     },
     "user": {
+        "pushover_info": "Push notification settings will apply to all clean (non-spam) mail delivered to <b>%s</b> including aliases (shared, non-shared, tagged).",
+        "verify": "Verify",
+        "pushover_verify": "Verify credentials",
+        "title": "Title",
+        "pushover_title": "Notification title",
+        "text": "Text",
+        "pushover_text": "Notification text",
+        "pushover_vars": "Useable variables for text and title (please take note of data protection)",
+        "pushover_sender_array": "Only consider the following sender email addresses <small>(comma-separated)</small>",
         "no_last_login": "No last UI login information",
         "last_mail_login": "Last mail login",
+        "save": "Save changes",
         "apple_connection_profile": "Apple connection profile",
         "apple_connection_profile_mailonly": "This connection profile includes IMAP and SMTP configuration parameters for an Apple device.",
         "apple_connection_profile_complete": "This connection profile includes IMAP and SMTP parameters as well as CalDAV (calendars) and CardDAV (contacts) pathes for an Apple device.",
@@ -333,6 +350,15 @@
         "spam_score_reset": "Reset to server default"
     },
     "admin": {
+        "pushover_info": "Push notification settings will apply to all clean (non-spam) mail delivered to <b>%s</b> including aliases (shared, non-shared, tagged).",
+        "verify": "Verify",
+        "pushover_verify": "Verify credentials",
+        "title": "Title",
+        "pushover_title": "Notification title",
+        "text": "Text",
+        "pushover_text": "Notification text",
+        "pushover_vars": "Useable variables for text and title (please take note of data protection)",
+        "pushover_sender_array": "Only consider the following sender email addresses <small>(comma-separated)</small>",
         "spamfilter": "Spam filter",
         "domain": "Domain",
         "domain_s": "Domain/s",
@@ -570,6 +596,7 @@
         "notified": "Notified"
     },
     "mailbox": {
+        "stats": "Statistics",
         "last_mail_login": "Last mail login",
         "table_size": "Table size",
         "table_size_show_n": "Show %s items",
@@ -638,7 +665,7 @@
         "last_run": "Last run",
         "excludes": "Excludes",
         "last_run_reset": "Schedule next",
-        "sieve_info": "You can store multiple filters per user, but only one prefilter and one postfilter can be active at the same time.<br>\r\nEach filter will be processed in the described order. Neither a failed script nor an issued \"keep;\" will stop processing of further scripts.<br><br>Global sieve prefilter → Prefilter → User scripts → Postfilter → Global sieve postfilter",
+        "sieve_info": "You can store multiple filters per user, but only one prefilter and one postfilter can be active at the same time.<br>\r\nEach filter will be processed in the described order. Neither a failed script nor an issued \"keep;\" will stop processing of further scripts. Changes to global sieve scripts will trigger a restart of Dovecot.<br><br>Global sieve prefilter → Prefilter → User scripts → Postfilter → Global sieve postfilter",
         "sogo_visible": "Alias is visible in SOGo",
         "sogo_visible_y": "Show alias in SOGo",
         "sogo_visible_n": "Hide alias in SOGo",
@@ -697,8 +724,10 @@
         "sieve_preset_7": "Redirect and keep/drop"
     },
     "edit": {
-        "generate": "generate",
+        "evaluate_x_prio": "Escalate high priority mail [<code>X-Priority: 1</code>]",
+        "only_x_prio": "Only consider high priority mail [<code>X-Priority: 1</code>]",
         "app_name": "App name",
+        "generate": "generate",
         "app_passwd": "App password",
         "sogo_visible": "Alias is visible in SOGo",
         "sogo_visible_info": "This option only affects objects, that can be displayed in SOGo (shared or non-shared alias addresses pointing to at least one local mailbox). If hidden, an alias will not appear as selectable sender in SOGo.",
@@ -738,9 +767,11 @@
         "max_quota": "Max. quota per mailbox (MiB)",
         "domain_quota": "Domain quota",
         "backup_mx_options": "Backup MX options",
-        "relay_domain": "Relay domain",
+        "relay_domain": "Relay this domain",
         "relay_all": "Relay all recipients",
-        "relay_all_info": "<small>If you choose <b>not</b> to relay all recipients, you will need to add a (\"blind\") mailbox for every single recipient that should be relayed.</small>",
+        "relay_all_info": "↪ If you choose <b>not</b> to relay all recipients, you will need to add a (\"blind\") mailbox for every single recipient that should be relayed.",
+        "relay_unknown_only": "Relay non-existing mailboxes only. Existing mailboxes will be delivered locally.",
+        "relay_transport_info": "<div class=\"label label-info\">Info</div> You can define transport maps for a custom destination for this domain. If not set, a MX lookup will be made.",
         "full_name": "Full name",
         "quota_mb": "Quota (MiB)",
         "sender_acl": "Allow to send as",
@@ -820,7 +851,9 @@
         "backup_mx_options": "Backup MX options",
         "relay_all": "Relay all recipients",
         "relay_domain": "Relay this domain",
-        "relay_all_info": "<small>If you choose <b>not</b> to relay all recipients, you will need to add a (\"blind\") mailbox for every single recipient that should be relayed.</small>",
+        "relay_all_info": "↪ If you choose <b>not</b> to relay all recipients, you will need to add a (\"blind\") mailbox for every single recipient that should be relayed.",
+        "relay_unknown_only": "Relay non-existing mailboxes only. Existing mailboxes will be delivered locally.",
+        "relay_transport_info": "<div class=\"label label-info\">Info</div> You can define transport maps for a custom destination for this domain. If not set, a MX lookup will be made.",
         "alias_address": "Alias address/es",
         "alias_address_info": "<small>Full email address/es or @example.com, to catch all messages for a domain (comma-separated). <b>mailcow domains only</b>.</small>",
         "alias_domain_info": "<small>Valid domain names only (comma-separated).</small>",
@@ -851,6 +884,7 @@
         "relayhost_wrapped_tls_info": "Please do <b>not</b> use TLS-wrapped ports (mostly used on port 465).<br>\r\nUse any non-wrapped port and issue STARTTLS. A TLS policy to enforce TLS can be created in \"TLS policy maps\"."
     },
     "acl": {
+        "pushover": "Pushover",
         "spam_alias": "Temporary aliases",
         "tls_policy": "TLS policy",
         "spam_score": "Spam score",

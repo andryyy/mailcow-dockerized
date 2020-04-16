@@ -81,7 +81,7 @@ function quarantine($_action, $_data = null) {
         $stmt = $pdo->prepare('SELECT `msg`, `qid`, `sender`, `rcpt` FROM `quarantine` WHERE `id` = :id');
         $stmt->execute(array(':id' => $row['id']));
         $detail_row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $sender = (isset($detail_row['sender'])) ? $detail_row['sender'] : 'sender-unknown@rspamd';
+        $sender = !empty($detail_row['sender']) ? $detail_row['sender'] : 'sender-unknown@rspamd';
         if (!empty(gethostbynamel('postfix-mailcow'))) {
           $postfix = 'postfix-mailcow';
         }
@@ -368,7 +368,7 @@ function quarantine($_action, $_data = null) {
             );
             continue;
           }
-          $sender = (isset($row['sender'])) ? $row['sender'] : 'sender-unknown@rspamd';
+          $sender = !empty($row['sender']) ? $row['sender'] : 'sender-unknown@rspamd';
           if (!empty(gethostbynamel('postfix-mailcow'))) {
             $postfix = 'postfix-mailcow';
           }

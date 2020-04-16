@@ -71,7 +71,7 @@ services:
             - clamd
 
     rspamd-mailcow:
-      image: mailcow/rspamd:1.64
+      image: mailcow/rspamd:1.68
       stop_grace_period: 30s
       depends_on:
         - nginx-mailcow
@@ -102,7 +102,7 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.58
+      image: mailcow/phpfpm:1.60
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
         - redis-mailcow
@@ -143,6 +143,7 @@ services:
         - SMTPS_PORT=${SMTPS_PORT:-465}
         - SMTP_PORT=${SMTP_PORT:-25}
         - API_KEY=${API_KEY:-invalid}
+        - API_KEY_READ_ONLY=${API_KEY_READ_ONLY:-invalid}
         - API_ALLOW_FROM=${API_ALLOW_FROM:-invalid}
         - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-mailcow-dockerized}
         - SKIP_SOLR=${SKIP_SOLR:-y}
@@ -188,7 +189,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.115
+      image: mailcow/dovecot:1.120
       depends_on:
         - mysql-mailcow
       dns:
@@ -246,7 +247,7 @@ services:
             - dovecot
 
     postfix-mailcow:
-      image: mailcow/postfix:1.46
+      image: mailcow/postfix:1.48
       depends_on:
         - mysql-mailcow
       volumes:
@@ -394,7 +395,7 @@ services:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.72
+      image: mailcow/watchdog:1.74
       # Debug
       #command: /watchdog.sh
       dns:
@@ -411,10 +412,12 @@ services:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
         - DBPASS=${DBPASS}
+        - DBROOT=${DBROOT}
         - USE_WATCHDOG=${USE_WATCHDOG:-n}
         - WATCHDOG_NOTIFY_EMAIL=${WATCHDOG_NOTIFY_EMAIL}
         - WATCHDOG_NOTIFY_BAN=${WATCHDOG_NOTIFY_BAN:-y}
         - WATCHDOG_EXTERNAL_CHECKS=${WATCHDOG_EXTERNAL_CHECKS:-n}
+        - WATCHDOG_MYSQL_REPLICATION_CHECKS=${WATCHDOG_MYSQL_REPLICATION_CHECKS:-n}
         - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
         - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
         - IP_BY_DOCKER_API=${IP_BY_DOCKER_API:-0}
@@ -429,10 +432,12 @@ services:
         - UNBOUND_THRESHOLD=5
         - REDIS_THRESHOLD=5
         - MYSQL_THRESHOLD=5
+        - MYSQL_REPLICATION_THRESHOLD=1
         - SOGO_THRESHOLD=3
         - POSTFIX_THRESHOLD=8
         - CLAMD_THRESHOLD=15
         - DOVECOT_THRESHOLD=12
+        - DOVECOT_REPL_THRESHOLD=2
         - PHPFPM_THRESHOLD=5
         - RATELIMIT_THRESHOLD=1
         - FAIL2BAN_THRESHOLD=1

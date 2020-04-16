@@ -17,7 +17,7 @@ try {
   $pdo = new PDO($dsn, $database_user, $database_pass, $opt);
 }
 catch (PDOException $e) {
-  error_log("QUARANTINE: " . $e . PHP_EOL);
+  error_log("NOTIFY: " . $e . PHP_EOL);
   http_response_code(501);
   exit;
 }
@@ -46,43 +46,23 @@ if (!function_exists('getallheaders'))  {
   }
 }
 
-$raw_data_content = file_get_contents('php://input');
-$raw_data = mb_convert_encoding($raw_data_content, 'HTML-ENTITIES', "UTF-8");
 $headers = getallheaders();
 
 $qid      = $headers['X-Rspamd-Qid'];
-$subject  = $headers['X-Rspamd-Subject'];
-$score    = $headers['X-Rspamd-Score'];
 $rcpts    = $headers['X-Rspamd-Rcpt'];
-$user     = $headers['X-Rspamd-User'];
-$ip       = $headers['X-Rspamd-Ip'];
-$action   = $headers['X-Rspamd-Action'];
 $sender   = $headers['X-Rspamd-From'];
-$symbols  = $headers['X-Rspamd-Symbols'];
+$ip       = $headers['X-Rspamd-Ip'];
+$subject  = $headers['X-Rspamd-Subject'];
+$priority = 0;
 
-$raw_size = (int)$_SERVER['CONTENT_LENGTH'];
-
-if (empty($sender)) {
-  error_log("QUARANTINE: Unknown sender, assuming empty-env-from@localhost" . PHP_EOL);
-  $sender = 'empty-env-from@localhost';
-}
-
-try {
-  $max_size = (int)$redis->Get('Q_MAX_SIZE');
-  if (($max_size * 1048576) < $raw_size) {
-    error_log(sprintf("QUARANTINE: Message too large: %d b exceeds %d b", $raw_size, ($max_size * 1048576)) . PHP_EOL);
-    http_response_code(505);
-    exit;
+$symbols_array = json_decode($headers['X-Rspamd-Symbols'], true);
+if (is_array($symbols_array)) {
+  foreach ($symbols_array as $symbol) {
+    if ($symbol['name'] == 'HAS_X_PRIO_ONE') {
+      $priority = 1;
+      break;
+    }
   }
-  if ($exclude_domains = $redis->Get('Q_EXCLUDE_DOMAINS')) {
-    $exclude_domains = json_decode($exclude_domains, true);
-  }
-  $retention_size = (int)$redis->Get('Q_RETENTION_SIZE');
-}
-catch (RedisException $e) {
-  error_log("QUARANTINE: " . $e . PHP_EOL);
-  http_response_code(504);
-  exit;
 }
 
 $rcpt_final_mailboxes = array();
@@ -91,10 +71,10 @@ $rcpt_final_mailboxes = array();
 foreach (json_decode($rcpts, true) as $rcpt) {
   // Remove tag
   $rcpt = preg_replace('/^(.*?)\+.*(@.*)$/', '$1$2', $rcpt);
-  
+
   // Break rcpt into local part and domain part
   $parsed_rcpt = parse_email($rcpt);
-  
+
   // Skip if not a mailcow handled domain
   try {
     if (!$redis->hGet('DOMAIN_MAP', $parsed_rcpt['domain'])) {
@@ -102,15 +82,9 @@ foreach (json_decode($rcpts, true) as $rcpt) {
     }
   }
   catch (RedisException $e) {
-    error_log("QUARANTINE: " . $e . PHP_EOL);
+    error_log("NOTIFY: " . $e . PHP_EOL);
     http_response_code(504);
     exit;
-  }
-
-  // Skip if domain is excluded
-  if (in_array($parsed_rcpt['domain'], $exclude_domains)) {
-    error_log(sprintf("QUARANTINE: Skipped domain %s", $parsed_rcpt['domain']) . PHP_EOL);
-    continue;
   }
 
   // Always assume rcpt is not a final mailbox but an alias for a mailbox or further aliases
@@ -212,43 +186,50 @@ foreach (json_decode($rcpts, true) as $rcpt) {
   }
 }
 
+
 foreach ($rcpt_final_mailboxes as $rcpt_final) {
-  error_log("QUARANTINE: quarantine pipe: processing quarantine message for rcpt " . $rcpt_final . PHP_EOL);
-  try {
-    $stmt = $pdo->prepare("INSERT INTO `quarantine` (`qid`, `subject`, `score`, `sender`, `rcpt`, `symbols`, `user`, `ip`, `msg`, `action`)
-      VALUES (:qid, :subject, :score, :sender, :rcpt, :symbols, :user, :ip, :msg, :action)");
-    $stmt->execute(array(
-      ':qid' => $qid,
-      ':subject' => $subject,
-      ':score' => $score,
-      ':sender' => $sender,
-      ':rcpt' => $rcpt_final,
-      ':symbols' => $symbols,
-      ':user' => $user,
-      ':ip' => $ip,
-      ':msg' => $raw_data,
-      ':action' => $action
+  error_log("NOTIFY: pushover pipe: processing pushover message for rcpt " . $rcpt_final . PHP_EOL);
+  $stmt = $pdo->prepare("SELECT * FROM `pushover`
+    WHERE `username` = :username AND `active` = '1'");
+  $stmt->execute(array(
+    ':username' => $rcpt_final
+  ));
+  $api_data = $stmt->fetch(PDO::FETCH_ASSOC);
+  if (isset($api_data['key']) && isset($api_data['token'])) {
+    $title = (!empty($api_data['title'])) ? $api_data['title'] : 'Mail';
+    $text = (!empty($api_data['text'])) ? $api_data['text'] : 'You\'ve got mail 📧';
+    $attributes = json_decode($api_data['attributes'], true);
+    $senders = explode(',', $api_data['senders']);
+    $senders = array_filter($senders);
+    if (!empty($senders) && !in_array($sender, $senders)) {
+      error_log("NOTIFY: pushover pipe: skipping unwanted sender " . $sender);
+      continue;
+    }
+    if ($attributes['only_x_prio'] == "1" && $priority == 0) {
+      error_log("NOTIFY: pushover pipe: mail has no X-Priority: 1 header, skipping");
+      continue;
+    }
+    $post_fields = array(
+      "token" => $api_data['token'],
+      "user" => $api_data['key'],
+      "title" => sprintf("%s", str_replace(array('{SUBJECT}', '{SENDER}'), array($subject, $sender), $title)),
+      "priority" => $priority,
+      "message" => sprintf("%s", str_replace(array('{SUBJECT}', '{SENDER}'), array($subject, $sender), $text))
+    );
+    if ($attributes['evaluate_x_prio'] == "1" && $priority == 1) {
+      $post_fields['expire'] = 600;
+      $post_fields['retry'] = 120;
+      $post_fields['priority'] = 2;
+    }
+    curl_setopt_array($ch = curl_init(), array(
+      CURLOPT_URL => "https://api.pushover.net/1/messages.json",
+      CURLOPT_POSTFIELDS => $post_fields,
+      CURLOPT_SAFE_UPLOAD => true,
+      CURLOPT_RETURNTRANSFER => true,
     ));
-    $stmt = $pdo->prepare('DELETE FROM `quarantine` WHERE `rcpt` = :rcpt AND `id` NOT IN (
-      SELECT `id`
-      FROM (
-        SELECT `id`
-        FROM `quarantine`
-        WHERE `rcpt` = :rcpt2
-        ORDER BY id DESC
-        LIMIT :retention_size
-      ) x 
-    );');
-    $stmt->execute(array(
-      ':rcpt' => $rcpt_final,
-      ':rcpt2' => $rcpt_final,
-      ':retention_size' => $retention_size
-    ));
-  }
-  catch (PDOException $e) {
-    error_log("QUARANTINE: " . $e->getMessage() . PHP_EOL);
-    http_response_code(503);
-    exit;
+    $result = curl_exec($ch);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    error_log("NOTIFY: result: " . $httpcode . PHP_EOL);
   }
 }
-

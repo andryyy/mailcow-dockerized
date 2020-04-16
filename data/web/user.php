@@ -76,6 +76,7 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
   $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
   $username = $_SESSION['mailcow_cc_username'];
   $mailboxdata = mailbox('get', 'mailbox_details', $username);
+  $pushover_data = pushover('get', $username);
 
   $clientconfigstr = "host=" . urlencode($mailcow_hostname) . "&email=" . urlencode($username) . "&name=" . urlencode($mailboxdata['name']) . "&ui=" . urlencode(strtok($_SERVER['HTTP_HOST'], ':')) . "&port=" . urlencode($autodiscover_config['caldav']['port']);
   if ($autodiscover_config['useEASforOutlook'] == 'yes')
@@ -101,6 +102,7 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
     <li role="presentation"><a href="#Spamfilter" aria-controls="Spamfilter" role="tab" data-toggle="tab"><?=$lang['user']['spamfilter'];?></a></li>
     <li role="presentation"><a href="#Syncjobs" aria-controls="Syncjobs" role="tab" data-toggle="tab"><?=$lang['user']['sync_jobs'];?></a></li>
     <li role="presentation"><a href="#AppPasswds" aria-controls="AppPasswds" role="tab" data-toggle="tab"><?=$lang['user']['app_passwds'];?></a></li>
+    <li role="presentation"><a href="#Pushover" aria-controls="Pushover" role="tab" data-toggle="tab">Pushover API</a></li>
   </ul>
   <hr>
 
@@ -470,6 +472,79 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
         <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#addSyncJobModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['user']['create_syncjob'];?></a>
       </div>
     </div>
+  </div>
+
+	<div role="tabpanel" class="tab-pane" id="Pushover">
+    <form data-id="pushover" class="form well" method="post">
+      <input type="hidden" value="0" name="evaluate_x_prio">
+      <input type="hidden" value="0" name="only_x_prio">
+      <input type="hidden" value="0" name="active">
+      <input type="hidden" value="" name="senders">
+      <div class="row">
+        <div class="col-sm-1">
+          <p class="help-block"><a href="https://pushover.net" target="_blank"><img src="data:image/png;base64,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" class="img img-fluid"></a></p>
+        </div>
+        <div class="col-sm-10">
+          <p class="help-block"><?=$lang['user']['pushover_vars'];?>: <code>{SUBJECT}</code>, <code>{SENDER}</code></p>
+          <div class="form-group">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="token">API Token/Key (Application)</label>
+                  <input type="text" class="form-control" name="token" maxlength="30" value="<?=$pushover_data['token'];?>" required>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="key">User/Group Key</label>
+                  <input type="text" class="form-control" name="key" maxlength="30" value="<?=$pushover_data['key'];?>" required>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="title"><?=$lang['user']['pushover_title'];?></label>
+                  <input type="text" class="form-control" name="title" value="<?=$pushover_data['title'];?>" placeholder="Mail">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="text"><?=$lang['user']['pushover_text'];?></label>
+                  <input type="text" class="form-control" name="text" value="<?=$pushover_data['text'];?>" placeholder="You've got mail 📧">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="text"><?=$lang['user']['pushover_sender_array'];?></label>
+                  <input type="text" class="form-control" name="senders" value="<?=$pushover_data['senders'];?>">
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="checkbox">
+                <label><input type="checkbox" value="1" name="evaluate_x_prio" <?=($pushover_data['attributes']['evaluate_x_prio']=="1") ? "checked" : null;?>> <?=$lang['edit']['evaluate_x_prio'];?></label>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="checkbox">
+                <label><input type="checkbox" value="1" name="only_x_prio" <?=($pushover_data['attributes']['only_x_prio']=="1") ? "checked" : null;?>> <?=$lang['edit']['only_x_prio'];?></label>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="checkbox">
+                <label><input type="checkbox" value="1" name="active" <?=($pushover_data['active']=="1") ? "checked" : null;?>> <?=$lang['edit']['active'];?></label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <p><?=sprintf($lang['user']['pushover_info'], $username);?></p>
+          <div class="btn-group" data-acl="<?=$_SESSION['acl']['pushover'];?>">
+              <a class="btn btn-sm btn-default" data-action="edit_selected" data-id="pushover" data-item="<?=htmlspecialchars($username);?>" data-api-url='edit/pushover' data-api-attr='{}' href="#"><?=$lang['user']['save'];?></a>
+              <a class="btn btn-sm btn-default" data-action="edit_selected" data-id="pushover-test" data-item="<?=htmlspecialchars($username);?>" data-api-url='edit/pushover-test' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['user']['pushover_verify'];?></a>
+              <a class="btn btn-sm btn-danger" data-action="edit_selected" data-id="pushover-delete" data-item="<?=htmlspecialchars($username);?>" data-api-url='edit/pushover' data-api-attr='{"delete":"true"}' href="#"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> <?=$lang['user']['remove'];?></a>
+          </div>
+        </div>
+      </div>
+    </form>
   </div>
 
 	<div role="tabpanel" class="tab-pane" id="AppPasswds">

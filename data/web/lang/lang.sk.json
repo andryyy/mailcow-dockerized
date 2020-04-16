@@ -24,6 +24,8 @@
         "hibp_ok": "Nenašla sa zhoda."
     },
     "danger": {
+        "invalid_filter_type": "Nesprávny typ filtra",
+        "file_open_error": "Nemožno otvoriť súbor pre zápis",
         "transport_dest_exists": "Transportný cieľ \"%s\" už existuje",
         "unlimited_quota_acl": "Neobmedzené kvóta je zakázaná cez ACL",
         "mysql_error": "MySQL chyba: %s",
@@ -61,6 +63,7 @@
         "app_passwd_id_invalid": "Heslo aplikácie ID %s neplatné",
         "global_map_invalid": "Globálna mapa ID %s neplatná",
         "global_map_write_error": "Nebolo možné zapísať globálnu mapu ID %s: %s",
+        "global_filter_write_error": "Nedá sa zapísať súbor s filtrom: %s",
         "invalid_host": "Neplatný hostiteľ: %s",
         "relayhost_invalid": "Položka %s je neplatná",
         "dkim_domain_or_sel_invalid": "DKIM doména alebo selektor je neplatný: %s",
@@ -69,7 +72,7 @@
         "mailbox_quota_exceeds_domain_quota": "Max. kvóta presahuje limit doménových kvót",
         "object_is_not_numeric": "Hodnota %s nie je numerická",
         "alias_empty": "Alias adresa nesmie byť prázdna",
-        "last_key": "Posledný kľúč nemôže byť vymazaný",
+        "last_key": "Posledný kľúč nemôže byť vymazaný, deaktivujte najprv TFA",
         "goto_empty": "Cieľová adresa nemôže byť prázdna",
         "policy_list_from_exists": "Záznam s daným menom existuje",
         "policy_list_from_invalid": "Záznam má neplatný formát",
@@ -132,6 +135,7 @@
         "extra_acl_invalid_domain": "Externý odosielateľ \"%s\" používa neplatnú doménu"
     },
     "success": {
+        "global_filter_written": "Filter bol úspešne zapísaný do súboru",
         "learned_ham": "ID % úspešne naučené ako ham",
         "verified_totp_login": "Overený TOTP login",
         "verified_u2f_login": "Overený U2F login",
@@ -216,7 +220,8 @@
         "no_active_admin": "Nemožno deaktivovať posledného aktívneho admina",
         "hash_not_found": "Chýbajúci hash",
         "fuzzy_learn_error": "Chyba počas učenia Fuzzy hash: %s",
-        "ip_invalid": "Preskočená neplatná IP adresa: %s"
+        "ip_invalid": "Preskočená neplatná IP adresa: %s",
+        "quota_exceeded_scope": "Prekročená kvóta domény, pre túto doménu je možné vytvárať iba neobmedzené poštové schránky."
     },
     "user": {
         "no_last_login": "Žiadne informácie o UI prihlásení.",
@@ -453,7 +458,7 @@
         "api_skip_ip_check": "Preskočiť kontrolu IP pre API",
         "activate_api": "Aktivovať API",
         "regen_api_key": "Obnoviť API kľúč",
-        "ban_list_info": "Ukázať zoznam zakázaných IP nižšie: <b>sieť (zostávajúci čas zákazu) - [akcia]</b>.<br />IP adresy čakajúce na unban budú odstránené z aktívneho zoznamu zákazov v nasledujúcich sekundách.<br />Červené značky indikujú aktívny permanentný zákaz.",
+        "ban_list_info": "Ukázať zoznam zakázaných IP nižšie: <b>sieť (zostávajúci čas zákazu) - [akcia]</b>.<br />IP adresy čakajúce na unban budú odstránené z aktívneho zoznamu v priebehu niekoľkých sekúnd.<br />Červené značky indikujú aktívny permanentný zákaz.",
         "unban_pending": "čakajúci na unban",
         "queue_unban": "v rade na unban",
         "no_active_bans": "Žiadne aktívne zákazy",
@@ -464,8 +469,8 @@
         "active_rspamd_settings_map": "Aktívne nastavenia",
         "quota_notifications_info": "Upozornenie na kvótu sú odoslané užívateľom, keď prekročia 80% a 95% objemu schránky.",
         "quarantine_bcc": "Poslať kópiu všetkých upozornení (BCC) tomuto príjemcovi:<br><small>Nechať prázdne pre vypnutie. <b>Nepodpísaná, neskontrolovaná pošta, by mala byť doručená interne.</b></small>",
-        "quarantine_retention_size": "Počet zadržaných správ pre jednotlivé poštové schránky<br><small>0 indikuje <b>neaktívne</b>.</small>",
-        "quarantine_max_size": "Maximálna veľkosť v MiB (väčšie prvky sú vyradené):<br><small>0 indikuje <b>neobmedzené</b>.</small>",
+        "quarantine_retention_size": "Počet zadržaných správ pre jednotlivé poštové schránky<br><small>0 znamená <b>neaktívne</b>.</small>",
+        "quarantine_max_size": "Maximálna veľkosť v MiB (väčšie prvky sú vyradené):<br><small>0 neznamená <b>neobmedzené</b>.</small>",
         "quarantine_max_age": "Maximálne obdobie v dňoch<br><small>Hodnota sa musí rovnať alebo byť väčšia ako 1 deň.</small>",
         "quarantine_exclude_domains": "Vymedziť domény a doménové aliasy",
         "quarantine_release_format": "Uvoľniť položky z karantény ako",
@@ -566,6 +571,7 @@
         "notified": "Notifikovaný"
     },
     "mailbox": {
+        "stats": "Štatistika",
         "last_mail_login": "Posledné poštové prihlásenie",
         "table_size": "Veľkosť tabuľky",
         "table_size_show_n": "Zobraziť %s položiek",
@@ -734,9 +740,11 @@
         "max_quota": "Max. kvóta pre poštovú schránku (MiB)",
         "domain_quota": "Kvóta domény",
         "backup_mx_options": "Možnosti MX zálohy",
-        "relay_domain": "Preposielať doménu",
+        "relay_domain": "Preposielať túto doménu",
         "relay_all": "Preposielať všetkých prijemcov",
-        "relay_all_info": "<small> Ak sa rozhodnete <b>nepreposielať</b> všetkých príjemcov, budete musieť pridať (\"tzv. slepú\") poštovú schránku pre každého príjemcu.</small>",
+        "relay_all_info": "↪ Ak sa rozhodnete <b>nepreposielať</b> všetkých príjemcov, budete musieť pridať (\"tzv. slepú\") poštovú schránku pre každého príjemcu.",
+        "relay_unknown_only": "Preposielať len neexistujúce poštové schránky. Existujúce budú doručené lokálne.",
+        "relay_transport_info": "<div class=\"label label-info\">Info</div> Môžete definovať transportné mapy pre vlastné určenie cieľa pre túto doménu. Ak nie sú nastavené, použije sa MX záznam.",
         "full_name": "Celé meno",
         "quota_mb": "Kvóta (MiB)",
         "sender_acl": "Povoliť odosielanie ako",
@@ -816,7 +824,9 @@
         "backup_mx_options": "Možnosti MX zálohy",
         "relay_all": "Preposielať všetkým príjemcom",
         "relay_domain": "Preposielať túto doménu",
-        "relay_all_info": "small> Ak sa rozhodnete <b>nepreposielať</b> všetkých príjemcov, budete musieť pridať (\"tzv. slepú\") poštovú schránku pre každého príjemcu.</small>",
+        "relay_all_info": "↪ Ak sa rozhodnete <b>nepreposielať</b> všetkých príjemcov, budete musieť pridať (\"tzv. slepú\") poštovú schránku pre každého príjemcu.",
+        "relay_unknown_only": "Preposielať len neexistujúce poštové schránky. Existujúce budú doručené lokálne.",
+        "relay_transport_info": "<div class=\"label label-info\">Info</div> Môžete definovať transportné mapy pre vlastné určenie cieľa pre túto doménu. Ak nie sú nastavené, použije sa MX záznam.",
         "alias_address": "Alias adresa/y",
         "alias_address_info": "<small>Celá emailová adresa/y alebo @example.com, na zachytenie všetkých správ pre doménu (oddelené čiarkou) <b>iba domény tomto serveri</b>.</small>",
         "alias_domain_info": "<small>Len platné mená domén (oddelené čiarkou).</small>",

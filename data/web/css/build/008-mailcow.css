@@ -178,3 +178,7 @@ nav .glyphicon {
   margin-bottom: 20px;
   color: #959595;
 }
+.slave-info {
+  padding: 15px 0px 15px 15px;
+  font-weight: bold;
+}
