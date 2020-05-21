@@ -60,7 +60,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="subfolder2"><?=$lang['edit']['subfolder2'];?></label>
 						<div class="col-sm-10">
-						<input type="text" class="form-control" name="subfolder2" value="External">
+						<input type="text" class="form-control" name="subfolder2" value="">
 						</div>
 					</div>
 					<div class="form-group">

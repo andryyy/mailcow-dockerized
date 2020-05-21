@@ -47,3 +47,14 @@ table tbody tr {
 table tbody tr td input[type="checkbox"] {
   cursor: pointer;
 }
+.rotate {
+  -moz-transition: all 0.3s linear;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
+}
+.rotate.animation {
+  -ms-transform:rotateX(180deg);
+  -moz-transform:rotateX(180deg);
+  -webkit-transform:rotateX(180deg);
+  transform:rotateX(180deg);
+}

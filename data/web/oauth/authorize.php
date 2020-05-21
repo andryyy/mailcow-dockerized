@@ -60,6 +60,10 @@ $is_authorized = ($_POST['authorized'] == '1');
 $oauth2_server->handleAuthorizeRequest($request, $response, $is_authorized, $_SESSION['mailcow_cc_username']);
 if ($is_authorized) {
   unset($_SESSION['oauth2_request']);
+  if ($GLOBALS['OAUTH2_FORGET_SESSION_AFTER_LOGIN'] === true) {
+    session_unset();
+    session_destroy();
+  }
   header('Location: ' . $response->getHttpHeader('Location'));
   exit;
 }

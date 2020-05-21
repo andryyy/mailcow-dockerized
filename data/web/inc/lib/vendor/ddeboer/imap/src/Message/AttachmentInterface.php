@@ -11,8 +11,6 @@ interface AttachmentInterface extends PartInterface
 {
     /**
      * Get attachment filename.
-     *
-     * @return null|string
      */
     public function getFilename(): ?string;
 
@@ -25,15 +23,11 @@ interface AttachmentInterface extends PartInterface
 
     /**
      * Is this attachment also an Embedded Message?
-     *
-     * @return bool
      */
     public function isEmbeddedMessage(): bool;
 
     /**
      * Return embedded message.
-     *
-     * @return EmbeddedMessageInterface
      */
     public function getEmbeddedMessage(): EmbeddedMessageInterface;
 }

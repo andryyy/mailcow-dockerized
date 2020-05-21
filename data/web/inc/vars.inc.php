@@ -34,10 +34,11 @@ if ($https_port === FALSE) {
 $autodiscover_config = array(
   // General autodiscover service type: "activesync" or "imap"
   // emClient uses autodiscover, but does not support ActiveSync. mailcow excludes emClient from ActiveSync.
+  // With SOGo disabled, the type will always fallback to imap. CalDAV and CardDAV will be excluded, too.
   'autodiscoverType' => 'activesync',
   // If autodiscoverType => activesync, also use ActiveSync (EAS) for Outlook desktop clients (>= Outlook 2013 on Windows)
   // Outlook for Mac does not support ActiveSync
-  'useEASforOutlook' => 'yes',
+  'useEASforOutlook' => 'no',
   // Please don't use STARTTLS-enabled service ports in the "port" variable.
   // The autodiscover service will always point to SMTPS and IMAPS (TLS-wrapped services).
   // The autoconfig service will additionally announce the STARTTLS-enabled ports, specified in the "tlsport" variable.

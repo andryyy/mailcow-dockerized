@@ -37,6 +37,10 @@ if (strpos($data, 'autodiscover/outlook/responseschema') !== false) {
   }
 }
 
+if (getenv('SKIP_SOGO') == "y") {
+  $autodiscover_config['autodiscoverType'] = 'imap';
+}
+
 //$dsn = $database_type . ":host=" . $database_host . ";dbname=" . $database_name;
 $dsn = $database_type . ":unix_socket=" . $database_sock . ";dbname=" . $database_name;
 $opt = [
@@ -176,6 +180,9 @@ if ($login_role === "user") {
         <UsePOPAuth>on</UsePOPAuth>
         <SMTPLast>off</SMTPLast>
       </Protocol>
+    <?php
+    if (getenv('SKIP_SOGO') != "y") {
+    ?>
       <Protocol>
         <Type>CalDAV</Type>
         <Server>https://<?=$autodiscover_config['caldav']['server'];?><?php if ($autodiscover_config['caldav']['port'] != 443) echo ':'.$autodiscover_config['caldav']['port']; ?>/SOGo/dav/<?=$email;?>/</Server>
@@ -188,6 +195,9 @@ if ($login_role === "user") {
         <DomainRequired>off</DomainRequired>
         <LoginName><?=$email;?></LoginName>
       </Protocol>
+    <?php
+    }
+    ?>
     </Account>
   </Response>
 <?php

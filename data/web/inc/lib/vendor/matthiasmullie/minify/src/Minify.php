@@ -100,6 +100,44 @@ abstract class Minify
     }
 
     /**
+     * Add a file to be minified.
+     *
+     * @param string|string[] $data
+     *
+     * @return static
+     * 
+     * @throws IOException
+     */
+    public function addFile($data /* $data = null, ... */)
+    {
+        // bogus "usage" of parameter $data: scrutinizer warns this variable is
+        // not used (we're using func_get_args instead to support overloading),
+        // but it still needs to be defined because it makes no sense to have
+        // this function without argument :)
+        $args = array($data) + func_get_args();
+
+        // this method can be overloaded
+        foreach ($args as $path) {
+            if (is_array($path)) {
+                call_user_func_array(array($this, 'addFile'), $path);
+                continue;
+            }
+
+            // redefine var
+            $path = (string) $path;
+
+            // check if we can read the file
+            if (!$this->canImportFile($path)) {
+                throw new IOException('The file "'.$path.'" could not be opened for reading. Check if PHP has enough permissions.');
+            }
+
+            $this->add($path);
+        }
+
+        return $this;
+    }
+
+    /**
      * Minify the data & (optionally) saves it to a file.
      *
      * @param string[optional] $path Path to write the data to

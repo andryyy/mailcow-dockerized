@@ -11,8 +11,6 @@ final class Headers extends Parameters
 {
     /**
      * Constructor.
-     *
-     * @param \stdClass $headers
      */
     public function __construct(\stdClass $headers)
     {
@@ -29,8 +27,6 @@ final class Headers extends Parameters
     /**
      * Get header.
      *
-     * @param string $key
-     *
      * @return mixed
      */
     public function get(string $key)
@@ -41,8 +37,7 @@ final class Headers extends Parameters
     /**
      * Parse header.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return mixed
      */

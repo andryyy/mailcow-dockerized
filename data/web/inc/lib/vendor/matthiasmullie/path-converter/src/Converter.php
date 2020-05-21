@@ -71,6 +71,14 @@ class Converter implements ConverterInterface
         // deal with different operating systems' directory structure
         $path = rtrim(str_replace(DIRECTORY_SEPARATOR, '/', $path), '/');
 
+        // remove leading current directory.
+        if (substr($path, 0, 2) === './') {
+            $path = substr($path, 2);
+        }
+
+        // remove references to current directory in the path.
+        $path = str_replace('/./', '/', $path);
+
         /*
          * Example:
          *     /home/forkcms/frontend/cache/compiled_templates/../../core/layout/css/../images/img.gif

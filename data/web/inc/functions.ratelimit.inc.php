@@ -25,7 +25,7 @@ function ratelimit($_action, $_scope, $_data = null) {
           foreach ($objects as $object) {
             $rl_value = intval($_data['rl_value']);
             $rl_frame = $_data['rl_frame'];
-            if (!in_array($rl_frame, array('s', 'm', 'h'))) {
+            if (!in_array($rl_frame, array('s', 'm', 'h', 'd'))) {
               $_SESSION['return'][] = array(
                 'type' => 'danger',
                 'log' => array(__FUNCTION__, $_action, $_scope, $_data_log),
@@ -85,7 +85,7 @@ function ratelimit($_action, $_scope, $_data = null) {
           foreach ($objects as $object) {
             $rl_value = intval($_data['rl_value']);
             $rl_frame = $_data['rl_frame'];
-            if (!in_array($rl_frame, array('s', 'm', 'h'))) {
+            if (!in_array($rl_frame, array('s', 'm', 'h', 'd'))) {
               $_SESSION['return'][] = array(
                 'type' => 'danger',
                 'log' => array(__FUNCTION__, $_action, $_scope, $_data_log),

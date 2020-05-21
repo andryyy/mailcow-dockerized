@@ -222,6 +222,10 @@ SKIP_HTTP_VERIFICATION=n
 
 SKIP_CLAMD=${SKIP_CLAMD}
 
+# Skip SOGo: Will disable SOGo integration and therefore webmail, DAV protocols and ActiveSync support (experimental, unsupported, not fully implemented) - y/n
+
+SKIP_SOGO=n
+
 # Skip Solr on low-memory systems or if you do not want to store a readable index of your mails in solr-vol-1.
 
 SKIP_SOLR=${SKIP_SOLR}
@@ -285,6 +289,7 @@ IPV6_NETWORK=fd4d:6169:6c63:6f77::/64
 # An API key defined as API_KEY_READ_ONLY has read-only access
 # Allowed chars for API_KEY and API_KEY_READ_ONLY: a-z, A-Z, 0-9, -
 # You can define API_KEY and/or API_KEY_READ_ONLY
+# Using CIDR is not yet implemented within mailcow.conf, use the UI to allow networks.
 
 #API_KEY=
 #API_KEY_READ_ONLY=

@@ -43,9 +43,15 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
             );
             return false;
           }
-          $stmt = $pdo->prepare("SELECT `domain` FROM `mailbox` WHERE `username` = :username");
-          $stmt->execute(array(':username' => $_SESSION['mailcow_cc_username']));
-          $domain = $stmt->fetch(PDO::FETCH_ASSOC)['domain'];
+          $domain = mailbox('get', 'mailbox_details', $username)['domain'];
+          if (!is_valid_domain_name($domain)) {
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
+              'msg' => 'domain_invalid'
+            );
+            return false;
+          }
           $validity = strtotime("+".$_data["validity"]." hour");
           $letters = 'abcefghijklmnopqrstuvwxyz1234567890';
           $random_name = substr(str_shuffle($letters), 0, 24);
@@ -59,7 +65,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
           $_SESSION['return'][] = array(
             'type' => 'success',
             'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
-            'msg' => array('mailbox_modified', htmlspecialchars($_SESSION['mailcow_cc_username']))
+            'msg' => array('mailbox_modified', $username)
           );
         break;
         case 'global_filter':

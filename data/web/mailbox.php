@@ -32,7 +32,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['domains'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <? if($_SESSION['mailcow_cc_role'] == "admin"): ?><button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addDomainModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_domain'];?></button><? endif; ?>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_domain_table" data-table="domain_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -76,7 +76,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['mailboxes'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addMailboxModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_mailbox'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_mailbox_table" data-table="mailbox_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -92,15 +92,11 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
                 </ul>
               </div>
             </div>
-            <?php
-            if (preg_match("/^([yY][eE][sS]|[yY])+$/", $_ENV["ALLOW_ADMIN_EMAIL_LOGIN"])):
-            ?>
+            <?php if (getenv('ALLOW_ADMIN_EMAIL_LOGIN') == "y" && getenv('SKIP_SOGO') != "y") { ?>
             <div class="panel-body help-block">
             <?=$lang['mailbox']['sogo_allow_admin_hint'];?>
             </div>
-            <?php
-            endif;
-            ?>
+            <?php } ?>
             <!-- <div class="mass-actions-mailbox" data-actions-header="true"></div> -->
             <div class="table-responsive">
               <table id="mailbox_table" class="table table-striped"></table>
@@ -139,7 +135,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['resources'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addResourceModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_resource'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_resource_table" data-table="resource_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -184,7 +180,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['domain_aliases'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addAliasDomainModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_domain_alias'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_aliasdomain_table" data-table="aliasdomain_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -224,7 +220,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['aliases'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addAliasModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_alias'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_alias_table" data-table="alias_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -256,9 +252,11 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
                   <li><a data-action="edit_selected" data-id="alias" data-api-url='edit/alias' data-api-attr='{"active":"0"}' href="#"><?=$lang['mailbox']['deactivate'];?></a></li>
                   <li role="separator" class="divider"></li>
                   <li><a data-action="delete_selected" data-id="alias" data-api-url='delete/alias' href="#"><?=$lang['mailbox']['remove'];?></a></li>
+                  <?php if (getenv('SKIP_SOGO') != "y") { ?>
                   <li role="separator" class="divider"></li>
                   <li><a data-action="edit_selected" data-id="alias" data-api-url='edit/alias' data-api-attr='{"sogo_visible":"1"}' href="#"><?=$lang['mailbox']['sogo_visible_y'];?></a></li>
                   <li><a data-action="edit_selected" data-id="alias" data-api-url='edit/alias' data-api-attr='{"sogo_visible":"0"}' href="#"><?=$lang['mailbox']['sogo_visible_n'];?></a></li>
+                  <?php } ?>
                 </ul>
                 <a class="btn btn-sm btn-success" href="#" data-toggle="modal" data-target="#addAliasModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_alias'];?></a>
               </div>
@@ -270,7 +268,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['sync_jobs'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addSyncJobModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['user']['create_syncjob'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_sync_job_table" data-table="sync_job_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -312,7 +310,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['filters'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addFilterModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_filter'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_filter_table" data-table="filter_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -401,7 +399,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['bcc_maps'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addBCCModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_bcc_entry'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_bcc_table" data-table="bcc_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -442,7 +440,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default <?=($_SESSION['mailcow_cc_role'] == "admin") ?: 'hidden';?>">
             <div class="panel-heading">
               <?=$lang['mailbox']['recipient_maps'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addRecipientMapModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_recipient_map_entry'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_recipient_map_table" data-table="recipient_map_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
@@ -483,7 +481,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
           <div class="panel panel-default">
             <div class="panel-heading">
               <?=$lang['mailbox']['tls_policy_maps_long'];?> <span class="badge badge-info table-lines"></span>
-              <div class="btn-group pull-right">
+              <div class="btn-group pull-right hidden-xs">
                 <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addTLSPolicyMapAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_tls_policy_map'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_tls_policy_table" data-table="tls_policy_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 

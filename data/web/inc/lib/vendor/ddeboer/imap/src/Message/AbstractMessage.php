@@ -15,8 +15,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Get message headers.
-     *
-     * @return Headers
      */
     abstract public function getHeaders(): Headers;
 
@@ -24,8 +22,6 @@ abstract class AbstractMessage extends AbstractPart
      * Get message id.
      *
      * A unique message id in the form <...>
-     *
-     * @return null|string
      */
     final public function getId(): ?string
     {
@@ -34,8 +30,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Get message sender (from headers).
-     *
-     * @return null|EmailAddress
      */
     final public function getFrom(): ?EmailAddress
     {
@@ -106,8 +100,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Get date (from headers).
-     *
-     * @return null|\DateTimeImmutable
      */
     final public function getDate(): ?\DateTimeImmutable
     {
@@ -120,11 +112,13 @@ abstract class AbstractMessage extends AbstractPart
         $alteredValue = $dateHeader;
         $alteredValue = \str_replace(',', '', $alteredValue);
         $alteredValue = (string) \preg_replace('/^[a-zA-Z]+ ?/', '', $alteredValue);
-        $alteredValue = (string) \preg_replace('/ +\(.*\)/', '', $alteredValue);
+        $alteredValue = (string) \preg_replace('/\(.*\)/', '', $alteredValue);
         $alteredValue = (string) \preg_replace('/\bUT\b/', 'UTC', $alteredValue);
         if (0 === \preg_match('/\d\d:\d\d:\d\d.* [\+\-]\d\d:?\d\d/', $alteredValue)) {
             $alteredValue .= ' +0000';
         }
+        // Handle numeric months
+        $alteredValue = (string) \preg_replace('/^(\d\d) (\d\d) (\d\d(?:\d\d)?) /', '$3-$2-$1 ', $alteredValue);
 
         try {
             $date = new \DateTimeImmutable($alteredValue);
@@ -147,8 +141,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Get message subject (from headers).
-     *
-     * @return null|string
      */
     final public function getSubject(): ?string
     {
@@ -157,8 +149,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Get message In-Reply-To (from headers).
-     *
-     * @return array
      */
     final public function getInReplyTo(): array
     {
@@ -169,8 +159,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Get message References (from headers).
-     *
-     * @return array
      */
     final public function getReferences(): array
     {
@@ -181,8 +169,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Get body HTML.
-     *
-     * @return null|string
      */
     final public function getBodyHtml(): ?string
     {
@@ -203,8 +189,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Get body text.
-     *
-     * @return null|string
      */
     final public function getBodyText(): ?string
     {
@@ -237,11 +221,6 @@ abstract class AbstractMessage extends AbstractPart
         return $this->attachments;
     }
 
-    /**
-     * @param PartInterface $part
-     *
-     * @return array
-     */
     private static function gatherAttachments(PartInterface $part): array
     {
         $attachments = [];
@@ -259,8 +238,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * Does this message have attachments?
-     *
-     * @return bool
      */
     final public function hasAttachments(): bool
     {
@@ -269,8 +246,6 @@ abstract class AbstractMessage extends AbstractPart
 
     /**
      * @param \stdClass[] $addresses
-     *
-     * @return array
      */
     private function decodeEmailAddresses(array $addresses): array
     {
@@ -284,11 +259,6 @@ abstract class AbstractMessage extends AbstractPart
         return $return;
     }
 
-    /**
-     * @param \stdClass $value
-     *
-     * @return EmailAddress
-     */
     private function decodeEmailAddress(\stdClass $value): EmailAddress
     {
         return new EmailAddress($value->mailbox, $value->host, $value->personal);

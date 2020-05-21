@@ -525,7 +525,7 @@ class CSS extends Minify
         );
 
         return preg_replace_callback(
-            '/(?<=[: ])('.implode(array_keys($colors), '|').')(?=[; }])/i',
+            '/(?<=[: ])('.implode('|', array_keys($colors)).')(?=[; }])/i',
             function ($match) use ($colors) {
                 return $colors[strtoupper($match[0])];
             },
@@ -708,7 +708,8 @@ class CSS extends Minify
             return $placeholder.$rest;
         };
 
-        $this->registerPattern('/calc(\(.+?)(?=$|;|calc\()/', $callback);
+        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/', $callback);
+        $this->registerPattern('/calc(\(.+?)(?=$|;|}|calc\()/m', $callback);
     }
 
     /**

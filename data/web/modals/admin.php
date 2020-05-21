@@ -206,6 +206,20 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
     </div>
   </div>
 </div><!-- test transport modal -->
+<!-- show queue item modal -->
+<div class="modal fade" id="showQueuedMsg" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+        <h3 class="modal-title"><span class="glyphicon glyphicon-hourglass" style="font-size:18px"></span> ID <span id="queue_id"></span></h3>
+      </div>
+      <div class="modal-body">
+        <textarea class="form-control" id="queue_msg_content" name="content" rows="40"></textarea>
+      </div>
+    </div>
+  </div>
+</div><!-- show queue item modal -->
 <!-- priv key modal -->
 <div class="modal fade" id="showDKIMprivKey" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">

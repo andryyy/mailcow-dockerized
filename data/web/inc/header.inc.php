@@ -38,9 +38,9 @@
   }
   ?>
   <link rel="stylesheet" href="/cache/<?=basename($CSSPath)?>">
-  <?php if (strtolower(trim($DEFAULT_THEME)) != "lumen"): ?>
+  <?php if (strtolower(trim($DEFAULT_THEME)) != "lumen") { ?>
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/<?= strtolower(trim($DEFAULT_THEME)); ?>/bootstrap.min.css">
-  <?php endif; ?>
+  <?php } ?>
   <link rel="shortcut icon" href="/favicon.png" type="image/png">
   <link rel="icon" href="/favicon.png" type="image/png">
 </head>
@@ -91,10 +91,7 @@
                 if ($_SESSION['mailcow_cc_role'] == 'admin' || $_SESSION['mailcow_cc_role'] == 'domainadmin') {
                 ?>
                   <li<?= (preg_match("/mailbox/i", $_SERVER['REQUEST_URI'])) ? ' class="active"' : ''; ?>><a href="/mailbox"><?= $lang['header']['mailboxes']; ?></a></li>
-                <?php
-                }
-                if ($_SESSION['mailcow_cc_role'] != 'admin') {
-                ?>
+                <?php } if ($_SESSION['mailcow_cc_role'] != 'admin') { ?>
                   <li<?= (preg_match("/user/i", $_SERVER['REQUEST_URI'])) ? ' class="active"' : ''; ?>><a href="/user"><?= $lang['header']['user_settings']; ?></a></li>
                 <?php
                 }
@@ -102,59 +99,50 @@
               ?>
             </ul>
           </li>
-          <?php
-          if (isset($_SESSION['mailcow_cc_role'])) {
-          ?>
+          <?php if (isset($_SESSION['mailcow_cc_role'])) { ?>
           <li<?= (preg_match("/quarantine/i", $_SERVER['REQUEST_URI'])) ? ' class="active"' : ''; ?>><a href="/quarantine"><span class="glyphicon glyphicon-briefcase"></span> <?= $lang['header']['quarantine']; ?></a></li>
-          <?php
-          }
-          if ($_SESSION['mailcow_cc_role'] == 'admin') {
-          ?>
+          <?php } if ($_SESSION['mailcow_cc_role'] == 'admin' && getenv('SKIP_SOGO') != "y") { ?>
           <li><a href data-toggle="modal" data-container="sogo-mailcow" data-target="#RestartContainer"><span class="glyphicon glyphicon-refresh"></span> <?= $lang['header']['restart_sogo']; ?></a></li>
-          <?php
-          }
-          ?>
+          <?php } ?>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-link"></span> <?= $lang['header']['apps']; ?> <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-            <?php
-            foreach ($MAILCOW_APPS as $app):
+            <?php foreach ($MAILCOW_APPS as $app) {
+              if (getenv('SKIP_SOGO') == "y" && preg_match('/^\/SOGo/i', $app['link'])) { continue; }
             ?>
               <li title="<?= htmlspecialchars($app['description']); ?>"><a href="<?= htmlspecialchars($app['link']); ?>"><?= htmlspecialchars($app['name']); ?></a></li>
             <?php
-            endforeach;
+            }
             $app_links = customize('get', 'app_links');
             if ($app_links) {
               foreach ($app_links as $row) {
-                foreach ($row as $key => $val):
+                foreach ($row as $key => $val) {
               ?>
               <li><a href="<?= htmlspecialchars($val); ?>"><?= htmlspecialchars($key); ?></a></li>
               <?php
-                endforeach;
+                }
               }
             }
             ?>
             </ul>
           </li>
-          <?php
-          }
-          if (!isset($_SESSION['dual-login']) && isset($_SESSION['mailcow_cc_username'])):
-          ?>
+          <?php } if (!isset($_SESSION['dual-login']) && isset($_SESSION['mailcow_cc_username'])) { ?>
             <li class="logged-in-as"><a href="#" onclick="logout.submit()"><b class="username-lia"><?= htmlspecialchars($_SESSION['mailcow_cc_username']); ?></b> <span class="glyphicon glyphicon-log-out"></span></a></li>
-          <?php
-          elseif (isset($_SESSION['dual-login'])):
-          ?>
+          <?php } elseif (isset($_SESSION['dual-login'])) { ?>
             <li class="logged-in-as"><a href="#" onclick="logout.submit()"><b class="username-lia"><?= htmlspecialchars($_SESSION['mailcow_cc_username']); ?> <span class="text-info">(<?= htmlspecialchars($_SESSION['dual-login']['username']); ?>)</span> </b><span class="glyphicon glyphicon-log-out"></span></a></li>
-          <?php
-          endif;
-          if (!preg_match('/y|yes/i', getenv('MASTER'))):
-          ?>
+          <?php } if (!preg_match('/y|yes/i', getenv('MASTER'))) { ?>
             <li class="text-warning slave-info">[ slave ]</li>
-          <?php
-          endif;
-          ?>
+          <?php } ?>
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
   </nav>
   <form action="/" method="post" id="logout"><input type="hidden" name="logout"></form>
+  <?php if (!empty($UI_TEXTS['ui_announcement_text']) &&
+    in_array($UI_TEXTS['ui_announcement_type'], array('info', 'warning', 'danger')) &&
+    $UI_TEXTS['ui_announcement_active'] == 1 &&
+    parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) != '/') { ?>
+  <div class="container">
+    <div class="alert alert-<?=$UI_TEXTS['ui_announcement_type'];?>"><?=$UI_TEXTS['ui_announcement_text'];?></div>
+  </div>
+  <?php } ?>

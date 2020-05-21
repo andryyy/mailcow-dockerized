@@ -1,7 +1,7 @@
 {
     "name": "robthree/twofactorauth",
     "description": "Two Factor Authentication",
-    "version": "1.6.7",
+    "version": "1.7.0",
     "type": "library",
     "keywords": [ "Authentication", "Two Factor Authentication", "Multi Factor Authentication", "TFA", "MFA", "PHP", "Authenticator", "Authy" ],
     "homepage": "https://github.com/RobThree/TwoFactorAuth",
@@ -18,7 +18,7 @@
         "source": "https://github.com/RobThree/TwoFactorAuth"
     },
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "@stable"

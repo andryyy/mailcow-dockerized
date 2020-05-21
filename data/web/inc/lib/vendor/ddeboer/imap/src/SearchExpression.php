@@ -22,8 +22,6 @@ final class SearchExpression implements ConditionInterface
      * Adds a new condition to the expression.
      *
      * @param ConditionInterface $condition the condition to be added
-     *
-     * @return self
      */
     public function addCondition(ConditionInterface $condition): self
     {
@@ -34,12 +32,10 @@ final class SearchExpression implements ConditionInterface
 
     /**
      * Converts the expression to a string that can be sent to the IMAP server.
-     *
-     * @return string
      */
     public function toString(): string
     {
-        $conditions = \array_map(static function (ConditionInterface $condition) {
+        $conditions = \array_map(static function (ConditionInterface $condition): string {
             return $condition->toString();
         }, $this->conditions);
 

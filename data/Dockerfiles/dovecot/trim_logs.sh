@@ -7,6 +7,7 @@ catch_non_zero() {
     echo "Command ${CMD} failed to execute, exit code was ${EC}"
   fi
 }
+source /source_env.sh
 # Do not attempt to write to slave
 if [[ ! -z ${REDIS_SLAVEOF_IP} ]]; then
   REDIS_CMDLINE="redis-cli -h ${REDIS_SLAVEOF_IP} -p ${REDIS_SLAVEOF_PORT}"

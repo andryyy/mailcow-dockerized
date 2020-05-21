@@ -5,7 +5,7 @@
    * @category    Auth
    * @package     Auth_Yubico
    * @author      Simon Josefsson <simon@yubico.com>, Olov Danielson <olov@yubico.com>
-   * @copyright   2007-2015 Yubico AB
+   * @copyright   2007-2020 Yubico AB
    * @license     https://opensource.org/licenses/bsd-license.php New BSD License
    * @version     2.0
    * @link        https://www.yubico.com/
@@ -51,12 +51,6 @@ class Auth_Yubico
 	var $_key;
 
 	/**
-	 * URL part of validation server
-	 * @var string
-	 */
-	var $_url;
-
-	/**
 	 * List with URL part of validation servers
 	 * @var array
 	 */
@@ -81,10 +75,22 @@ class Auth_Yubico
 	var $_response;
 
 	/**
+	 * Number of times we retried in our last validation
+	 * @var int
+	 */
+	var $_retries;
+
+	/**
 	 * Flag whether to verify HTTPS server certificates or not.
 	 * @var boolean
 	 */
 	var $_httpsverify;
+
+	/**
+	 * Maximum number of times we will retry transient HTTP errors
+	 * @var int
+	 */
+	var $_max_retries;
 
 	/**
 	 * Constructor
@@ -98,39 +104,37 @@ class Auth_Yubico
 	 *                                 default true)
 	 * @access public
 	 */
-	public function __construct($id, $key = '', $https = 0, $httpsverify = 1)
+        public function __construct($id, $key = '', $https = 0, $httpsverify = 1, $max_retries = 3)
 	{
 		$this->_id =  $id;
 		$this->_key = base64_decode($key);
 		$this->_httpsverify = $httpsverify;
+		$this->_max_retries = $max_retries;
 	}
 
 	/**
 	 * Specify to use a different URL part for verification.
-	 * The default is "api.yubico.com/wsapi/verify".
+	 * The default is "https://api.yubico.com/wsapi/2.0/verify".
 	 *
 	 * @param  string $url  New server URL part to use
 	 * @access public
+	 * @deprecated
 	 */
 	function setURLpart($url)
 	{
-		$this->_url = $url;
+	  $this->_url_list = array($url);
 	}
 
 	/**
 	 * Get next URL part from list to use for validation.
 	 *
-	 * @return mixed string with URL part of false if no more URLs in list
+	 * @return mixed string with URL part or false if no more URLs in list
 	 * @access public
 	 */
 	function getNextURLpart()
 	{
 	  if ($this->_url_list) $url_list=$this->_url_list;
-	  else $url_list=array('https://api.yubico.com/wsapi/2.0/verify',
-			       'https://api2.yubico.com/wsapi/2.0/verify',
-			       'https://api3.yubico.com/wsapi/2.0/verify',
-			       'https://api4.yubico.com/wsapi/2.0/verify',
-			       'https://api5.yubico.com/wsapi/2.0/verify');
+	  else $url_list=array('https://api.yubico.com/wsapi/2.0/verify');
 
 	  if ($this->_url_index>=count($url_list)) return false;
 	  else return $url_list[$this->_url_index++];
@@ -176,6 +180,17 @@ class Auth_Yubico
 	function getLastResponse()
 	{
 		return $this->_response;
+	}
+
+	/**
+	 * Return the number of retries that were used in the last validation
+	 *
+	 * @return int     Number of retries
+	 * @access public
+	 */
+	function getRetries()
+	{
+		return $this->_retries;
 	}
 
 	/**
@@ -238,6 +253,26 @@ class Auth_Yubico
 	  return $param_array;
 	}
 
+        function _make_curl_handle($query, $timeout=null)
+	{
+	    flush();
+	    $handle = curl_init($query);
+	    curl_setopt($handle, CURLOPT_USERAGENT, "PEAR Auth_Yubico");
+	    curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
+	    if (!$this->_httpsverify) {
+		curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, 0);
+	    }
+	    curl_setopt($handle, CURLOPT_FAILONERROR, true);
+	    /* If timeout is set, we better apply it here as well
+	     * in case the validation server fails to follow it. */
+	    if ($timeout) {
+		curl_setopt($handle, CURLOPT_TIMEOUT, $timeout);
+	    }
+
+	    return $handle;
+	}
+
 	/**
 	 * Verify Yubico OTP against multiple URLs
 	 * Protocol specification 2.0 is used to construct validation requests
@@ -252,12 +287,19 @@ class Auth_Yubico
 	 *                             and 100 or "fast" or "secure".
 	 * @param int $timeout         Max number of seconds to wait
 	 *                             for responses
+	 * @param int $max_retries     Max number of times we will retry on
+	 *                             transient errors.
 	 * @return mixed               PEAR error on error, true otherwise
 	 * @access public
 	 */
 	function verify($token, $use_timestamp=null, $wait_for_all=False,
-			$sl=null, $timeout=null)
+			$sl=null, $timeout=null, $max_retries=null)
 	{
+	  /* If maximum retries is not set, default from instance */
+	  if (is_null($max_retries)) {
+	    $max_retries = $this->_max_retries;
+	  }
+
 	  /* Construct parameters string */
 	  $ret = $this->parsePasswordOTP($token);
 	  if (!$ret) {
@@ -284,10 +326,13 @@ class Auth_Yubico
 	  }
 
 	  /* Generate and prepare request. */
-	  $this->_lastquery=null;
+	  $this->_lastquery = null;
+	  $this->_retries = 0;
 	  $this->URLreset();
+
 	  $mh = curl_multi_init();
 	  $ch = array();
+	  $retries = array();
 	  while($URLpart=$this->getNextURLpart()) 
 	    {
 	      $query = $URLpart . "?" . $parameters;
@@ -295,21 +340,11 @@ class Auth_Yubico
 	      if ($this->_lastquery) { $this->_lastquery .= " "; }
 	      $this->_lastquery .= $query;
 	      
-	      $handle = curl_init($query);
-	      curl_setopt($handle, CURLOPT_USERAGENT, "PEAR Auth_Yubico");
-	      curl_setopt($handle, CURLOPT_RETURNTRANSFER, 1);
-	      if (!$this->_httpsverify) {
-		curl_setopt($handle, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($handle, CURLOPT_SSL_VERIFYHOST, 0);
-	      }
-	      curl_setopt($handle, CURLOPT_FAILONERROR, true);
-	      /* If timeout is set, we better apply it here as well
-	         in case the validation server fails to follow it. 
-	      */ 
-	      if ($timeout) curl_setopt($handle, CURLOPT_TIMEOUT, $timeout);
+	      $handle = $this->_make_curl_handle($query, $timeout);
 	      curl_multi_add_handle($mh, $handle);
 	      
 	      $ch[(int)$handle] = $handle;
+	      $retries[$query] = 0;
 	    }
 
 	  /* Execute and read request. */
@@ -319,19 +354,20 @@ class Auth_Yubico
 	  do {
 	    /* Let curl do its work. */
 	    while (($mrc = curl_multi_exec($mh, $active))
-		   == CURLM_CALL_MULTI_PERFORM)
-	      ;
+		   == CURLM_CALL_MULTI_PERFORM) {
+	      curl_multi_select($mh);
+	    }
 
 	    while ($info = curl_multi_info_read($mh)) {
+	      $cinfo = curl_getinfo ($info['handle']);
 	      if ($info['result'] == CURLE_OK) {
-
 		/* We have a complete response from one server. */
 
 		$str = curl_multi_getcontent($info['handle']);
-		$cinfo = curl_getinfo ($info['handle']);
 		
 		if ($wait_for_all) { # Better debug info
-		  $this->_response .= 'URL=' . $cinfo['url'] ."\n"
+		  $this->_response .= 'URL=' . $cinfo['url'] . ' HTTP_CODE='
+		    . $cinfo['http_code'] . "\n"
 		    . $str . "\n";
 		}
 
@@ -401,7 +437,7 @@ class Auth_Yubico
 		    }
 		  }
 		}
-		if (!$wait_for_all && ($valid || $replay)) 
+		if (!$wait_for_all && ($valid || $replay))
 		  {
 		    /* We have status=OK or status=REPLAYED_OTP, return. */
 		    foreach ($ch as $h) {
@@ -413,12 +449,35 @@ class Auth_Yubico
 		    if ($valid) return true;
 		    return PEAR::raiseError($status);
 		  }
-		
-		curl_multi_remove_handle($mh, $info['handle']);
-		curl_close($info['handle']);
-		unset ($ch[(int)$info['handle']]);
+	      } else {
+		/* Some kind of error, but def. not a 200 response */
+		/* No status= in response body */
+		$http_status_code = (int)$cinfo['http_code'];
+		$query = $cinfo['url'];
+		if ($http_status_code == 400 ||
+		    ($http_status_code >= 500 && $http_status_code < 600)) {
+		  /* maybe retry */
+		  if ($retries[$query] < $max_retries) {
+		    $retries[$query]++;  // for this server
+		    $this->_retries++;   // for this validation attempt
+
+		    $newhandle = $this->_make_curl_handle($query, $timeout);
+
+		    curl_multi_add_handle($mh, $newhandle);
+		    $ch[(int)$newhandle] = $newhandle;
+
+		    // Loop back up to curl_multi_exec, even if this
+		    // was the last handle and curl_multi_exec _was_
+		    // no longer active, it's active again now we've
+		    // added a retry.
+		    $active = true;
+		  }
+		}
 	      }
-	      curl_multi_select($mh);
+	      /* Done with this handle */
+	      curl_multi_remove_handle($mh, $info['handle']);
+	      curl_close($info['handle']);
+	      unset ($ch[(int)$info['handle']]);
 	    }
 	  } while ($active);
 

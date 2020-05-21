@@ -66,7 +66,7 @@ def notify_rcpt(rcpt, msg_count, quarantine_acl):
   else:
     with open('/templates/quarantine.tpl') as file_:
       template = Template(file_.read())
-  html = template.render(meta=meta_query, counter=msg_count, hostname=socket.gethostname(), quarantine_acl=quarantine_acl)
+  html = template.render(meta=meta_query, username=rcpt, counter=msg_count, hostname=socket.gethostname(), quarantine_acl=quarantine_acl)
   text = html2text.html2text(html)
   count = 0
   while count < 15:

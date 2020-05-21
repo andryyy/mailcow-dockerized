@@ -8,6 +8,7 @@ use Ddeboer\Imap\Exception\CreateMailboxException;
 use Ddeboer\Imap\Exception\DeleteMailboxException;
 use Ddeboer\Imap\Exception\ImapGetmailboxesException;
 use Ddeboer\Imap\Exception\ImapNumMsgException;
+use Ddeboer\Imap\Exception\ImapQuotaException;
 use Ddeboer\Imap\Exception\InvalidResourceException;
 use Ddeboer\Imap\Exception\MailboxDoesNotExistException;
 
@@ -39,9 +40,6 @@ final class Connection implements ConnectionInterface
     /**
      * Constructor.
      *
-     * @param ImapResourceInterface $resource
-     * @param string                $server
-     *
      * @throws \InvalidArgumentException
      */
     public function __construct(ImapResourceInterface $resource, string $server)
@@ -52,8 +50,6 @@ final class Connection implements ConnectionInterface
 
     /**
      * Get IMAP resource.
-     *
-     * @return ImapResourceInterface
      */
     public function getResource(): ImapResourceInterface
     {
@@ -62,8 +58,6 @@ final class Connection implements ConnectionInterface
 
     /**
      * Delete all messages marked for deletion.
-     *
-     * @return bool
      */
     public function expunge(): bool
     {
@@ -72,14 +66,44 @@ final class Connection implements ConnectionInterface
 
     /**
      * Close connection.
-     *
-     * @param int $flag
-     *
-     * @return bool
      */
     public function close(int $flag = 0): bool
     {
+        $this->resource->clearLastMailboxUsedCache();
+
         return \imap_close($this->resource->getStream(), $flag);
+    }
+
+    /**
+     * Get Mailbox quota.
+     */
+    public function getQuota(string $root = 'INBOX'): array
+    {
+        $errorMessage = null;
+        $errorNumber  = 0;
+        \set_error_handler(static function ($nr, $message) use (&$errorMessage, &$errorNumber): bool {
+            $errorMessage = $message;
+            $errorNumber = $nr;
+
+            return true;
+        });
+
+        $return = \imap_get_quotaroot($this->resource->getStream(), $root);
+
+        \restore_error_handler();
+
+        if (false === $return || null !== $errorMessage) {
+            throw new ImapQuotaException(
+                \sprintf(
+                    'IMAP Quota request failed for "%s"%s',
+                    $root,
+                    null !== $errorMessage ? ': ' . $errorMessage : ''
+                ),
+                $errorNumber
+            );
+        }
+
+        return $return;
     }
 
     /**
@@ -105,8 +129,6 @@ final class Connection implements ConnectionInterface
      * Check that a mailbox with the given name exists.
      *
      * @param string $name Mailbox name
-     *
-     * @return bool
      */
     public function hasMailbox(string $name): bool
     {
@@ -121,8 +143,6 @@ final class Connection implements ConnectionInterface
      * @param string $name Mailbox name
      *
      * @throws MailboxDoesNotExistException If mailbox does not exist
-     *
-     * @return MailboxInterface
      */
     public function getMailbox(string $name): MailboxInterface
     {
@@ -153,8 +173,6 @@ final class Connection implements ConnectionInterface
      * Check if the connection is still active.
      *
      * @throws InvalidResourceException If connection was closed
-     *
-     * @return bool
      */
     public function ping(): bool
     {
@@ -164,11 +182,7 @@ final class Connection implements ConnectionInterface
     /**
      * Create mailbox.
      *
-     * @param string $name
-     *
      * @throws CreateMailboxException
-     *
-     * @return MailboxInterface
      */
     public function createMailbox(string $name): MailboxInterface
     {
@@ -184,8 +198,6 @@ final class Connection implements ConnectionInterface
 
     /**
      * Create mailbox.
-     *
-     * @param MailboxInterface $mailbox
      *
      * @throws DeleteMailboxException
      */

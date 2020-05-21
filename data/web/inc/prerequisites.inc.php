@@ -179,6 +179,8 @@ function get_remote_ip($anonymize = null) {
   }
 }
 
+// Load core functions first
+require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/sessions.inc.php';
 
 // IMAP lib
@@ -215,7 +217,6 @@ if(file_exists($langFile)) {
   $lang = array_merge_real($lang, json_decode(file_get_contents($langFile), true));
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.acl.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.app_passwd.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.mailbox.inc.php';

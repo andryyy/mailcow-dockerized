@@ -136,6 +136,16 @@ function acl($_action, $_scope = null, $_data = null) {
           $stmt = $pdo->prepare("SELECT * FROM `user_acl` WHERE `username` = :username");
           $stmt->execute(array(':username' => $_data));
           $data = $stmt->fetch(PDO::FETCH_ASSOC);
+          if ($_SESSION['mailcow_cc_role'] == 'domainadmin') {
+            // Domain admins cannot see, add or remove user ACLs they don't have access to by themselves
+            // Editing a user will use acl("get", "user") to determine granted ACLs and therefore block unallowed access escalation via form editing
+            $self_da_acl = acl('get', 'domainadmin', $_SESSION['mailcow_cc_username']);
+            foreach ($self_da_acl as $self_da_acl_key => $self_da_acl_val) {
+              if ($self_da_acl_val == 0) {
+                unset($data[$self_da_acl_key]);
+              }
+            }
+          }
           if (!empty($data)) {
             unset($data['username']);
             return $data;

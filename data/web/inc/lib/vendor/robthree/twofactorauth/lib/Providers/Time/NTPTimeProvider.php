@@ -11,7 +11,7 @@ class NTPTimeProvider implements ITimeProvider
     public $port;
     public $timeout;
 
-    function __construct($host = 'pool.ntp.org', $port = 123, $timeout = 1)
+    function __construct($host = 'time.google.com', $port = 123, $timeout = 1)
     {
         $this->host = $host;
 
@@ -28,6 +28,7 @@ class NTPTimeProvider implements ITimeProvider
         try {
             /* Create a socket and connect to NTP server */
             $sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+            socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, ['sec' => $this->timeout, 'usec' => 0]);
             socket_connect($sock, $this->host, $this->port);
 
             /* Send request */
@@ -35,7 +36,8 @@ class NTPTimeProvider implements ITimeProvider
             socket_send($sock, $msg, strlen($msg), 0);
 
             /* Receive response and close socket */
-            socket_recv($sock, $recv, 48, MSG_WAITALL);
+            if (socket_recv($sock, $recv, 48, MSG_WAITALL) === false)
+                throw new \Exception(socket_strerror(socket_last_error($sock)));
             socket_close($sock);
 
             /* Interpret response */

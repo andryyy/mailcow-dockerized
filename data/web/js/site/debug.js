@@ -404,6 +404,7 @@ jQuery(function($){
   function rspamd_pie_graph() {
     $.ajax({
       url: '/api/v1/get/rspamd/actions',
+      async: true,
       success: function(data){
 
         var total = 0;
@@ -437,17 +438,25 @@ jQuery(function($){
             }
           }
         };
-
         var chartcanvas = document.getElementById('rspamd_donut');
-
         Chart.plugins.register('ChartDataLabels');
-
-        var chart = new Chart(chartcanvas.getContext("2d"), {
-          plugins: [ChartDataLabels],
-          type: 'doughnut',
-          data: graphdata,
-          options: options
-        });
+        if(typeof chart == 'undefined') {
+          chart = new Chart(chartcanvas.getContext("2d"), {
+            plugins: [ChartDataLabels],
+            type: 'doughnut',
+            data: graphdata,
+            options: options
+          });
+        }
+        else {
+          chart.destroy();
+          chart = new Chart(chartcanvas.getContext("2d"), {
+            plugins: [ChartDataLabels],
+            type: 'doughnut',
+            data: graphdata,
+            options: options
+          });
+        }
       }
     });
   }
@@ -533,7 +542,7 @@ jQuery(function($){
         }
         var str = '<strong>' + key + '</strong> ' + sym.score_formatted;
         if (sym.options) {
-          str += ' [' + sym.options.join(", ") + "]";
+          str += ' [' + escapeHtml(sym.options.join(", ")) + "]";
         }
         return str
       }).join('<br>\n');
@@ -702,7 +711,7 @@ jQuery(function($){
   draw_rspamd_history();
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var target = $(e.target).attr("href");
-    if ((target == '#tab-rspamd-history')) {
+    if (target == '#tab-rspamd-history') {
       rspamd_pie_graph();
     }
   });

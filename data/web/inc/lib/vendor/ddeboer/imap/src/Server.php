@@ -80,16 +80,16 @@ final class Server implements ServerInterface
      * @param string $password Password
      *
      * @throws AuthenticationFailedException
-     *
-     * @return ConnectionInterface
      */
     public function authenticate(string $username, string $password): ConnectionInterface
     {
         $errorMessage = null;
         $errorNumber  = 0;
-        \set_error_handler(static function ($nr, $message) use (&$errorMessage, &$errorNumber) {
+        \set_error_handler(static function ($nr, $message) use (&$errorMessage, &$errorNumber): bool {
             $errorMessage = $message;
             $errorNumber = $nr;
+
+            return true;
         });
 
         $resource = \imap_open(
@@ -133,8 +133,6 @@ final class Server implements ServerInterface
 
     /**
      * Glues hostname, port and flags and returns result.
-     *
-     * @return string
      */
     private function getServerString(): string
     {

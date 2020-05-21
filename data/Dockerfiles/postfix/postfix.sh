@@ -197,7 +197,7 @@ dbname = ${DBNAME}
 query = SELECT username FROM mailbox, alias_domain
   WHERE alias_domain.alias_domain = '%d'
     AND mailbox.username = CONCAT('%u', '@', alias_domain.target_domain)
-    AND mailbox.active = '1'
+    AND (mailbox.active = '1' OR mailbox.active = '2')
     AND alias_domain.active='1'
 EOF
 
@@ -267,7 +267,7 @@ user = ${DBUSER}
 password = ${DBPASS}
 hosts = unix:/var/run/mysqld/mysqld.sock
 dbname = ${DBNAME}
-query = SELECT CONCAT(JSON_UNQUOTE(JSON_EXTRACT(attributes, '$.mailbox_format')), mailbox_path_prefix, '%d/%u/') FROM mailbox WHERE username='%s' AND active = '1'
+query = SELECT CONCAT(JSON_UNQUOTE(JSON_EXTRACT(attributes, '$.mailbox_format')), mailbox_path_prefix, '%d/%u/') FROM mailbox WHERE username='%s' AND (active = '1' OR active = '2')
 EOF
 
 cat <<EOF > /opt/postfix/conf/sql/mysql_virtual_relay_domain_maps.cf
@@ -317,7 +317,7 @@ query = SELECT goto FROM alias
   SELECT username FROM mailbox, alias_domain
     WHERE alias_domain.alias_domain = '%d'
       AND mailbox.username = CONCAT('%u','@',alias_domain.target_domain)
-      AND mailbox.active ='1'
+      AND (mailbox.active = '1' OR mailbox.active ='2')
       AND alias_domain.active='1'
 EOF
 

@@ -26,8 +26,6 @@ final class MessageIterator extends \ArrayIterator implements MessageIteratorInt
 
     /**
      * Get current message.
-     *
-     * @return MessageInterface
      */
     public function current(): MessageInterface
     {

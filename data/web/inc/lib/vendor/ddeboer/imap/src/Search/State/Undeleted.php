@@ -14,8 +14,6 @@ final class Undeleted implements ConditionInterface
 {
     /**
      * Returns the keyword that the condition represents.
-     *
-     * @return string
      */
     public function toString(): string
     {

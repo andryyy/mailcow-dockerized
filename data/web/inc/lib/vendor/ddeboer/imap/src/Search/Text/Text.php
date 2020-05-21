@@ -14,8 +14,6 @@ final class Text extends AbstractText
 {
     /**
      * Returns the keyword that the condition represents.
-     *
-     * @return string
      */
     protected function getKeyword(): string
     {

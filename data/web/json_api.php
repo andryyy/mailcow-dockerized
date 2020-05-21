@@ -375,6 +375,15 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
                 break;
               }
             break;
+            
+            case "postcat":
+              switch ($object) {
+                default:
+                  $data = mailq('cat', array('qid' => $object));
+                  echo $data;
+                break;
+              }
+            break;
 
             case "global_filters":
               $global_filters = mailbox('get', 'global_filter_details');

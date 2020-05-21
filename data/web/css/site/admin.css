@@ -53,11 +53,6 @@ body.modal-open {
   margin-top: -65px;
   visibility: hidden;
 }
-.scrollboxFixed {
-  position: fixed;
-  top: 65px;
-  z-index: 1;
-}
 .thumbnail img {
   min-height:100px;
   height:100px;

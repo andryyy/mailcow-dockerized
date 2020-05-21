@@ -38,12 +38,10 @@ final class OrConditions implements ConditionInterface
 
     /**
      * Returns the keyword that the condition represents.
-     *
-     * @return string
      */
     public function toString(): string
     {
-        $conditions = \array_map(static function (ConditionInterface $condition) {
+        $conditions = \array_map(static function (ConditionInterface $condition): string {
             return $condition->toString();
         }, $this->conditions);
 

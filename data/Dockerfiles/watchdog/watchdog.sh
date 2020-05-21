@@ -770,6 +770,7 @@ PID=$!
 echo "Spawned phpfpm_checks with PID ${PID}"
 BACKGROUND_TASKS+=(${PID})
 
+if [[ "${SKIP_SOGO}" =~ ^([nN][oO]|[nN])+$ ]]; then
 (
 while true; do
   if ! sogo_checks; then
@@ -781,6 +782,7 @@ done
 PID=$!
 echo "Spawned sogo_checks with PID ${PID}"
 BACKGROUND_TASKS+=(${PID})
+fi
 
 if [ ${CHECK_UNBOUND} -eq 1 ]; then
 (

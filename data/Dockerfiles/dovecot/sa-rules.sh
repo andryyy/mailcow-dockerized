@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Create temp directories
-#[[ ! -d /tmp/sa-rules-schaal ]] && mkdir -p /tmp/sa-rules-schaal
 [[ ! -d /tmp/sa-rules-heinlein ]] && mkdir -p /tmp/sa-rules-heinlein
+#[[ ! -d /tmp/sa-rules-schaal ]] && mkdir -p /tmp/sa-rules-schaal
 
 # Hash current SA rules
 if [[ ! -f /etc/rspamd/custom/sa-rules ]]; then
@@ -40,4 +40,4 @@ fi
 
 # Cleanup
 rm -rf /tmp/sa-rules-heinlein /tmp/sa-rules-heinlein.tar.gz
-rm -rf /tmp/sa-rules-schaal /tmp/sa-rules-schaal.tar.gz
+#rm -rf /tmp/sa-rules-schaal /tmp/sa-rules-schaal.tar.gz

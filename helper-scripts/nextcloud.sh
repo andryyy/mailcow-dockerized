@@ -69,11 +69,11 @@ elif [[ ${NC_UPDATE} == "y" ]]; then
   if ! grep -q 'installed: true' <<<$(docker exec -it -u www-data $(docker ps -f name=php-fpm-mailcow -q) bash -c "/web/nextcloud/occ --no-warnings status"); then
     echo "Nextcloud seems not to be installed."
     exit 1
-  elif ! grep -q 'version: 16\.' <<<$(docker exec -it -u www-data $(docker ps -f name=php-fpm-mailcow -q) bash -c "/web/nextcloud/occ --no-warnings status"); then
+  elif ! grep -q 'version: 18\.' <<<$(docker exec -it -u www-data $(docker ps -f name=php-fpm-mailcow -q) bash -c "/web/nextcloud/occ --no-warnings status"); then
     echo "Cannot upgrade to new major version, please update manually."
     exit 1
   else
-    curl -L# -o nextcloud.tar.bz2 "https://download.nextcloud.com/server/releases/latest-16.tar.bz2" || { echo "Failed to download Nextcloud archive."; exit 1; } \
+    curl -L# -o nextcloud.tar.bz2 "https://download.nextcloud.com/server/releases/latest-18.tar.bz2" || { echo "Failed to download Nextcloud archive."; exit 1; } \
       && tar -xjf nextcloud.tar.bz2 -C ./data/web/ \
       && rm nextcloud.tar.bz2 \
       && mkdir -p ./data/web/nextcloud/data \
@@ -94,7 +94,7 @@ elif [[ ${NC_INSTALL} == "y" ]]; then
 
   ADMIN_NC_PASS=$(</dev/urandom tr -dc A-Za-z0-9 | head -c 28)
 
-  curl -L# -o nextcloud.tar.bz2 "https://download.nextcloud.com/server/releases/latest-15.tar.bz2" || { echo "Failed to download Nextcloud archive."; exit 1; } \
+  curl -L# -o nextcloud.tar.bz2 "https://download.nextcloud.com/server/releases/latest-18.tar.bz2" || { echo "Failed to download Nextcloud archive."; exit 1; } \
     && tar -xjf nextcloud.tar.bz2 -C ./data/web/ \
     && rm nextcloud.tar.bz2 \
     && mkdir -p ./data/web/nextcloud/data \
@@ -118,21 +118,18 @@ elif [[ ${NC_INSTALL} == "y" ]]; then
     /web/nextcloud/occ --no-warnings config:system:set redis dbindex --value=10 --type=integer; \
     /web/nextcloud/occ --no-warnings config:system:set memcache.locking --value='\OC\Memcache\Redis' --type=string; \
     /web/nextcloud/occ --no-warnings config:system:set memcache.local --value='\OC\Memcache\Redis' --type=string; \
-    /web/nextcloud/occ --no-warnings config:system:set trusted_domains 1 --value=${MAILCOW_HOSTNAME}; \
+    /web/nextcloud/occ --no-warnings config:system:set trusted_domains 1 --value=${NC_SUBD}; \
     /web/nextcloud/occ --no-warnings config:system:set trusted_proxies 0 --value=${IPV6_NETWORK}; \
     /web/nextcloud/occ --no-warnings config:system:set trusted_proxies 1 --value=${IPV4_NETWORK}.0/24; \
-    /web/nextcloud/occ --no-warnings config:system:set overwritewebroot --value=/nextcloud; \
-    /web/nextcloud/occ --no-warnings config:system:set overwritehost --value=${MAILCOW_HOSTNAME}; \
+    /web/nextcloud/occ --no-warnings config:system:set overwritehost --value=${NC_SUBD}; \
     /web/nextcloud/occ --no-warnings config:system:set overwriteprotocol --value=https; \
+    /web/nextcloud/occ --no-warnings config:system:set overwritewebroot --value=/; \
     /web/nextcloud/occ --no-warnings config:system:set mail_smtpmode --value=smtp; \
     /web/nextcloud/occ --no-warnings config:system:set mail_smtpauthtype --value=LOGIN; \
     /web/nextcloud/occ --no-warnings config:system:set mail_from_address --value=nextcloud; \
     /web/nextcloud/occ --no-warnings config:system:set mail_domain --value=${MAILCOW_HOSTNAME}; \
     /web/nextcloud/occ --no-warnings config:system:set mail_smtphost --value=postfix; \
     /web/nextcloud/occ --no-warnings config:system:set mail_smtpport --value=588; \
-    /web/nextcloud/occ --no-warnings config:system:set trusted_domains 1 --value=${NC_SUBD}; \
-    /web/nextcloud/occ --no-warnings config:system:set overwritewebroot --value=/; \
-    /web/nextcloud/occ --no-warnings config:system:set overwritehost --value=${NC_SUBD}; \
     /web/nextcloud/occ --no-warnings db:convert-filecache-bigint -n"
 
     # Not installing by default, broke too often

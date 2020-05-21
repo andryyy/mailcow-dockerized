@@ -64,11 +64,11 @@ class container_post(Resource):
         print("api call: %s, container_id: %s" % (api_call_method_name, container_id))
         return api_call_method(container_id)
       except Exception as e:
-        print("error - container_post: %s" % str(e))  
+        print("error - container_post: %s" % str(e))
         return jsonify(type='danger', msg=str(e))
 
     else:
-      return jsonify(type='danger', msg='invalid container id or missing action')        
+      return jsonify(type='danger', msg='invalid container id or missing action')
 
 
   # api call: container_post - post_action: stop
@@ -107,7 +107,7 @@ class container_post(Resource):
 
   # api call: container_post - post_action: exec - cmd: mailq - task: delete
   def container_post__exec__mailq__delete(self, container_id):
-    if 'items' in request.json:  
+    if 'items' in request.json:
       r = re.compile("^[0-9a-fA-F]+$")
       filtered_qids = filter(r.match, request.json['items'])
       if filtered_qids:
@@ -118,10 +118,9 @@ class container_post(Resource):
           postsuper_r = container.exec_run(["/bin/bash", "-c", "/usr/sbin/postsuper " + sanitized_string])
           return exec_run_handler('generic', postsuper_r)
 
-
   # api call: container_post - post_action: exec - cmd: mailq - task: hold
   def container_post__exec__mailq__hold(self, container_id):
-    if 'items' in request.json:  
+    if 'items' in request.json:
       r = re.compile("^[0-9a-fA-F]+$")
       filtered_qids = filter(r.match, request.json['items'])
       if filtered_qids:
@@ -132,10 +131,23 @@ class container_post(Resource):
           postsuper_r = container.exec_run(["/bin/bash", "-c", "/usr/sbin/postsuper " + sanitized_string])
           return exec_run_handler('generic', postsuper_r)
 
+  # api call: container_post - post_action: exec - cmd: mailq - task: cat
+  def container_post__exec__mailq__cat(self, container_id):
+    if 'items' in request.json:
+      r = re.compile("^[0-9a-fA-F]+$")
+      filtered_qids = filter(r.match, request.json['items'])
+      if filtered_qids:
+        sanitized_string = str(' '.join(filtered_qids));
+
+        for container in docker_client.containers.list(filters={"id": container_id}):
+          postcat_return = container.exec_run(["/bin/bash", "-c", "/usr/sbin/postcat -q " + sanitized_string], user='postfix')
+        if not postcat_return:
+          postcat_return = 'err: invalid'
+        return exec_run_handler('utf8_text_only', postcat_return)
 
    # api call: container_post - post_action: exec - cmd: mailq - task: unhold
   def container_post__exec__mailq__unhold(self, container_id):
-    if 'items' in request.json:  
+    if 'items' in request.json:
       r = re.compile("^[0-9a-fA-F]+$")
       filtered_qids = filter(r.match, request.json['items'])
       if filtered_qids:
@@ -149,7 +161,7 @@ class container_post(Resource):
 
   # api call: container_post - post_action: exec - cmd: mailq - task: deliver
   def container_post__exec__mailq__deliver(self, container_id):
-    if 'items' in request.json:  
+    if 'items' in request.json:
       r = re.compile("^[0-9a-fA-F]+$")
       filtered_qids = filter(r.match, request.json['items'])
       if filtered_qids:
@@ -294,7 +306,6 @@ class container_post(Resource):
       for container in docker_client.containers.list(filters={"id": container_id}):
         cmd = "/usr/bin/rspamadm pw -e -p '" + request.json['raw'].replace("'", "'\\''") + "' 2> /dev/null"
         cmd_response = exec_cmd_container(container, cmd, user="_rspamd")
-        
         matched = False
         for line in cmd_response.split("\n"):
           if '$2$' in line:
@@ -314,7 +325,6 @@ class container_post(Resource):
             return jsonify(type='success', msg='command completed successfully')
         else:
             return jsonify(type='danger', msg='command did not complete')
-        
 
 def exec_cmd_container(container, cmd, user, timeout=2, shell_cmd="/bin/bash"):
 
@@ -341,7 +351,7 @@ def exec_cmd_container(container, cmd, user, timeout=2, shell_cmd="/bin/bash"):
       except:
         pass
     return ''.join(total_data)
-    
+
   try :
     socket = container.exec_run([shell_cmd], stdin=True, socket=True, user=user).output._sock
     if not cmd.endswith("\n"):

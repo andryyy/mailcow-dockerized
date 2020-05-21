@@ -113,12 +113,18 @@ function customize($_action, $_item, $_data = null) {
           $apps_name = $_data['apps_name'];
           $help_text = $_data['help_text'];
           $ui_footer = $_data['ui_footer'];
+          $ui_announcement_text = $_data['ui_announcement_text'];
+          $ui_announcement_type = (in_array($_data['ui_announcement_type'], array('info', 'warning', 'danger'))) ? $_data['ui_announcement_type'] : false;
+          $ui_announcement_active = (!empty($_data['ui_announcement_active']) ? 1 : 0);
           try {
             $redis->set('TITLE_NAME', htmlspecialchars($title_name));
             $redis->set('MAIN_NAME', htmlspecialchars($main_name));
             $redis->set('APPS_NAME', htmlspecialchars($apps_name));
             $redis->set('HELP_TEXT', $help_text);
             $redis->set('UI_FOOTER', $ui_footer);
+            $redis->set('UI_ANNOUNCEMENT_TEXT', $ui_announcement_text);
+            $redis->set('UI_ANNOUNCEMENT_TYPE', $ui_announcement_type);
+            $redis->set('UI_ANNOUNCEMENT_ACTIVE', $ui_announcement_active);
           }
           catch (RedisException $e) {
             $_SESSION['return'][] = array(
@@ -208,6 +214,9 @@ function customize($_action, $_item, $_data = null) {
               $redis->del('UI_IMPRESS');
             }
             $data['ui_footer'] = ($ui_footer = $redis->get('UI_FOOTER')) ? $ui_footer : false;
+            $data['ui_announcement_text'] = ($ui_announcement_text = $redis->get('UI_ANNOUNCEMENT_TEXT')) ? $ui_announcement_text : false;
+            $data['ui_announcement_type'] = ($ui_announcement_type = $redis->get('UI_ANNOUNCEMENT_TYPE')) ? $ui_announcement_type : false;
+            $data['ui_announcement_active'] = ($redis->get('UI_ANNOUNCEMENT_ACTIVE') == 1) ? 1 : 0;
             return $data;
           }
           catch (RedisException $e) {

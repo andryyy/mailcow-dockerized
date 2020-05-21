@@ -8,8 +8,6 @@ interface BasicMessageInterface extends PartInterface
 {
     /**
      * Get raw message headers.
-     *
-     * @return string
      */
     public function getRawHeaders(): string;
 
@@ -22,8 +20,6 @@ interface BasicMessageInterface extends PartInterface
 
     /**
      * Get message headers.
-     *
-     * @return Headers
      */
     public function getHeaders(): Headers;
 
@@ -31,15 +27,11 @@ interface BasicMessageInterface extends PartInterface
      * Get message id.
      *
      * A unique message id in the form <...>
-     *
-     * @return null|string
      */
     public function getId(): ?string;
 
     /**
      * Get message sender (from headers).
-     *
-     * @return null|EmailAddress
      */
     public function getFrom(): ?EmailAddress;
 
@@ -87,8 +79,6 @@ interface BasicMessageInterface extends PartInterface
 
     /**
      * Get date (from headers).
-     *
-     * @return null|\DateTimeImmutable
      */
     public function getDate(): ?\DateTimeImmutable;
 
@@ -101,22 +91,16 @@ interface BasicMessageInterface extends PartInterface
 
     /**
      * Get message subject (from headers).
-     *
-     * @return null|string
      */
     public function getSubject(): ?string;
 
     /**
      * Get message In-Reply-To (from headers).
-     *
-     * @return array
      */
     public function getInReplyTo(): array;
 
     /**
      * Get message References (from headers).
-     *
-     * @return array
      */
     public function getReferences(): array;
 
@@ -129,8 +113,6 @@ interface BasicMessageInterface extends PartInterface
 
     /**
      * Get body text.
-     *
-     * @return null|string
      */
     public function getBodyText(): ?string;
 
@@ -143,8 +125,6 @@ interface BasicMessageInterface extends PartInterface
 
     /**
      * Does this message have attachments?
-     *
-     * @return bool
      */
     public function hasAttachments(): bool;
 }

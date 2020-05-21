@@ -3,6 +3,10 @@ if /^\s*Received:.*Authenticated sender.*\(Postcow\)/
 /^Received: from .*? \([\w-.]* \[.*?\]\)(.*|\n.*)\(Authenticated sender: (.+)\)\s+by.+\(Postcow\) with (.*)/
   REPLACE Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with $3
 endif
+if /^\s*Received: from rspamd \(.*mailcow-network.*\).*\(Postcow\)/
+/^Received: from rspamd (.*|\n.*)\((.+) (.+)\)\s+by (.+\(Postcow\)) with (.*)/
+  REPLACE Received: from rspamd (RSPAMD_HOST $3) by $4 with $5
+endif
 /^\s*X-Enigmail/        IGNORE
 /^\s*X-Mailer/          IGNORE
 /^\s*X-Originating-IP/  IGNORE
