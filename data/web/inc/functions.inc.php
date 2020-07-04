@@ -369,9 +369,11 @@ function generate_tlsa_digest($hostname, $port, $starttls = null, $ciphers = 'DE
   }
   if (empty($starttls)) {
     $context = stream_context_create(array("ssl" => array("ciphers" => $ciphers, "capture_peer_cert" => true, 'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true)));
-    $stream = stream_socket_client('ssl://' . $hostname . ':' . $port, $error_nr, $error_msg, 5, STREAM_CLIENT_CONNECT, $context);
+    $stream = stream_socket_client('tcp://' . $hostname . ':' . $port, $error_nr, $error_msg, 5, STREAM_CLIENT_CONNECT, $context);
+    if(stream_socket_enable_crypto($stream, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT) === false) {
+      return false; // negotiation failed
+    }
     if (!$stream) {
-      if($error_nr === 0) return false; // probably negotiation failed
       $error_msg = isset($error_msg) ? $error_msg : '-';
       return $error_nr . ': ' . $error_msg;
     }
@@ -410,7 +412,7 @@ function generate_tlsa_digest($hostname, $port, $starttls = null, $ciphers = 'DE
     stream_context_set_option($stream, 'ssl', 'verify_peer_name', false);
     stream_context_set_option($stream, 'ssl', 'allow_self_signed', true);
     stream_context_set_option($stream, 'ssl', 'ciphers', $ciphers);
-    if(stream_socket_enable_crypto($stream, true, STREAM_CRYPTO_METHOD_ANY_CLIENT) === false) {
+    if(stream_socket_enable_crypto($stream, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT) === false) {
       return false; // negotiation failed
     }
     stream_set_blocking($stream, false);
