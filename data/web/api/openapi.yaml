@@ -1,0 +1,4968 @@
+openapi: 3.0.0
+info:
+  description: >-
+    mailcow is complete e-mailing solution with advanced antispam, antivirus,
+    nice UI and API.
+
+
+    In order to use this API you have to create a API key and add your IP
+    address to the whitelist of allowed IPs this can be done by logging into the
+    Mailcow UI using your admin account, then go to Configuration > Access >
+    Edit administrator details > API. There you will find a collapsed API menu.
+
+
+    There are two types of API keys
+      - The read only key can only be used for all get endpoints
+      - The read write key can be used for all endpoints
+
+  title: mailcow API
+  version: '1.0.0'
+
+servers:
+  - url: /
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                example: error
+              msg:
+                type: string
+                example: authentication failed
+            required:
+            - type
+            - msg
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /api/v1/add/alias:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - add
+                        - alias
+                        - active: '1'
+                          address: alias@domain.tld
+                          goto: destination@domain.tld
+                        - null
+                      msg:
+                        - alias_added
+                        - alias@domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Aliases
+      description: >-
+        You may create your own mailbox alias using this action. It takes a JSON
+        object containing a domain informations.
+
+        Only one `goto*` option can be used, for ex. if you want learn as spam,
+        then send just `goto_spam = 1` in request body.
+      operationId: Create alias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                address: alias@domain.tld
+                goto: destination@domain.tld
+              properties:
+                active:
+                  description: is alias active or not
+                  type: boolean
+                address:
+                  description: 'alias address, for catchall use "@domain.tld"'
+                  type: string
+                goto:
+                  description: 'destination address, comma separated'
+                  type: string
+                goto_ham:
+                  description: learn as ham
+                  type: boolean
+                goto_null:
+                  description: silently ignore
+                  type: boolean
+                goto_spam:
+                  description: learn as spam
+                  type: boolean
+              type: object
+      summary: Create alias
+  /api/v1/add/app-passwd:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - app_passwd
+                        - add
+                        - active: '1'
+                          app_name: emclient
+                          app_passwd: keyleudecticidechothistishownsan31
+                          app_passwd2: keyleudecticidechothistishownsan31
+                          username: hello@mailcow.email
+                      msg: app_passwd_added
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - App Passwords
+      description: >-
+        Using this endpoint you can create a new app password for a specific
+        mailbox.
+      operationId: Create App Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                username: info@domain.tld
+                app_name: wordpress
+                app_passwd: keyleudecticidechothistishownsan31
+                app_passwd2: keyleudecticidechothistishownsan31
+              properties:
+                active:
+                  description: is alias active or not
+                  type: boolean
+                username:
+                  description: mailbox for which the app password should be created
+                  type: string
+                app_name:
+                  description: name of your app password
+                  type: string
+                app_passwd:
+                  description: your app password
+                  type: string
+                app_passwd2:
+                    description: your app password
+                    type: string
+              type: object
+      summary: Create App Password
+  /api/v1/add/bcc:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - bcc
+                        - add
+                        - active: '1'
+                          bcc_dest: bcc@awesomecow.tld
+                          local_dest: mailcow.tld
+                          type: sender
+                        - null
+                      msg: bcc_saved
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Address Rewriting
+      description: >-
+        Using this endpoint you can create a BCC map to forward all mails via a
+        bcc for a given domain.
+      operationId: Create BCC Map
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                bcc_dest: bcc@awesomecow.tld
+                local_dest: mailcow.tld
+                type: sender
+              properties:
+                active:
+                  description: 1 for a active user account 0 for a disabled user account
+                  type: number
+                bcc_dest:
+                  description: the email address where all mails should be send to
+                  type: string
+                local_dest:
+                  description: the domain which emails should be forwarded
+                  type: string
+                type:
+                  description: the type of bcc map can be `sender` or `recipient`
+                  type: string
+              type: object
+      summary: Create BCC Map
+  /api/v1/add/dkim:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - dkim
+                        - add
+                        - dkim_selector: dkim
+                          domains: hanspeterlol.de
+                          key_size: '2048'
+                      msg:
+                        - dkim_added
+                        - hanspeterlol.de
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - DKIM
+      description: Using this endpoint you can generate new DKIM keys.
+      operationId: Generate DKIM Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                dkim_selector: dkim
+                domains: mailcow.tld
+                key_size: '2048'
+              properties:
+                dkim_selector:
+                  description: the DKIM selector default dkim
+                  type: string
+                domain:
+                  description: the domain which a key should be generated for
+                  type: string
+                key_size:
+                  description: the key size (1024 or 2048)
+                  type: number
+              type: object
+      summary: Generate DKIM Key
+  /api/v1/add/dkim_duplicate:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - dkim
+                        - duplicate
+                        - from_domain: mailcow.tld
+                          to_domain: awesomecow.tld
+                      msg:
+                        - dkim_duplicated
+                        - mailcow.tld
+                        - awesomecow.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - DKIM
+      description: Using this endpoint you can duplicate the DKIM Key of one domain.
+      operationId: Duplicate DKIM Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                from_domain: mailcow.tld
+                to_domain: awesomecow.tld
+              properties:
+                fron_domain:
+                  description: the domain where the dkim key should be copied from
+                  type: string
+                to_domain:
+                  description: the domain where the dkim key should be copied to
+                  type: string
+              type: object
+      summary: Duplicate DKIM Key
+  /api/v1/add/domain:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - ratelimit
+                        - edit
+                        - domain
+                        - object: domain.tld
+                          rl_frame: s
+                          rl_value: '10'
+                      msg:
+                        - rl_saved
+                        - domain.tld
+                      type: success
+                    - log:
+                        - mailbox
+                        - add
+                        - domain
+                        - active: '1'
+                          aliases: '400'
+                          backupmx: '0'
+                          defquota: '3072'
+                          description: some decsription
+                          domain: domain.tld
+                          lang: cs
+                          mailboxes: '10'
+                          maxquota: '10240'
+                          quota: '10240'
+                          relay_all_recipients: '0'
+                          rl_frame: s
+                          rl_value: '10'
+                        - null
+                      msg:
+                        - domain_added
+                        - domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domains
+      description: >-
+        You may create your own domain using this action. It takes a JSON object
+        containing a domain informations.
+      operationId: Create domain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                aliases: '400'
+                backupmx: '0'
+                defquota: '3072'
+                description: some decsription
+                domain: domain.tld
+                lang: cs
+                mailboxes: '10'
+                maxquota: '10240'
+                quota: '10240'
+                relay_all_recipients: '0'
+                rl_frame: s
+                rl_value: '10'
+              properties:
+                active:
+                  description: is domain active or not
+                  type: boolean
+                aliases:
+                  description: limit count of aliases associated with this domain
+                  type: number
+                backupmx:
+                  description: relay domain or not
+                  type: boolean
+                defquota:
+                  description: predefined mailbox quota in `add mailbox` form
+                  type: number
+                description:
+                  description: Description of domain
+                  type: string
+                domain:
+                  description: Fully qualified domain name
+                  type: string
+                lang:
+                  description: language code
+                  enum:
+                    - sk
+                    - cs
+                    - de
+                    - en
+                    - es
+                    - fr
+                    - lv
+                    - nl
+                    - pl
+                    - pt
+                    - ru
+                    - it
+                    - ca
+                  type: string
+                mailboxes:
+                  description: limit count of mailboxes associated with this domain
+                  type: number
+                maxquota:
+                  description: maximum quota per mailbox
+                  type: number
+                quota:
+                  description: maximum quota for this domain (for all mailboxes in sum)
+                  type: number
+                relay_all_recipients:
+                  description: >-
+                    if not, them you have to create "dummy" mailbox for each
+                    address to relay
+                  type: boolean
+                rl_frame:
+                  enum:
+                    - s
+                    - m
+                    - h
+                  type: string
+                rl_value:
+                  description: rate limit value
+                  type: number
+              type: object
+      summary: Create domain
+  /api/v1/add/domain-admin:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - domain_admin
+                        - add
+                        - active: '1'
+                          domains: mailcow.tld
+                          password: '*'
+                          password2: '*'
+                          username: testadmin
+                      msg:
+                        - domain_admin_added
+                        - testadmin
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domain admin
+      description: >-
+        Using this endpoint you can create a new Domain Admin user. This user
+        has full control over a domain, and can create new mailboxes and
+        aliases.
+      operationId: Create Domain Admin user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                domains: mailcow.tld
+                password: supersecurepw
+                password2: supersecurepw
+                username: testadmin
+              properties:
+                active:
+                  description: 1 for a active user account 0 for a disabled user account
+                  type: number
+                domains:
+                  description: the domains the user should be a admin of
+                  type: string
+                password:
+                  description: domain admin user password
+                  type: string
+                password2:
+                  description: domain admin user password
+                  type: string
+                username:
+                  description: the username for the admin user
+                  type: string
+              type: object
+      summary: Create Domain Admin user
+  /api/v1/add/domain-policy:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - policy
+                        - add
+                        - domain
+                        - domain: domain.tld
+                          object_from: '*@baddomain.tld'
+                          object_list: bl
+                      msg:
+                        - domain_modified
+                        - domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domain antispam policies
+      description: >-
+        You may create your own domain policy using this action. It takes a JSON
+        object containing a domain informations.
+      operationId: Create domain policy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                domain: domain.tld
+                object_from: '*@baddomain.tld'
+                object_list: bl
+              properties:
+                domain:
+                  description: domain name to which policy is associated to
+                  type: string
+                object_from:
+                  description: exact address or use wildcard to match whole domain
+                  type: string
+                object_list:
+                  enum:
+                    - wl
+                    - bl
+                  type: string
+              type: object
+      summary: Create domain policy
+  /api/v1/add/fwdhost:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - fwdhost
+                        - add
+                        - filter_spam: '0'
+                          hostname: hosted.mailcow.de
+                      msg:
+                        - forwarding_host_added
+                        - '5.1.76.202, 2a00:f820:417::202'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Fordwarding Hosts
+      description: >-
+        Add a new Forwarding host to mailcow. You can chose to enable or disable
+        spam filtering of incoming emails by specifing `filter_spam` 0 =
+        inactive, 1 = active.
+      operationId: Add Forward Host
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                filter_spam: '0'
+                hostname: hosted.mailcow.de
+              properties:
+                filter_spam:
+                  description: '1 to enable spam filter, 0 to disable spam filter'
+                  type: number
+                hostname:
+                  description: contains the hostname you want to add
+                  type: string
+              type: object
+      summary: Add Forward Host
+  /api/v1/add/mailbox:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - add
+                        - mailbox
+                        - active: '1'
+                          domain: domain.tld
+                          local_part: info
+                          name: Full name
+                          password: '*'
+                          password2: '*'
+                          quota: '3072'
+                        - null
+                      msg:
+                        - mailbox_added
+                        - info@domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Mailboxes
+      description: >-
+        You may create your own mailbox using this action. It takes a JSON
+        object containing a domain informations.
+      operationId: Create mailbox
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                domain: domain.tld
+                local_part: info
+                name: Full name
+                password: atedismonsin
+                password2: atedismonsin
+                quota: '3072'
+              properties:
+                active:
+                  description: is mailbox active or not
+                  type: boolean
+                domain:
+                  description: domain name
+                  type: string
+                local_part:
+                  description: left part of email address
+                  type: string
+                name:
+                  description: Full name of the mailbox user
+                  type: string
+                password2:
+                  description: mailbox password for confirmation
+                  type: string
+                pasword:
+                  description: mailbox password
+                  type: string
+                quota:
+                  description: mailbox quota
+                  type: number
+              type: object
+      summary: Create mailbox
+
+  /api/v1/add/oauth2-client:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - oauth2
+                        - add
+                        - client
+                        - redirect_uri: 'https://mailcow.tld'
+                      msg: Added client access
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - oAuth Clients
+      description: Using this endpoint you can create a oAuth clients.
+      operationId: Create oAuth Client
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                redirect_uri: 'https://mailcow.tld'
+              properties:
+                redirect_uri:
+                  description: the uri where you should be redirected after oAuth
+                  type: string
+              type: object
+      summary: Create oAuth Client
+  /api/v1/add/recipient_map:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - recipient_map
+                        - add
+                        - active: '1'
+                          recipient_map_new: target@mailcow.tld
+                          recipient_map_old: recipient@mailcow.tld
+                        - null
+                      msg:
+                        - recipient_map_entry_saved
+                        - recipient@mailcow.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Address Rewriting
+      description: >-
+        Using this endpoint you can create a recipient map to forward all mails
+        from one email address to another.
+      operationId: Create Recipient Map
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                recipient_map_new: target@mailcow.tld
+                recipient_map_old: recipient@mailcow.tld
+              properties:
+                active:
+                  description: 1 for a active user account 0 for a disabled user account
+                  type: number
+                recipient_map_new:
+                  description: the email address that should receive the forwarded emails
+                  type: string
+                recipient_map_old:
+                  description: the email address which emails should be forwarded
+                  type: string
+              type: object
+      summary: Create Recipient Map
+  /api/v1/add/relayhost:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - relayhost
+                        - add
+                        - hostname: 'mailcow.tld:25'
+                          password: supersecurepassword
+                          username: testuser
+                      msg:
+                        - relayhost_added
+                        - ''
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Routing
+      description: Using this endpoint you can create Sender-Dependent Transports.
+      operationId: Create Sender-Dependent Transports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                hostname: 'mailcow.tld:25'
+                password: supersecurepassword
+                username: testuser
+              properties:
+                hostname:
+                  description: the hostname of the smtp server with port
+                  type: string
+                password:
+                  description: the password for the smtp user
+                  type: string
+                username:
+                  description: the username used to authenticate
+                  type: string
+              type: object
+      summary: Create Sender-Dependent Transports
+  /api/v1/add/resource:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - add
+                        - resource
+                        - active: '1'
+                          description: test
+                          domain: mailcow.tld
+                          kind: location
+                          multiple_bookings: '0'
+                          multiple_bookings_custom: ''
+                          multiple_bookings_select: '0'
+                        - null
+                      msg:
+                        - resource_added
+                        - mailcow.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Resources
+      description: Using this endpoint you can create Resources.
+      operationId: Create Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                description: test
+                domain: mailcow.tld
+                kind: location
+                multiple_bookings: '0'
+                multiple_bookings_custom: ''
+                multiple_bookings_select: '0'
+              properties:
+                active:
+                  description: 1 for a active transport map 0 for a disabled transport map
+                  type: number
+                description:
+                  description: a description of the resource
+                  type: string
+                domain:
+                  description: the domain for which the resource should be
+                  type: string
+                kind:
+                  description: the kind of recouse
+                  enum:
+                    - location
+                    - group
+                    - thing
+                  type: string
+                multiple_bookings:
+                  enum:
+                    - '-1'
+                    - '1'
+                    - custom
+                  type: string
+                multiple_bookings_custom:
+                  description: always empty
+                  type: number
+                multiple_bookings_select:
+                  enum:
+                    - '-1'
+                    - '1'
+                    - custom
+                  type: string
+              type: object
+      summary: Create Resources
+  /api/v1/add/syncjob:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - add
+                        - syncjob
+                        - active: '1'
+                          automap: '1'
+                          custom_params: ''
+                          delete1: '0'
+                          delete2: '0'
+                          delete2duplicates: '1'
+                          enc1: SSL
+                          exclude: (?i)spam|(?i)junk
+                          host1: imap.server.tld
+                          maxage: '0'
+                          maxbytespersecond: '0'
+                          mins_interval: '20'
+                          password1: supersecret
+                          port1: 993
+                          skipcrossduplicates: '0'
+                          subfolder2: External
+                          subscribeall: '1'
+                          timeout1: '600'
+                          timeout2: '600'
+                          user1: username
+                          username: mailbox@domain.tld
+                        - null
+                      msg:
+                        - mailbox_modified
+                        - mailbox@domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Sync jobs
+      description: >-
+        You can create new sync job using this action. It takes a JSON object
+        containing a domain informations.
+      operationId: Create sync job
+      summary: Create sync job
+  /api/v1/add/tls-policy-map:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - tls_policy_maps
+                        - add
+                        - parameters: ''
+                          active: '1'
+                          dest: mailcow.tld
+                          policy: encrypt
+                        - null
+                      msg:
+                        - tls_policy_map_entry_saved
+                        - mailcow.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Outgoing TLS Policy Map Overrides
+      description: Using this endpoint you can create a TLS policy map override.
+      operationId: Create TLS Policy Map
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                parameters: ''
+                active: '1'
+                dest: mailcow.tld
+                policy: encrypt
+              properties:
+                parameters:
+                  description: >-
+                    custom parameters you find out more about them
+                    [here](http://www.postfix.org/postconf.5.html#smtp_tls_policy_maps)
+                  type: string
+                active:
+                  description: 1 for a active user account 0 for a disabled user account
+                  type: number
+                dest:
+                  description: the target domain or email address
+                  type: string
+                policy:
+                  description: the policy
+                  enum:
+                    - none
+                    - may
+                    - encrypt
+                    - dane
+                    - '''dane'
+                    - fingerprint
+                    - verify
+                    - secure
+                  type: string
+              type: object
+      summary: Create TLS Policy Map
+  /api/v1/add/transport/all:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - transport
+                        - add
+                        - active: '1'
+                          destination: example2.org
+                          nexthop: 'host:25'
+                          password: supersecurepw
+                          username: testuser
+                      msg:
+                        - relayhost_added
+                        - ''
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Routing
+      description: Using this endpoint you can create Sender-Dependent Transports.
+      operationId: Create Transport Maps
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                active: '1'
+                destination: example.org
+                nexthop: 'host:25'
+                password: supersecurepw
+                username: testuser
+              properties:
+                active:
+                  description: 1 for a active transport map 0 for a disabled transport map
+                  type: number
+                destination:
+                  type: string
+                nexthop:
+                  type: string
+                password:
+                  description: the password for the smtp user
+                  type: string
+                username:
+                  description: the username used to authenticate
+                  type: string
+              type: object
+      summary: Create Transport Maps
+  /api/v1/delete/alias:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - delete
+                        - alias
+                        - id:
+                            - '6'
+                            - '9'
+                        - null
+                      msg:
+                        - alias_removed
+                        - alias@domain.tld
+                      type: success
+                    - log:
+                        - mailbox
+                        - delete
+                        - alias
+                        - id:
+                            - '6'
+                            - '9'
+                        - null
+                      msg:
+                        - alias_removed
+                        - alias2@domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Aliases
+      description: You can delete one or more aliases.
+      operationId: Delete alias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                example:
+                  - '6'
+                  - '9'
+                type: string
+              type: array
+      summary: Delete alias
+  /api/v1/delete/app-passwd:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - app_passwd
+                        - delete
+                        - id:
+                            - '2'
+                      msg:
+                        - app_passwd_removed
+                        - '2'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - App Passwords
+      description: Using this endpoint you can delete a single app password.
+      operationId: Delete App Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '1'
+              properties:
+                items:
+                  description: contains list of app passwords you want to delete
+                  type: object
+              type: object
+      summary: Delete App Password
+  /api/v1/delete/bcc:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - bcc
+                        - delete
+                        - id:
+                            - '4'
+                        - null
+                      msg:
+                        - bcc_deleted
+                        - '4'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Address Rewriting
+      description: >-
+        Using this endpoint you can delete a BCC map, for this you have to know
+        its ID. You can get the ID using the GET method.
+      operationId: Delete BCC Map
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '3'
+              properties:
+                items:
+                  description: contains list of bcc maps you want to delete
+                  type: object
+              type: object
+      summary: Delete BCC Map
+  /api/v1/delete/dkim:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - dkim
+                        - delete
+                        - domains:
+                            - mailcow.tld
+                      msg:
+                        - dkim_removed
+                        - mailcow.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - DKIM
+      description: Using this endpoint a existing DKIM Key can be deleted
+      operationId: Delete DKIM Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                example:
+                  - mailcow.tld
+                type: string
+              type: array
+      summary: Delete DKIM Key
+  /api/v1/delete/domain:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - delete
+                        - domain
+                        - domain:
+                            - domain.tld
+                            - domain2.tld
+                        - null
+                      msg:
+                        - domain_removed
+                        - domain.tld
+                      type: success
+                    - log:
+                        - mailbox
+                        - delete
+                        - domain
+                        - domain:
+                            - domain.tld
+                            - domain2.tld
+                        - null
+                      msg:
+                        - domain_removed
+                        - domain2.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domains
+      description: You can delete one or more domains.
+      operationId: Delete domain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - domain.tld
+                - domain2.tld
+              properties:
+                items:
+                  description: contains list of domains you want to delete
+                  type: object
+              type: object
+      summary: Delete domain
+  /api/v1/delete/domain-admin:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - domain_admin
+                        - delete
+                        - username:
+                            - testadmin
+                      msg:
+                        - domain_admin_removed
+                        - testadmin
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domain admin
+      description: Using this endpoint a existing Domain Admin user can be deleted.
+      operationId: Delete Domain Admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - testadmin
+              properties:
+                items:
+                  description: contains list of usernames of the users you want to delete
+                  type: object
+              type: object
+      summary: Delete Domain Admin
+  /api/v1/delete/domain-policy:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - policy
+                        - delete
+                        - domain
+                        - prefid:
+                            - '1'
+                            - '2'
+                      msg:
+                        - item_deleted
+                        - '1'
+                      type: success
+                    - log:
+                        - policy
+                        - delete
+                        - domain
+                        - prefid:
+                            - '1'
+                            - '2'
+                      msg:
+                        - item_deleted
+                        - '2'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domain antispam policies
+      description: You can delete one o more domain policies.
+      operationId: Delete domain policy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '1'
+                - '2'
+              properties:
+                items:
+                  description: contains list of domain policys you want to delete
+                  type: object
+              type: object
+      summary: Delete domain policy
+  /api/v1/delete/fwdhost:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - fwdhost
+                        - delete
+                        - forwardinghost:
+                            - 5.1.76.202
+                            - '2a00:f820:417::202'
+                      msg:
+                        - forwarding_host_removed
+                        - 5.1.76.202
+                      type: success
+                    - log:
+                        - fwdhost
+                        - delete
+                        - forwardinghost:
+                            - 5.1.76.202
+                            - '2a00:f820:417::202'
+                      msg:
+                        - forwarding_host_removed
+                        - '2a00:f820:417::202'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Fordwarding Hosts
+      description: >-
+        Using this endpoint you can delete a forwarding host, in order to do so
+        you need to know the IP of the host.
+      operationId: Delete Forward Host
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - 5.1.76.202
+                - '2a00:f820:417::202'
+              properties:
+                ip:
+                  description: contains the ip of the fowarding host you want to delete
+                  type: string
+              type: object
+      summary: Delete Forward Host
+  /api/v1/delete/mailbox:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - delete
+                        - mailbox
+                        - username:
+                            - info@domain.tld
+                            - sales@domain.tld
+                        - null
+                      msg:
+                        - mailbox_removed
+                        - info@domain.tld
+                      type: success
+                    - log:
+                        - mailbox
+                        - delete
+                        - mailbox
+                        - username:
+                            - info@domain.tld
+                            - sales@domain.tld
+                        - null
+                      msg:
+                        - mailbox_removed
+                        - sales@domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Mailboxes
+      description: You can delete one or more mailboxes.
+      operationId: Delete mailbox
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - info@domain.tld
+                - sales@domain.tld
+              properties:
+                items:
+                  description: contains list of mailboxes you want to delete
+                  type: object
+              type: object
+      summary: Delete mailbox
+  /api/v1/delete/mailq:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    msg: Task completed
+                    type: success
+          description: OK
+          headers: {}
+      tags:
+        - Queue Manager
+      description: >-
+        Using this API you can delete the current mail queue. This will delete
+        all mails in it.
+
+        This API uses the command: `postsuper -d`
+      operationId: Delete Queue
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                action: super_delete
+              properties:
+                action:
+                  description: use super_delete to delete the mail queue
+                  type: string
+              type: object
+      summary: Delete Queue
+  /api/v1/delete/oauth2-client:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - oauth2
+                        - delete
+                        - client
+                        - id:
+                            - '1'
+                      msg:
+                        - items_deleted
+                        - '1'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - oAuth Clients
+      description: >-
+        Using this endpoint you can delete a oAuth client, for this you have to
+        know its ID. You can get the ID using the GET method.
+      operationId: Delete oAuth Client
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '3'
+              properties:
+                items:
+                  description: contains list of oAuth clients you want to delete
+                  type: object
+              type: object
+      summary: Delete oAuth Client
+  /api/v1/delete/qitem:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - quarantine
+                        - delete
+                        - id:
+                            - '33'
+                      msg:
+                        - item_deleted
+                        - '33'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Quarantine
+      description: >-
+        Using this endpoint you can delete a email from quarantine, for this you
+        have to know its ID. You can get the ID using the GET method.
+      operationId: Delete mails in Quarantine
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '33'
+              properties:
+                items:
+                  description: contains list of emails you want to delete
+                  type: object
+              type: object
+      summary: Delete mails in Quarantine
+  /api/v1/delete/recipient_map:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - recipient_map
+                        - delete
+                        - id:
+                            - '1'
+                        - null
+                      msg:
+                        - recipient_map_entry_deleted
+                        - '1'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Address Rewriting
+      description: >-
+        Using this endpoint you can delete a recipient map, for this you have to
+        know its ID. You can get the ID using the GET method.
+      operationId: Delete Recipient Map
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '1'
+              properties:
+                items:
+                  description: contains list of recipient maps you want to delete
+                  type: object
+              type: object
+      summary: Delete Recipient Map
+  /api/v1/delete/relayhost:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - relayhost
+                        - delete
+                        - id:
+                            - '1'
+                      msg:
+                        - relayhost_removed
+                        - '1'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Routing
+      description: >-
+        Using this endpoint you can delete a Sender-Dependent Transport, for
+        this you have to know its ID. You can get the ID using the GET method.
+      operationId: Delete Sender-Dependent Transports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '1'
+              properties:
+                items:
+                  description: >-
+                    contains list of Sender-Dependent Transport you want to
+                    delete
+                  type: object
+              type: object
+      summary: Delete Sender-Dependent Transports
+  /api/v1/delete/resource:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - delete
+                        - resource
+                        - name:
+                            - test@mailcow.tld
+                        - null
+                      msg:
+                        - resource_removed
+                        - test@mailcow.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Resources
+      description: >-
+        Using this endpoint you can delete a Resources, for this you have to
+        know its ID. You can get the ID using the GET method.
+      operationId: Delete Resources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - test@mailcow.tld
+              properties:
+                items:
+                  description: contains list of Resources you want to delete
+                  type: object
+              type: object
+      summary: Delete Resources
+  /api/v1/delete/syncjob:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    log:
+                      - entity
+                      - action
+                      - object
+                    msg:
+                      - message
+                      - entity name
+                    type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Sync jobs
+      description: You can delete one or more sync jobs.
+      operationId: Delete sync job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '6'
+                - '9'
+              properties:
+                items:
+                  description: contains list of aliases you want to delete
+                  type: object
+              type: object
+      summary: Delete sync job
+  /api/v1/delete/tls-policy-map:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - tls_policy_maps
+                        - delete
+                        - id:
+                            - '1'
+                        - null
+                      msg:
+                        - tls_policy_map_entry_deleted
+                        - '1'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Outgoing TLS Policy Map Overrides
+      description: >-
+        Using this endpoint you can delete a TLS Policy Map, for this you have
+        to know its ID. You can get the ID using the GET method.
+      operationId: Delete TLS Policy Map
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '3'
+              properties:
+                items:
+                  description: contains list of tls policy maps you want to delete
+                  type: object
+              type: object
+      summary: Delete TLS Policy Map
+  /api/v1/delete/transport:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - transport
+                        - delete
+                        - id:
+                            - '1'
+                      msg:
+                        - relayhost_removed
+                        - '1'
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Routing
+      description: >-
+        Using this endpoint you can delete a Transport Maps, for this you have
+        to know its ID. You can get the ID using the GET method.
+      operationId: Delete Transport Maps
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - '1'
+              properties:
+                items:
+                  description: contains list of transport maps you want to delete
+                  type: object
+              type: object
+      summary: Delete Transport Maps
+  /api/v1/edit/alias:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - edit
+                        - alias
+                        - active: '1'
+                          address: alias@domain.tld
+                          goto: destination@domain.tld
+                          id:
+                            - '6'
+                          private_comment: private comment
+                          public_comment: public comment
+                        - null
+                      msg:
+                        - alias_modified
+                        - alias@domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Aliases
+      description: >-
+        You can update one or more aliases per request. You can also send just
+        attributes you want to change
+      operationId: Update alias
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  active: '1'
+                  address: alias@domain.tld
+                  goto: destination@domain.tld
+                  private_comment: private comment
+                  public_comment: public comment
+                items: '6'
+              properties:
+                attr:
+                  properties:
+                    active:
+                      description: is alias active or not
+                      type: boolean
+                    address:
+                      description: 'alias address, for catchall use "@domain.tld"'
+                      type: string
+                    goto:
+                      description: 'destination address, comma separated'
+                      type: string
+                    goto_ham:
+                      description: learn as ham
+                      type: boolean
+                    goto_null:
+                      description: silently ignore
+                      type: boolean
+                    goto_spam:
+                      description: learn as spam
+                      type: boolean
+                    private_comment:
+                      type: string
+                    public_comment:
+                      type: string
+                  type: object
+                items:
+                  description: contains list of aliases you want update
+                  type: object
+              type: object
+      summary: Update alias
+  /api/v1/edit/domain:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            '*/*':
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domains
+      description: >-
+        You can update one or more domains per request. You can also send just
+        attributes you want to change.
+
+        Example: You can add domain names to items list and in attr object just
+        include `"active": "0"` to deactivate domains.
+      operationId: Update domain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  active: '1'
+                  aliases: '400'
+                  backupmx: '1'
+                  defquota: '3072'
+                  description: domain description
+                  gal: '1'
+                  lang: cs
+                  mailboxes: '10'
+                  maxquota: '10240'
+                  quota: '10240'
+                  relay_all_recipients: '0'
+                  relayhost: '2'
+                items: domain.tld
+              properties:
+                attr:
+                  properties:
+                    active:
+                      description: is domain active or not
+                      type: boolean
+                    aliases:
+                      description: limit count of aliases associated with this domain
+                      type: number
+                    backupmx:
+                      description: relay domain or not
+                      type: boolean
+                    defquota:
+                      description: predefined mailbox quota in `add mailbox` form
+                      type: number
+                    description:
+                      description: Description of domain
+                      type: string
+                    gal:
+                      description: >-
+                        is domain global address list active or not, it enables
+                        shared contacts accross domain in SOGo webmail
+                      type: boolean
+                    lang:
+                      description: language code
+                      enum:
+                        - sk
+                        - cs
+                        - de
+                        - en
+                        - es
+                        - fr
+                        - lv
+                        - nl
+                        - pl
+                        - pt
+                        - ru
+                        - it
+                        - ca
+                      type: string
+                    mailboxes:
+                      description: limit count of mailboxes associated with this domain
+                      type: number
+                    maxquota:
+                      description: maximum quota per mailbox
+                      type: number
+                    quota:
+                      description: maximum quota for this domain (for all mailboxes in sum)
+                      type: number
+                    relay_all_recipients:
+                      description: >-
+                        if not, them you have to create "dummy" mailbox for each
+                        address to relay
+                      type: boolean
+                    relayhost:
+                      description: id of relayhost
+                      type: number
+                  type: object
+                items:
+                  description: contains list of domain names you want update
+                  type: object
+              type: object
+      summary: Update domain
+  /api/v1/edit/fail2ban:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            '*/*':
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Fail2Ban
+      description: >-
+        Using this endpoint you can edit the Fail2Ban config and black or
+        whitelist new ips.
+      operationId: Edit Fail2Ban
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  ban_time: '86400'
+                  blacklist: '10.100.6.5/32,10.100.8.4/32'
+                  max_attempts: '5'
+                  netban_ipv4: '24'
+                  netban_ipv6: '64'
+                  retry_window: '600'
+                  whitelist: mailcow.tld
+                items: none
+              properties:
+                attr:
+                  description: array containing the fail2ban settings
+                  properties:
+                    backlist:
+                      description: the backlisted ips or hostnames separated by comma
+                      type: string
+                    ban_time:
+                      description: the time a ip should be banned
+                      type: number
+                    max_attempts:
+                      description: the maximum numbe of wrong logins before a ip is banned
+                      type: number
+                    netban_ipv4:
+                      description: the networks mask to ban for ipv4
+                      type: number
+                    netban_ipv6:
+                      description: the networks mask to ban for ipv6
+                      type: number
+                    retry_window:
+                      description: >-
+                        the maximum time in which a ip as to login with false
+                        credentials to be banned
+                      type: number
+                    whitelist:
+                      description: whitelisted ips or hostnames sepereated by comma
+                      type: string
+                  type: object
+                items:
+                  description: has to be none
+              type: object
+      summary: Edit Fail2Ban
+  /api/v1/edit/mailbox:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - mailbox
+                        - edit
+                        - mailbox
+                        - active: '1'
+                          force_pw_update: '0'
+                          name: Full name
+                          password: '*'
+                          password2: '*'
+                          quota: '3072'
+                          sender_acl:
+                            - default
+                            - info@domain2.tld
+                            - domain3.tld
+                            - '*'
+                          sogo_access: '1'
+                          username:
+                            - info@domain.tld
+                        - null
+                      msg:
+                        - mailbox_modified
+                        - info@domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Mailboxes
+      description: >-
+        You can update one or more mailboxes per request. You can also send just
+        attributes you want to change
+      operationId: Update mailbox
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  active: '1'
+                  force_pw_update: '0'
+                  name: Full name
+                  password: ''
+                  password2: ''
+                  quota: '3072'
+                  sender_acl:
+                    - default
+                    - info@domain2.tld
+                    - domain3.tld
+                    - '*'
+                  sogo_access: '1'
+                items: info@domain.tld
+              properties:
+                attr:
+                  properties:
+                    active:
+                      description: is mailbox active or not
+                      type: boolean
+                    force_pw_update:
+                      description: force user to change password on next login
+                      type: boolean
+                    name:
+                      description: Full name of the mailbox user
+                      type: string
+                    password2:
+                      description: new mailbox password for confirmation
+                      type: string
+                    pasword:
+                      description: new mailbox password
+                      type: string
+                    quota:
+                      description: mailbox quota
+                      type: number
+                    sender_acl:
+                      description: list of allowed send from addresses
+                      type: object
+                    sogo_access:
+                      description: is access to SOGo webmail active or not
+                      type: boolean
+                  type: object
+                items:
+                  description: contains list of mailboxes you want update
+                  type: object
+              type: object
+      summary: Update mailbox
+  /api/v1/edit/mailq:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    msg: Task completed
+                    type: success
+          description: OK
+          headers: {}
+      tags:
+        - Queue Manager
+      description: >-
+        Using this API you can flush the current mail queue. This will try to
+        deliver all mails currently in it.
+
+        This API uses the command: `postqueue -f`
+      operationId: Flush Queue
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                action: flush
+              properties:
+                action:
+                  description: use flush to flush the mail queue
+                  type: string
+              type: object
+      summary: Flush Queue
+  /api/v1/edit/pushover:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - pushover
+                        - edit
+                        - active: '0'
+                          evaluate_x_prio: '0'
+                          key: 21e8918e1jksdjcpis712
+                          only_x_prio: '0'
+                          senders: ''
+                          senders_regex: ''
+                          text: ''
+                          title: Mail
+                          token: 9023e2ohcwed27d1idu2
+                          username:
+                            - info@domain.tld
+                      msg: pushover_settings_edited
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Mailboxes
+      description: >-
+        Using this endpoint it is possible to update the pushover settings for
+        mailboxes
+      operationId: Update Pushover settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  active: '0'
+                  evaluate_x_prio: '0'
+                  key: 21e8918e1jksdjcpis712
+                  only_x_prio: '0'
+                  senders: ''
+                  senders_regex: ''
+                  text: ''
+                  title: Mail
+                  token: 9023e2ohcwed27d1idu2
+                items: info@domain.tld
+              properties:
+                attr:
+                  properties:
+                    active:
+                      description: Enables pushover 1 disable pushover 0
+                      type: number
+                    evaluate_x_prio:
+                      description: Send the Push with High priority
+                      type: number
+                    key:
+                      description: Pushover key
+                      type: string
+                    only_x_prio:
+                      description: Only send push for prio mails
+                      type: number
+                    senders:
+                      description: Only send push for emails from these senders
+                      type: string
+                    senders_regex:
+                      description: Regex to match senders for which a push will be send
+                      type: string
+                    text:
+                      description: Custom push noficiation text
+                      type: string
+                    title:
+                      description: Push title
+                      type: string
+                    token:
+                      description: Pushover token
+                      type: string
+                  type: object
+                items:
+                  description: contains list of mailboxes you want to delete
+                  type: object
+              type: object
+      summary: Update Pushover settings
+  /api/v1/edit/quarantine_notification:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          description: OK
+          headers: {}
+      tags:
+        - Mailboxes
+      description: You can update one or more mailboxes per request.
+      operationId: Quarantine Notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  quarantine_notification: hourly
+                items:
+                  anyOf:
+                    - mailbox1@domain.tld
+                    - mailbox2@domain.tld
+              properties:
+                attr:
+                  properties:
+                    quarantine_notification:
+                      description: recurrence
+                      enum:
+                        - hourly
+                        - daily
+                        - weekly
+                        - never
+                      type: string
+                  type: object
+                items:
+                  description: >-
+                    contains list of mailboxes you want set qurantine
+                    notifications
+                  type: object
+              type: object
+      summary: Quarantine Notifications
+  /api/v1/edit/syncjob:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    log:
+                      - entity
+                      - action
+                      - object
+                    msg:
+                      - message
+                      - entity name
+                    type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Sync jobs
+      description: >-
+        You can update one or more sync jobs per request. You can also send just
+        attributes you want to change.
+      operationId: Update sync job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  active: '1'
+                  automap: '1'
+                  custom_params: ''
+                  delete1: '0'
+                  delete2: '0'
+                  delete2duplicates: '1'
+                  enc1: SSL
+                  exclude: (?i)spam|(?i)junk
+                  host1: imap.server.tld
+                  maxage: '0'
+                  maxbytespersecond: '0'
+                  mins_interval: '20'
+                  password1: supersecret
+                  port1: '993'
+                  skipcrossduplicates: '0'
+                  subfolder2: External
+                  subscribeall: '1'
+                  timeout1: '600'
+                  timeout2: '600'
+                  user1: username
+                items: '1'
+              properties:
+                attr:
+                  properties:
+                    active:
+                      description: Is sync job active
+                      type: boolean
+                    automap:
+                      description: >-
+                        Try to automap folders ("Sent items", "Sent" => "Sent"
+                        etc.)
+                      type: boolean
+                    custom_params:
+                      description: Custom parameters passed to imapsync command
+                      type: string
+                    delete1:
+                      description: Delete from source when completed
+                      type: boolean
+                    delete2:
+                      description: Delete messages on destination that are not on source
+                      type: boolean
+                    delete2duplicates:
+                      description: Delete duplicates on destination
+                      type: boolean
+                    enc1:
+                      description: Encryption
+                      enum:
+                        - TLS
+                        - SSL
+                        - PLAIN
+                      type: string
+                    exclude:
+                      description: Exclude objects (regex)
+                      type: string
+                    host1:
+                      description: Hostname
+                      type: string
+                    maxage:
+                      description: >-
+                        Maximum age of messages in days that will be polled from
+                        remote (0 = ignore age)
+                      type: number
+                    maxbytespersecond:
+                      description: Max. bytes per second (0 = unlimited)
+                      type: number
+                    mins_interval:
+                      description: Interval (min)
+                      type: number
+                    password1:
+                      description: Password
+                      type: string
+                    port1:
+                      description: Port
+                      type: string
+                    skipcrossduplicates:
+                      description: >-
+                        Skip duplicate messages across folders (first come,
+                        first serve)
+                      type: boolean
+                    subfolder2:
+                      description: >-
+                        Sync into subfolder on destination (empty = do not use
+                        subfolder)
+                      type: string
+                    subscribeall:
+                      description: Subscribe all folders
+                      type: boolean
+                    timeout1:
+                      description: Timeout for connection to remote host
+                      type: number
+                    timeout2:
+                      description: Timeout for connection to local host
+                      type: number
+                    user1:
+                      description: Username
+                      type: string
+                  type: object
+                items:
+                  description: contains list of aliases you want update
+                  type: object
+              type: object
+      summary: Update sync job
+  /api/v1/edit/user-acl:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - log:
+                        - acl
+                        - edit
+                        - user
+                        - user_acl:
+                            - spam_alias
+                            - tls_policy
+                            - spam_score
+                            - spam_policy
+                            - delimiter_action
+                            - syncjobs
+                            - eas_reset
+                            - quarantine
+                            - sogo_profile_reset
+                            - quarantine_attachments
+                            - quarantine_notification
+                            - app_passwds
+                            - pushover
+                          username:
+                            - info@domain.tld
+                      msg:
+                        - acl_saved
+                        - info@domain.tld
+                      type: success
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Mailboxes
+      description: Using this endpoints its possible to update the ACL's for mailboxes
+      operationId: Update mailbox ACL
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  user_acl:
+                    - spam_alias
+                    - tls_policy
+                    - spam_score
+                    - spam_policy
+                    - delimiter_action
+                    - syncjobs
+                    - eas_reset
+                    - quarantine
+                    - sogo_profile_reset
+                    - quarantine_attachments
+                    - quarantine_notification
+                    - app_passwds
+                    - pushover
+                items: info@domain.tld
+              properties:
+                attr:
+                  properties:
+                    user_acl:
+                      description: contains a list of active user acls
+                      type: object
+                  type: object
+                items:
+                  description: contains list of mailboxes you want to delete
+                  type: object
+              type: object
+      summary: Update mailbox ACL
+  '/api/v1/get/alias/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - '1'
+              - '2'
+              - '5'
+              - '10'
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10004;'
+                      active_int: 1
+                      address: alias@domain.tld
+                      created: '2019-04-04 19:29:49'
+                      domain: domain.tld
+                      goto: destination@domain.tld
+                      id: 6
+                      in_primary_domain: ''
+                      is_catch_all: 0
+                      modified: null
+                      private_comment: null
+                      public_comment: null
+                    - active: '&#10004;'
+                      active_int: 1
+                      address: '@domain.tld'
+                      created: '2019-04-27 13:42:39'
+                      domain: domain.tld
+                      goto: destination@domain.tld
+                      id: 10
+                      in_primary_domain: ''
+                      is_catch_all: 1
+                      modified: null
+                      private_comment: null
+                      public_comment: null
+          description: OK
+          headers: {}
+      tags:
+        - Aliases
+      description: You can list mailbox aliases existing in system.
+      operationId: Get aliases
+      summary: Get aliases
+  '/api/v1/get/app-passwd/all/{mailbox}':
+    get:
+      parameters:
+        - description: mailbox of entry you want to get
+          example: hello@mailcow.email
+          in: path
+          name: mailbox
+          required: true
+          schema:
+            enum:
+              - hello@mailcow.email
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10003;'
+                      active_int: 1
+                      created: '2019-12-21 16:04:55'
+                      domain: mailcow.email
+                      id: 2
+                      mailbox: hello@mailcow.email
+                      modified: null
+                      name: emclient
+          description: OK
+          headers: {}
+      tags:
+        - App Passwords
+      description: >-
+        Using this endpoint you can get all app passwords from a specific
+        mailbox.
+      operationId: Get App Password
+      summary: Get App Password
+  '/api/v1/get/bcc/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - '1'
+              - '2'
+              - '5'
+              - '10'
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10003;'
+                      active_int: 1
+                      bcc_dest: bcc@awesomecow.tld
+                      created: '2019-10-02 21:44:34'
+                      domain: mailcow.tld
+                      id: 3
+                      local_dest: '@mailcow.tld'
+                      modified: null
+                      type: sender
+          description: OK
+          headers: {}
+      tags:
+        - Address Rewriting
+      description: Using this endpoint you can get all BCC maps.
+      operationId: Get BCC Map
+      summary: Get BCC Map
+  '/api/v1/get/dkim/{domain}':
+    get:
+      parameters:
+        - description: name of domain
+          in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    dkim_selector: dkim
+                    dkim_txt: >-
+                      v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA21tUSjyasQy/hJmVjPnlRGfzx6TPhYj8mXY9DVOzSAE64Gddw/GnE/GcCR6WXNT23u9q4zPnz1IPoNt5kFOps8vg/iNqrcH++494noaZuYyFPPFnebkfryO4EvEyxC/c66qts+gnOUml+M8uv5WObBJld2gG12jLwFM0263J/N6J8LuUsaXOB2uCIfx8Nf4zjuJ6Ieez2uyHNK5dXjDLfKA4mTr+EEK6W6e34M4KN1liWM6r9Oy5S1FlLrD42VpURxxBZtBiEtaJPEKSQuk6GQz8ihu7W20Yr53tyCdaORu8dhxXVUWVf+GjuuMEdAmQCjYkarXdYCrt56Psw703kwIDAQAB
+                    length: '2048'
+                    privkey: ''
+                    pubkey: >-
+                      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA21tUSjyasQy/hJmVjPnlRGfzx6TPhYj8mXY9DVOzSAE64Gddw/GnE/GcCR6WXNT23u9q4zPnz1IPoNt5kFOps8vg/iNqrcH++494noaZuYyFPPFnebkfryO4EvEyxC/c66qts+gnOUml+M8uv5WObBJld2gG12jLwFM0263J/N6J8LuUsaXOB2uCIfx8Nf4zjuJ6Ieez2uyHNK5dXjDLfKA4mTr+EEK6W6e34M4KN1liWM6r9Oy5S1FlLrD42VpURxxBZtBiEtaJPEKSQuk6GQz8ihu7W20Yr53tyCdaORu8dhxXVUWVf+GjuuMEdAmQCjYkarXdYCrt56Psw703kwIDAQAB
+          description: OK
+          headers: {}
+      tags:
+        - DKIM
+      description: >-
+        Using this endpoint you can get the DKIM public key for a specific
+        domain.
+      operationId: Get DKIM Key
+      summary: Get DKIM Key
+  /api/v1/get/domain-admin/all:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10003;'
+                      active_int: 1
+                      created: '2019-10-02 10:29:41'
+                      selected_domains:
+                        - mailcow.tld
+                      tfa_active: '&#10005;'
+                      tfa_active_int: null
+                      unselected_domains:
+                        - awesomemailcow.de
+                        - mailcowisgreat.de
+                      username: testadmin
+          description: OK
+          headers: {}
+      tags:
+        - Domain admin
+      description: ''
+      operationId: Get Domain Admins
+      summary: Get Domain Admins
+  '/api/v1/get/domain/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - mailcow.tld
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10004;'
+                      active_int: 1
+                      aliases_in_domain: 0
+                      aliases_left: 400
+                      backupmx: '&#10008;'
+                      backupmx_int: 0
+                      bytes_total: '5076666944'
+                      def_new_mailbox_quota: 3221225472
+                      def_quota_for_mbox: 3221225472
+                      description: Some description
+                      domain_name: domain.tld
+                      gal: '&#10008;'
+                      gal_int: 0
+                      lang: en
+                      max_new_mailbox_quota: 10737418240
+                      max_num_aliases_for_domain: 400
+                      max_num_mboxes_for_domain: 10
+                      max_quota_for_domain: 10737418240
+                      max_quota_for_mbox: 10737418240
+                      mboxes_in_domain: 0
+                      mboxes_left: 10
+                      msgs_total: '172440'
+                      quota_used_in_domain: '0'
+                      relay_all_recipients: '&#10008;'
+                      relay_all_recipients_int: 0
+                      relayhost: '0'
+                      rl: false
+                    - active: '&#10004;'
+                      active_int: 1
+                      aliases_in_domain: 0
+                      aliases_left: 400
+                      backupmx: '&#10004;'
+                      backupmx_int: 1
+                      bytes_total: '5076666944'
+                      def_new_mailbox_quota: 3221225472
+                      def_quota_for_mbox: 3221225472
+                      description: domain description
+                      domain_name: domain2.tld
+                      gal: '&#10008;'
+                      gal_int: 0
+                      lang: cs
+                      max_new_mailbox_quota: 10737418240
+                      max_num_aliases_for_domain: 400
+                      max_num_mboxes_for_domain: 10
+                      max_quota_for_domain: 10737418240
+                      max_quota_for_mbox: 10737418240
+                      mboxes_in_domain: 0
+                      mboxes_left: 10
+                      msgs_total: '172440'
+                      quota_used_in_domain: '0'
+                      relay_all_recipients: '&#10008;'
+                      relay_all_recipients_int: 0
+                      relayhost: '0'
+                      rl: false
+          description: OK
+          headers: {}
+      tags:
+        - Domains
+      description: You can list all domains existing in system.
+      operationId: Get domains
+      summary: Get domains
+  /api/v1/get/fail2ban:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    ban_time: 604800
+                    blacklist: |-
+                      45.82.153.37/32
+                      92.118.38.52/32
+                    max_attempts: 1
+                    netban_ipv4: 32
+                    netban_ipv6: 128
+                    perm_bans:
+                      - 45.82.153.37/32
+                      - 92.118.38.52/32
+                    retry_window: 7200
+                    whitelist: 1.1.1.1
+          description: OK
+          headers: {}
+      tags:
+        - Fail2Ban
+      description: Gets the current Fail2Ban configuration.
+      operationId: Get Fail2Ban Config
+      summary: Get Fail2Ban Config
+  /api/v1/get/fwdhost/all:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - host: 5.1.76.202
+                      keep_spam: 'yes'
+                      source: hosted.mailcow.de
+                    - host: '2a00:f820:417::202'
+                      keep_spam: 'yes'
+                      source: hosted.mailcow.de
+          description: OK
+          headers: {}
+      tags:
+        - Fordwarding Hosts
+      description: You can list all Forwarding Hosts in your mailcow.
+      operationId: Get Forwarding Hosts
+      summary: Get Forwarding Hosts
+  '/api/v1/get/logs/acme/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - message: >-
+                        Certificate validation done, neither changed nor due for
+                        renewal, sleeping for another day.
+                      time: '1569927728'
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all ACME logs from issued Lets Enctypts
+        certificates.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get ACME logs
+      summary: Get ACME logs
+  '/api/v1/get/logs/api/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - data: ''
+                      method: GET
+                      remote: 1.1.1.1
+                      time: 1569939001
+                      uri: /api/v1/get/logs/api/2
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all Api logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get Api logs
+      summary: Get Api logs
+  '/api/v1/get/logs/autodiscover/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - service: activesync
+                      time: 1569684212
+                      ua: >-
+                        Microsoft Office/16.0 (Windows NT 6.2; MAPICPL
+                        16.0.11328; Pro)
+                      user: awesome@mailcow.de
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all Autodiscover logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get Autodiscover logs
+      summary: Get Autodiscover logs
+  '/api/v1/get/logs/dovecot/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - message: >-
+                        managesieve-login: Disconnected (no auth attempts in 0
+                        secs): user=<>, rip=172.22.1.3, lip=172.22.1.250
+                      priority: info
+                      program: dovecot
+                      time: '1569938740'
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all Dovecot logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get Dovecot logs
+      summary: Get Dovecot logs
+  '/api/v1/get/logs/netfilter/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - message: 'Whitelist was changed, it has 1 entries'
+                      priority: info
+                      time: 1569754911
+                    - message: Add host/network 1.1.1.1/32 to blacklist
+                      priority: crit
+                      time: 1569754911
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all Netfilter logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get Netfilter logs
+      summary: Get Netfilter logs
+  '/api/v1/get/logs/postfix/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - message: 'EF1711500458: removed'
+                      priority: info
+                      program: postfix/qmgr
+                      time: '1569937433'
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all Postfix logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get Postfix logs
+      summary: Get Postfix logs
+  '/api/v1/get/logs/ratelimited/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - from: awesome@mailcow.email
+                      header_from: '"Awesome" <awesome@mailcow.email>'
+                      header_subject: Mailcow is amazing
+                      ip: 172.22.1.248
+                      message_id: 6a-5d892500-7-240abd80@90879116
+                      qid: E3CF91500458
+                      rcpt: hello@mailcow.email
+                      rl_hash: RLsdz3tuabozgd4oacbdh8kc78
+                      rl_info: mailcow(RLsdz3tuabozgd4oacbdh8kc78)
+                      rl_name: mailcow
+                      time: 1569269003
+                      user: awesome@mailcow.email
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all Ratelimit logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get Ratelimit logs
+      summary: Get Ratelimit logs
+  '/api/v1/get/logs/rspamd-history/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all Rspamd logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get Rspamd logs
+      summary: Get Rspamd logs
+  '/api/v1/get/logs/sogo/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - message: >-
+                        [109]:
+                        mailcowdockerized_watchdog-mailcow_1.mailcowdockerized_mailcow-network
+                        "GET /SOGo.index/ HTTP/1.1" 200 2531/0 0.005 - - 0
+                      priority: notice
+                      program: sogod
+                      time: '1569938874'
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all SOGo logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get SOGo logs
+      summary: Get SOGo logs
+  '/api/v1/get/logs/watchdog/{count}':
+    get:
+      parameters:
+        - description: Number of logs to return
+          in: path
+          name: count
+          required: true
+          schema:
+            type: number
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - hpdiff: '0'
+                      hpnow: '1'
+                      hptotal: '1'
+                      lvl: '100'
+                      service: Fail2ban
+                      time: '1569938958'
+                    - hpdiff: '0'
+                      hpnow: '5'
+                      hptotal: '5'
+                      lvl: '100'
+                      service: Rspamd
+                      time: '1569938956'
+          description: OK
+          headers: {}
+      tags:
+        - Logs
+      description: >-
+        This Api endpoint lists all Watchdog logs.
+
+        Tip: You can limit how many logs you want to get by using `/<count>` at
+        the end of the api url.
+      operationId: Get Watchdog logs
+      summary: Get Watchdog logs
+  '/api/v1/get/mailbox/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - user@domain.tld
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10004;'
+                      active_int: 1
+                      attributes:
+                        force_pw_update: '0'
+                        mailbox_format: 'maildir:'
+                        quarantine_notification: never
+                        sogo_access: '1'
+                        tls_enforce_in: '0'
+                        tls_enforce_out: '0'
+                      domain: doman3.tld
+                      is_relayed: 0
+                      local_part: info
+                      max_new_quota: 10737418240
+                      messages: 0
+                      name: Full name
+                      percent_class: success
+                      percent_in_use: 0
+                      quota: 3221225472
+                      quota_used: 0
+                      rl: false
+                      spam_aliases: 0
+                      username: info@doman3.tld
+          description: OK
+          headers: {}
+      tags:
+        - Mailboxes
+      description: You can list all mailboxes existing in system.
+      operationId: Get mailboxes
+      summary: Get mailboxes
+  /api/v1/get/mailq/all:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - arrival_time: 1570091234
+                      message_size: 1848
+                      queue_id: B98C6260CA1
+                      queue_name: incoming
+                      recipients:
+                        - recipient@awesomecow.tld
+                      sender: sender@mailcow.tld
+          description: OK
+          headers: {}
+      tags:
+        - Queue Manager
+      description: Get the current mail queue and everything it contains.
+      operationId: Get Queue
+      summary: Get Queue
+  '/api/v1/get/oauth2-client/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - '1'
+              - '2'
+              - '5'
+              - '10'
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - client_id: 17c76aaa88c0
+                      client_secret: 73fc668a88147e32a31ff80c
+                      grant_types: null
+                      id: 1
+                      redirect_uri: 'https://mailcow.tld'
+                      scope: profile
+                      user_id: null
+          description: OK
+          headers: {}
+      tags:
+        - oAuth Clients
+      description: Using this endpoint you can get all oAuth clients.
+      operationId: Get oAuth Clients
+      summary: Get oAuth Clients
+  '/api/v1/get/policy_bl_domain/{domain}':
+    get:
+      parameters:
+        - description: name of domain
+          in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - object: domain.tld
+                      prefid: 2
+                      value: '*@baddomain.tld'
+          description: OK
+          headers: {}
+      tags:
+        - Domain antispam policies
+      description: You can list all blacklist policies per domain.
+      operationId: List blacklist domain policy
+      summary: List blacklist domain policy
+  '/api/v1/get/policy_wl_domain/{domain}':
+    get:
+      parameters:
+        - description: name of domain
+          in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - object: domain.tld
+                      prefid: 1
+                      value: '*@gooddomain.tld'
+          description: OK
+          headers: {}
+      tags:
+        - Domain antispam policies
+      description: You can list all whitelist policies per domain.
+      operationId: List whitelist domain policy
+      summary: List whitelist domain policy
+  /api/v1/get/quarantine/all:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    created: 1572688831
+                    id: 33
+                    notified: 1
+                    qid: 8224615004C1
+                    rcpt: admin@domain.tld
+                    score: 15.48
+                    sender: bounces@send.domain.tld
+                    subject: mailcow is awesome
+                    virus_flag: 0
+          description: OK
+          headers: {}
+      tags:
+        - Quarantine
+      description: Get all mails that are currently in Quarantine.
+      operationId: Get mails in Quarantine
+      summary: Get mails in Quarantine
+  '/api/v1/get/recipient_map/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - '1'
+              - '2'
+              - '5'
+              - '10'
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10003;'
+                      active_int: 1
+                      created: '2019-10-02 22:06:29'
+                      id: 3
+                      modified: null
+                      recipient_map_new: target@mailcow.tld
+                      recipient_map_old: recipient@mailcow.tld
+          description: OK
+          headers: {}
+      tags:
+        - Address Rewriting
+      description: Using this endpoint you can get all recipient maps.
+      operationId: Get Recipient Map
+      summary: Get Recipient Map
+  '/api/v1/get/relayhost/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - '1'
+              - '2'
+              - '5'
+              - '10'
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10003;'
+                      active_int: 1
+                      hostname: 'mailcow.tld:25'
+                      id: 1
+                      password: supersecurepassword
+                      password_short: tes...
+                      used_by_domains: ''
+                      username: testuser
+          description: OK
+          headers: {}
+      tags:
+        - Routing
+      description: Using this endpoint you can get all Sender-Dependent Transports.
+      operationId: Get Sender-Dependent Transports
+      summary: Get Sender-Dependent Transports
+  /api/v1/get/resource/all:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10003;'
+                      active_int: 1
+                      description: test
+                      domain: mailcow.tld
+                      kind: location
+                      local_part: test
+                      multiple_bookings: 0
+                      name: test@mailcow.tld
+          description: OK
+          headers: {}
+      tags:
+        - Resources
+      description: Using this endpoint you can get all Resources.
+      operationId: Get Resources
+      summary: Get Resources
+  '/api/v1/get/rl-mbox/{mailbox}':
+    get:
+      parameters:
+        - description: name of mailbox or all
+          in: path
+          name: mailbox
+          required: true
+          schema:
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - frame: s
+                      mailbox: leon@mailcow.tld
+                      value: '5'
+                    - frame: s
+                      mailbox: lisa@mailcow.tld
+                      value: '3'
+          description: OK
+          headers: {}
+      tags:
+        - Ratelimits
+      description: >-
+        Using this endpoint you can get the ratelimits for a certain mailbox.
+        You can use all for all mailboxes.
+      operationId: Get mailbox ratelimits
+      summary: Get mailbox ratelimits
+  '/api/v1/get/rl-domain/{domain}':
+    get:
+      parameters:
+        - description: name of domain or all
+          in: path
+          name: domain
+          required: true
+          schema:
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - frame: s
+                      domain: domain.tld
+                      value: '5'
+                    - frame: s
+                      mailbox: domain2.tld
+                      value: '3'
+          description: OK
+          headers: {}
+      tags:
+        - Ratelimits
+      description: >-
+        Using this endpoint you can get the ratelimits for a certain domains.
+        You can use all for all domain.
+      operationId: Get domain ratelimits
+      summary: Get domain ratelimits
+  /api/v1/edit/rl-mbox/:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - type: success
+                      log:
+                      - ratelimit
+                      - edit
+                      - mailbox
+                      - object:
+                        - info@domain.tld
+                        rl_value: "10"
+                        rl_frame: h
+                      msg:
+                      - rl_saved
+                      - info@domain.tld
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Ratelimits
+      description: >-
+        Using this endpoint you can edit the ratelimits for a certain mailbox.
+      operationId: Edit mailbox ratelimits
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  - rl_vlaue: "10"
+                    rl_frame: "h"
+                items: info@domain.tld
+              properties:
+                attr:
+                  properties:
+                    rl_frame:
+                      description: contains the frame for the ratelimit h,s,m
+                      type: string
+                    rl_vlaue:
+                      description: contains the rate for the ratelimit 10,20,50,1
+                      type: number
+                  type: object
+                items:
+                  description: contains list of mailboxes you want to edit the ratelimit of
+                  type: object
+              type: object
+      summary: Edit mailbox ratelimits
+  /api/v1/edit/rl-domain/:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - type: success
+                    - log:
+                        - ratelimit
+                        - edit
+                        - domain
+                        - object: 
+                          - domain.tld
+                          rl_value: "50"
+                          rl_frame: "h"
+                      msg:
+                        - rl_saved
+                        - domain.tld
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Ratelimits
+      description: >-
+        Using this endpoint you can edit the ratelimits for a certain domains.
+      operationId: Edit domain ratelimits
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                attr:
+                  - rl_vlaue: "10"
+                    rl_frame: "h"
+                items: domain.tld
+              properties:
+                attr:
+                  properties:
+                    rl_frame:
+                      description: contains the frame for the ratelimit h,s,m
+                      type: string
+                    rl_vlaue:
+                      description: contains the rate for the ratelimit 10,20,50,1
+                      type: number
+                  type: object
+                items:
+                  description: contains list of domains you want to edit the ratelimit of
+                  type: object
+              type: object
+      summary: Edit domain ratelimits 
+  /api/v1/get/status/containers:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    acme-mailcow:
+                      container: acme-mailcow
+                      image: 'mailcow/acme:1.63'
+                      started_at: '2019-12-22T21:00:08.270660275Z'
+                      state: running
+                      type: info
+                    clamd-mailcow:
+                      container: clamd-mailcow
+                      image: 'mailcow/clamd:1.35'
+                      started_at: '2019-12-22T21:00:01.622856172Z'
+                      state: running
+                      type: info
+                    dockerapi-mailcow:
+                      container: dockerapi-mailcow
+                      image: 'mailcow/dockerapi:1.36'
+                      started_at: '2019-12-22T20:59:59.984797808Z'
+                      state: running
+                      type: info
+                    dovecot-mailcow:
+                      container: dovecot-mailcow
+                      image: 'mailcow/dovecot:1.104'
+                      started_at: '2019-12-22T21:00:08.988680259Z'
+                      state: running
+                      type: info
+                    ipv6nat-mailcow:
+                      container: ipv6nat-mailcow
+                      image: robbertkl/ipv6nat
+                      started_at: '2019-12-22T21:06:37.273225445Z'
+                      state: running
+                      type: info
+                    memcached-mailcow:
+                      container: memcached-mailcow
+                      image: 'memcached:alpine'
+                      started_at: '2019-12-22T20:59:58.0907785Z'
+                      state: running
+                      type: info
+                    mysql-mailcow:
+                      container: mysql-mailcow
+                      image: 'mariadb:10.3'
+                      started_at: '2019-12-22T21:00:02.201937528Z'
+                      state: running
+                      type: info
+                    netfilter-mailcow:
+                      container: netfilter-mailcow
+                      image: 'mailcow/netfilter:1.31'
+                      started_at: '2019-12-22T21:00:09.851559297Z'
+                      state: running
+                      type: info
+                    nginx-mailcow:
+                      container: nginx-mailcow
+                      image: 'nginx:mainline-alpine'
+                      started_at: '2019-12-22T21:00:12.9843038Z'
+                      state: running
+                      type: info
+                    olefy-mailcow:
+                      container: olefy-mailcow
+                      image: 'mailcow/olefy:1.2'
+                      started_at: '2019-12-22T20:59:59.676259274Z'
+                      state: running
+                      type: info
+                    php-fpm-mailcow:
+                      container: php-fpm-mailcow
+                      image: 'mailcow/phpfpm:1.55'
+                      started_at: '2019-12-22T21:00:00.955808957Z'
+                      state: running
+                      type: info
+                    postfix-mailcow:
+                      container: postfix-mailcow
+                      image: 'mailcow/postfix:1.44'
+                      started_at: '2019-12-22T21:00:07.186717617Z'
+                      state: running
+                      type: info
+                    redis-mailcow:
+                      container: redis-mailcow
+                      image: 'redis:5-alpine'
+                      started_at: '2019-12-22T20:59:56.827166834Z'
+                      state: running
+                      type: info
+                    rspamd-mailcow:
+                      container: rspamd-mailcow
+                      image: 'mailcow/rspamd:1.56'
+                      started_at: '2019-12-22T21:00:12.456075355Z'
+                      state: running
+                      type: info
+                    sogo-mailcow:
+                      container: sogo-mailcow
+                      image: 'mailcow/sogo:1.65'
+                      started_at: '2019-12-22T20:59:58.382274592Z'
+                      state: running
+                      type: info
+                    solr-mailcow:
+                      container: solr-mailcow
+                      image: 'mailcow/solr:1.7'
+                      started_at: '2019-12-22T20:59:59.635413798Z'
+                      state: running
+                      type: info
+                    unbound-mailcow:
+                      container: unbound-mailcow
+                      image: 'mailcow/unbound:1.10'
+                      started_at: '2019-12-22T20:59:58.760595825Z'
+                      state: running
+                      type: info
+                    watchdog-mailcow:
+                      container: watchdog-mailcow
+                      image: 'mailcow/watchdog:1.65'
+                      started_at: '2019-12-22T20:59:56.028660382Z'
+                      state: running
+                      type: info
+          description: OK
+          headers: {}
+      tags:
+        - Status
+      description: >-
+        Using this endpoint you can get the status of all containers and when
+        hey where started and a few other details.
+      operationId: Get container status
+      summary: Get container status
+  /api/v1/get/status/solr:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    solr_documents: null
+                    solr_enabled: false
+                    solr_size: null
+                    type: info
+          description: OK
+          headers: {}
+      tags:
+        - Status
+      description: >-
+        Using this endpoint you can get the status of all containers and when
+        hey where started and a few other details.
+      operationId: Get solr status
+      summary: Get solr status
+  /api/v1/get/status/vmail:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    disk: /dev/mapper/mail--vg-root
+                    total: 41G
+                    type: info
+                    used: 11G
+                    used_percent: 28%
+          description: OK
+          headers: {}
+      tags:
+        - Status
+      description: >-
+        Using this endpoint you can get the status of the vmail and the amount
+        of used storage.
+      operationId: Get vmail status
+      summary: Get vmail status
+  /api/v1/get/syncjobs/all/no_log:
+    get:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10003;'
+                      active_int: 1
+                      authmd51: 0
+                      authmech1: PLAIN
+                      automap: 1
+                      created: '2019-05-22 11:37:25'
+                      custom_params: ''
+                      delete1: 0
+                      delete2: 0
+                      delete2duplicates: 1
+                      domain2: ''
+                      enc1: TLS
+                      exclude: (?i)spam|(?i)junk
+                      host1: imap.server.tld
+                      id: 1
+                      is_running: 0
+                      last_run: '2019-05-22 11:40:02'
+                      log: ''
+                      maxage: 0
+                      maxbytespersecond: '0'
+                      mins_interval: '20'
+                      modified: '2019-05-22 11:40:02'
+                      port1: 993
+                      regextrans2: ''
+                      skipcrossduplicates: 0
+                      subfolder2: External
+                      subscribeall: 1
+                      timeout1: 600
+                      timeout2: 600
+                      user1: username
+                      user2: mailbox@domain.tld
+          description: OK
+          headers: {}
+      tags:
+        - Sync jobs
+      description: You can list all syn jobs existing in system.
+      operationId: Get sync jobs
+      summary: Get sync jobs
+  '/api/v1/get/tls-policy-map/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - '1'
+              - '2'
+              - '5'
+              - '10'
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - parameters: ''
+                      active: '&#10003;'
+                      active_int: 1
+                      created: '2019-10-03 08:42:12'
+                      dest: mailcow.tld
+                      id: 1
+                      modified: null
+                      policy: encrypt
+          description: OK
+          headers: {}
+      tags:
+        - Outgoing TLS Policy Map Overrides
+      description: Using this endpoint you can get all TLS policy map override maps.
+      operationId: Get TLS Policy Map
+      summary: Get TLS Policy Map
+  '/api/v1/get/transport/{id}':
+    get:
+      parameters:
+        - description: id of entry you want to get
+          example: all
+          in: path
+          name: id
+          required: true
+          schema:
+            enum:
+              - all
+              - '1'
+              - '2'
+              - '5'
+              - '10'
+            type: string
+        - description: e.g. api-key-string
+          example: api-key-string
+          in: header
+          name: X-API-Key
+          required: false
+          schema:
+            type: string
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - active: '&#10003;'
+                      active_int: 1
+                      destination: example.org
+                      id: 1
+                      lookup_mx: '&#10005;'
+                      lookup_mx_int: 0
+                      nexthop: 'host:25'
+                      password: supersecurepw
+                      password_short: sup...
+                      username: testuser
+          description: OK
+          headers: {}
+      tags:
+        - Routing
+      description: Using this endpoint you can get all Transport Maps.
+      operationId: Get Transport Maps
+      summary: Get Transport Maps
+  /api/v1/edit/spam-score/:
+    post:
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '200':
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - type: success
+                      log:
+                      - mailbox
+                      - edit
+                      - spam_score
+                      - username:
+                        - info@domain.tld
+                        spam_score: '8,15'
+                      msg:
+                      - mailbox_modified
+                      - info@domain.tld
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Mailboxes
+      description: >-
+        Using this endpoint you can edit the spam filter score for a certain mailbox.
+      operationId: Edit mailbox spam filter score
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                - items:
+                  - info@domain.tld
+                  attr:
+                    spam_score: '8,15'
+      summary: Edit mailbox spam filter score
+
+tags:
+  - name: Domains
+    description: You can create antispam whitelist and blacklist policies
+  - name: Domain antispam policies
+    description: You can edit the Domain Antispam policies
+  - name: Mailboxes
+    description: You can manage mailboxes
+  - name: Aliases
+    description: You can manage aliases
+  - name: Sync jobs
+    description: Using Syncjobs you can sync your mails with other email servers
+  - name: Fordwarding Hosts
+    description: Forwarding Hosts enable you to send mail using a relay
+  - name: Logs
+    description: Get all mailcow sysmte logs
+  - name: Queue Manager
+    description: Manage the postfix mailque
+  - name: Quarantine
+    description: Check what emails went to quarantine
+  - name: Fail2Ban
+    description: Manage the Netfilter fail2ban options
+  - name: DKIM
+    description: Manage DKIM keys
+  - name: Domain admin
+    description: Create or udpdate domain admin users
+  - name: Address Rewriting
+    description: Create BBC maps or recipient maps
+  - name: Outgoing TLS Policy Map Overrides
+    description: Force global TLS policys
+  - name: oAuth Clients
+    description: Use mailcow as a oAuth server
+  - name: Routing
+    description: Define your own email routes
+  - name: Resources
+    description: Manage ressources
+  - name: App Passwords
+    description: Create mailbox app passwords
+  - name: Status
+    description: Get the status of your cow
+  - name: Ratelimits
+    description: Edit domain ratelimits

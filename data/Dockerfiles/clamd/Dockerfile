@@ -2,8 +2,7 @@ FROM debian:buster-slim
 
 LABEL maintainer "André Peters <andre.peters@servercow.de>"
 
-# Installation
-ENV CLAMAV 0.102.1
+ARG CLAMAV=0.102.3
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   ca-certificates \

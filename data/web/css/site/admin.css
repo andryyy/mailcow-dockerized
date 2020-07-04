@@ -11,10 +11,8 @@ table.footable>tbody>tr.footable-empty>td {
 .table-responsive {
   overflow: visible !important;
 }
-@media screen and (max-width: 767px) {
-  .table-responsive {
-    overflow-x: scroll !important;
-  }
+.table-responsive {
+  overflow-x: scroll !important;
 }
 body {
   overflow-y:scroll;

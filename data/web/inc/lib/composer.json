@@ -2,7 +2,7 @@
     "require": {
         "robthree/twofactorauth": "^1.6",
         "yubico/u2flib-server": "^1.0",
-        "phpmailer/phpmailer": "^5.2",
+        "phpmailer/phpmailer": "^6.1",
         "php-mime-mail-parser/php-mime-mail-parser": "^5.0.5",
         "soundasleep/html2text": "^0.5.0",
         "ddeboer/imap": "^1.5",

@@ -388,7 +388,7 @@
         "release_body": "Šim ziņojumam mēs esam pievienojuši jūsu ziņojumu kā eml failu.",
         "release_subject": "Potenciāli kaitīgs karantīnas vienums %s",
         "remove": "Noņemt",
-        "sender": "Sūtītājs",
+        "sender": "Sūtītājs (SMTP)",
         "show_item": "Parādīt vienumus",
         "subj": "Priekšmets",
         "text_from_html_content": "Saturs (konvertēts html)",

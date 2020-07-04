@@ -113,7 +113,13 @@ function fail2ban($_action, $_data = null) {
               }
             }
             elseif ($_data['action'] == "blacklist") {
-              if (valid_network($network)) {
+              if (valid_network($network) && !in_array($network, array(
+                '0.0.0.0',
+                '0.0.0.0/0',
+                getenv('IPV4_NETWORK') . '0/24',
+                getenv('IPV4_NETWORK') . '0',
+                getenv('IPV6_NETWORK')
+              ))) {
                 $redis->hSet('F2B_BLACKLIST', $network, 1);
                 $redis->hDel('F2B_WHITELIST', $network, 1);
                 //$response = docker('post', 'netfilter-mailcow', 'restart');
@@ -176,6 +182,7 @@ function fail2ban($_action, $_data = null) {
         $redis->Del('F2B_BLACKLIST');
         if(!empty($wl)) {
           $wl_array = array_map('trim', preg_split( "/( |,|;|\n)/", $wl));
+          $wl_array = array_filter($wl_array);
           if (is_array($wl_array)) {
             foreach ($wl_array as $wl_item) {
               if (valid_network($wl_item) || valid_hostname($wl_item)) {
@@ -194,9 +201,16 @@ function fail2ban($_action, $_data = null) {
         }
         if(!empty($bl)) {
           $bl_array = array_map('trim', preg_split( "/( |,|;|\n)/", $bl));
+          $bl_array = array_filter($bl_array);
           if (is_array($bl_array)) {
             foreach ($bl_array as $bl_item) {
-              if (valid_network($bl_item) || valid_hostname($bl_item)) {
+              if (valid_network($bl_item) && !in_array($bl_item, array(
+                '0.0.0.0',
+                '0.0.0.0/0',
+                getenv('IPV4_NETWORK') . '0/24',
+                getenv('IPV4_NETWORK') . '0',
+                getenv('IPV6_NETWORK')
+              ))) {
                 $redis->hSet('F2B_BLACKLIST', $bl_item, 1);
               }
               else {

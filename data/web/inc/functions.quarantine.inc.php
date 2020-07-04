@@ -1,4 +1,7 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 function quarantine($_action, $_data = null) {
 	global $pdo;
 	global $redis;
@@ -16,7 +19,7 @@ function quarantine($_action, $_data = null) {
             'msg' => 'access_denied'
           )
         )));
-        return;
+        return false;
       }
       $stmt = $pdo->prepare('SELECT `id` FROM `quarantine` LEFT OUTER JOIN `user_acl` ON `user_acl`.`username` = `rcpt`
         WHERE SHA2(CONCAT(`id`, `qid`), 256) = :hash
@@ -32,7 +35,7 @@ function quarantine($_action, $_data = null) {
             'msg' => 'access_denied'
           )
         )));
-        return;
+        return false;
       }
       else {
         $stmt = $pdo->prepare("DELETE FROM `quarantine` WHERE id = :id");
@@ -59,7 +62,7 @@ function quarantine($_action, $_data = null) {
             'msg' => 'access_denied'
           )
         )));
-        return;
+        return false;
       }
       $stmt = $pdo->prepare('SELECT `id` FROM `quarantine` LEFT OUTER JOIN `user_acl` ON `user_acl`.`username` = `rcpt`
         WHERE SHA2(CONCAT(`id`, `qid`), 256) = :hash
@@ -75,7 +78,7 @@ function quarantine($_action, $_data = null) {
             'msg' => 'access_denied'
           )
         )));
-        return;
+        return false;
       }
       else {
         $stmt = $pdo->prepare('SELECT `msg`, `qid`, `sender`, `rcpt` FROM `quarantine` WHERE `id` = :id');
@@ -96,7 +99,7 @@ function quarantine($_action, $_data = null) {
               'msg' => array('release_send_failed', 'Cannot determine Postfix host')
             )
           )));
-          return;
+        return false;
         }
         try {
           $release_format = $redis->Get('Q_RELEASE_FORMAT');
@@ -109,7 +112,7 @@ function quarantine($_action, $_data = null) {
               'msg' => array('redis_error', $e)
             )
           )));
-          return;
+          return false;
         }
         if ($release_format == 'attachment') {
           try {
@@ -137,7 +140,7 @@ function quarantine($_action, $_data = null) {
                   'msg' => array('release_send_failed', 'Cannot determine Postfix host')
                 )
               )));
-              return;
+              return false;
             }
             $mail->Host = $postfix;
             $mail->Port = 590;
@@ -162,7 +165,7 @@ function quarantine($_action, $_data = null) {
                 'msg' => array('release_send_failed', $e->errorMessage())
               )
             )));
-            return;
+            return false;
           }
         }
         elseif ($release_format == 'raw') {
@@ -199,7 +202,7 @@ function quarantine($_action, $_data = null) {
                   'msg' => 'Postfix returned SMTP code ' . $smtp_resource . ', expected ' . $postfix_talk[$i][0]
                 )
               )));
-              return;
+            return false;
             }
             if ($postfix_talk[$i][1] !== '')  {
               fputs($smtp_connection, $postfix_talk[$i][1]);
@@ -361,7 +364,7 @@ function quarantine($_action, $_data = null) {
           $stmt = $pdo->prepare('SELECT `msg`, `qid`, `sender`, `rcpt` FROM `quarantine` WHERE `id` = :id');
           $stmt->execute(array(':id' => $id));
           $row = $stmt->fetch(PDO::FETCH_ASSOC);
-          if (!hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $row['rcpt'])) {
+          if (!hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $row['rcpt']) && $_SESSION['mailcow_cc_role'] != 'admin') {
             $_SESSION['return'][] = array(
               'type' => 'danger',
               'msg' => 'access_denied'
@@ -809,13 +812,36 @@ function quarantine($_action, $_data = null) {
       if (!is_numeric($_data) || empty($_data)) {
         return false;
       }
-      $stmt = $pdo->prepare('SELECT `rcpt`, `score`, `symbols`, `msg`, `domain` FROM `quarantine` WHERE `id`= :id');
+      $stmt = $pdo->prepare('SELECT * FROM `quarantine` WHERE `id`= :id');
       $stmt->execute(array(':id' => $_data));
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
-      if (hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $row['rcpt'])) {
+      if (hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $row['rcpt']) || $_SESSION['mailcow_cc_role'] == 'admin') {
         return $row;
       }
+      logger(array('return' => array(
+        array(
+          'type' => 'danger',
+          'log' => array(__FUNCTION__, $_action, $_data_log),
+          'msg' => 'access_denied'
+        )
+      )));
       return false;
+    break;
+    case 'hash_details':
+      $hash = trim($_data);
+      if (preg_match("/^([a-f0-9]{64})$/", $hash) === false) {
+        logger(array('return' => array(
+          array(
+            'type' => 'danger',
+            'log' => array(__FUNCTION__, $_action, $_data_log),
+            'msg' => 'access_denied'
+          )
+        )));
+        return false;
+      }
+      $stmt = $pdo->prepare('SELECT * FROM `quarantine` WHERE SHA2(CONCAT(`id`, `qid`), 256) = :hash');
+      $stmt->execute(array(':hash' => $hash));
+      return $stmt->fetch(PDO::FETCH_ASSOC);
     break;
   }
 }

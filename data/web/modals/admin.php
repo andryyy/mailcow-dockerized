@@ -55,7 +55,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
         <h3 class="modal-title"><?=$lang['admin']['add_domain_admin'];?></h3>
       </div>
       <div class="modal-body">
-          <form class="form-horizontal" data-cached-form="true" data-id="add_domain_admin" role="form" method="post">
+          <form class="form-horizontal" data-cached-form="true" data-id="add_domain_admin" role="form" method="post" autocomplete="off">
             <div class="form-group">
               <label class="control-label col-sm-2" for="username"><?=$lang['admin']['username'];?>:</label>
               <div class="col-sm-10">
@@ -76,15 +76,15 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-2" for="password"><?=$lang['admin']['password'];?>:</label>
+              <label class="control-label col-sm-2" for="password"><?=$lang['admin']['password'];?> (<a href="#" class="generate_password"><?=$lang['admin']['generate'];?></a>)</label>
               <div class="col-sm-10">
-              <input type="password" class="form-control" data-hibp="true" name="password" placeholder="" required>
+              <input type="password" class="form-control" data-pwgen-field="true" data-hibp="true" name="password" placeholder="" autocomplete="new-password" required>
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-2" for="password2"><?=$lang['admin']['password_repeat'];?>:</label>
               <div class="col-sm-10">
-              <input type="password" class="form-control" name="password2" placeholder="" required>
+              <input type="password" class="form-control" data-pwgen-field="true" name="password2" placeholder="" autocomplete="new-password" required>
               </div>
             </div>
             <div class="form-group">
@@ -139,7 +139,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
         <h3 class="modal-title"><?=$lang['admin']['add_admin'];?></h3>
       </div>
       <div class="modal-body">
-          <form class="form-horizontal" data-cached-form="true" data-id="add_admin" role="form" method="post">
+          <form class="form-horizontal" data-cached-form="true" data-id="add_admin" role="form" method="post" autocomplete="off">
             <div class="form-group">
               <label class="control-label col-sm-2" for="username"><?=$lang['admin']['username'];?>:</label>
               <div class="col-sm-10">
@@ -148,15 +148,15 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-2" for="password"><?=$lang['admin']['password'];?>:</label>
+              <label class="control-label col-sm-2" for="password"><?=$lang['admin']['password'];?> (<a href="#" class="generate_password"><?=$lang['admin']['generate'];?></a>):</label>
               <div class="col-sm-10">
-              <input type="password" class="form-control" data-hibp="true" name="password" placeholder="" required>
+              <input type="password" class="form-control" data-pwgen-field="true" data-hibp="true" name="password" placeholder="" autocomplete="new-password" required>
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-2" for="password2"><?=$lang['admin']['password_repeat'];?>:</label>
               <div class="col-sm-10">
-              <input type="password" class="form-control" name="password2" placeholder="" required>
+              <input type="password" class="form-control" data-pwgen-field="true" name="password2" placeholder="" autocomplete="new-password" required>
               </div>
             </div>
             <div class="form-group">

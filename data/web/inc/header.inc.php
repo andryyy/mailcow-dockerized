@@ -20,7 +20,7 @@
     if (preg_match("/edit/i", $_SERVER['REQUEST_URI'])) {
       $css_minifier->add('/web/css/site/edit.css');
     }
-    if (preg_match("/quarantine/i", $_SERVER['REQUEST_URI'])) {
+    if (preg_match("/(quarantine|qhandler)/i", $_SERVER['REQUEST_URI'])) {
       $css_minifier->add('/web/css/site/quarantine.css');
     }
     if (preg_match("/debug/i", $_SERVER['REQUEST_URI'])) {

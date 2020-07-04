@@ -1,4 +1,7 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 function is_valid_regex($exp) {
   return @preg_match($exp, '') !== false;
 }
@@ -354,6 +357,11 @@ function pem_to_der($pem_key) {
   unset($lines[count($lines)-1]);
   unset($lines[0]);
   return base64_decode(implode('', $lines));
+}
+function expand_ipv6($ip) {
+	$hex = unpack("H*hex", inet_pton($ip));
+	$ip = substr(preg_replace("/([A-f0-9]{4})/", "$1:", $hex['hex']), 0, -1);
+	return $ip;
 }
 function generate_tlsa_digest($hostname, $port, $starttls = null, $ciphers = 'DEFAULT') {
   if (!is_valid_domain_name($hostname)) {

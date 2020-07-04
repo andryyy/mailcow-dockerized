@@ -27,6 +27,14 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
           <p id="qid_detail_recipients"></p>
         </div>
         <div class="form-group">
+          <label for="qid_detail_hfrom"><h4><?=$lang['quarantine']['sender_header'];?>:</h4></label>
+          <p><span class="mail-address-item" id="qid_detail_hfrom"></span></p>
+        </div>
+        <div class="form-group">
+          <label for="qid_detail_efrom"><h4><?=$lang['quarantine']['sender'];?>:</h4></label>
+          <p><span class="mail-address-item" id="qid_detail_efrom"></span></p>
+        </div>
+        <div class="form-group">
           <label for="qid_detail_text"><h4><?=$lang['quarantine']['text_plain_content'];?>:</h4></label>
           <pre id="qid_detail_text"></pre>
         </div>
@@ -52,6 +60,9 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             <li><a data-action="edit_selected" data-id="qitems_single" data-item="" data-api-url='edit/qitem' data-api-attr='{"action":"learnspam"}' href="#"><?=$lang['quarantine']['learn_spam_delete'];?></a></li>
             <li role="separator" class="divider"></li>
             <li><a data-id="qitems_single" data-item="" onclick="window.open('/inc/ajax/qitem_details.php?id=' + $(this).data('item') + '&eml', '_blank')" href="#"><?=$lang['quarantine']['download_eml'];?></a></li>
+            <li role="separator" class="divider"></li>
+            <li><a data-id="qitems_single" data-item="" onclick="window.open('/inc/ajax/qitem_details.php?id=' + $(this).data('item') + '&quick_release', '_blank')" href="#"><?=$lang['quarantine']['quick_release_link'];?></a></li>
+            <li><a data-id="qitems_single" data-item="" onclick="window.open('/inc/ajax/qitem_details.php?id=' + $(this).data('item') + '&quick_delete', '_blank')" href="#"><?=$lang['quarantine']['quick_delete_link'];?></a></li>
             <li role="separator" class="divider"></li>
             <li><a data-action="delete_selected" data-id="qitems_single" data-item="" data-api-url='delete/qitem' href="#"><?=$lang['quarantine']['remove'];?></a></li>
           </ul>

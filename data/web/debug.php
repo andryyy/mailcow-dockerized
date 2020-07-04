@@ -236,9 +236,11 @@ $clamd_status = (preg_match("/^([yY][eE][sS]|[yY])+$/", $_ENV["SKIP_CLAMD"])) ? 
               </div>
             </div>
             <div class="panel-body">
+              <legend><?=$lang['debug']['chart_this_server'];?></legend>
               <div id="chart-container">
                 <canvas id="rspamd_donut" style="width:100%;height:400px"></canvas>
               </div>
+              <legend><?=$lang['debug']['history_all_servers'];?></legend>
               <div class="table-responsive">
                 <table class="table table-striped table-condensed log-table" id="rspamd_history"></table>
               </div>

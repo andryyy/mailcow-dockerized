@@ -144,7 +144,8 @@ jQuery(function($){
         $('#qid_detail_subj').text(data.subject);
         $('#qid_detail_text').text(data.text_plain);
         $('#qid_detail_text_from_html').text(data.text_html);
-
+        $('#qid_detail_hfrom').text(data.header_from);
+        $('#qid_detail_efrom').text(data.env_from);
         $('#qid_detail_score').text(data.score);
         $('#qid_detail_symbols').html('');
         if (typeof data.symbols !== 'undefined') {
@@ -173,7 +174,7 @@ jQuery(function($){
         if (typeof data.recipients !== 'undefined') {
           $.each(data.recipients, function(index, value) {
             var elem = $('<span class="mail-address-item"></span>');
-            elem.text(value.address + (value.type != 'to' ? (' (' + value.type.toUpperCase() + ')') : ''));
+            elem.text(value.address + ' (' + value.type.toUpperCase() + ')');
             $('#qid_detail_recipients').append(elem);
           });
         }

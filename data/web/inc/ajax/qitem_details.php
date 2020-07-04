@@ -2,9 +2,6 @@
 session_start();
 header("Content-Type: application/json");
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
-if (!isset($_SESSION['mailcow_cc_role'])) {
-  exit();
-}
 
 function rrmdir($src) {
   $dir = opendir($src);
@@ -22,21 +19,81 @@ function rrmdir($src) {
   closedir($dir);
   rmdir($src);
 }
+
 function addAddresses(&$list, $mail, $headerName) {
   $addresses = $mail->getAddresses($headerName);
   foreach ($addresses as $address) {
-    $list[] = array('address' => $address['address'], 'type' => $headerName);
+    if (filter_var($address['address'], FILTER_VALIDATE_EMAIL)) {
+      $list[] = array('address' => $address['address'], 'type' => $headerName);
+    }
   }
 }
 
-if (!empty($_GET['id']) && ctype_alnum($_GET['id'])) {
-  $tmpdir = '/tmp/' . $_GET['id'] . '/';
-  $mailc = quarantine('details', $_GET['id']);
+if (!empty($_GET['hash']) && ctype_alnum($_GET['hash'])) {
+  $mailc = quarantine('hash_details', $_GET['hash']);
+  if ($mailc === false) {
+    echo json_encode(array('error' => 'Message invalid'));
+    exit;
+  }
   if (strlen($mailc['msg']) > 10485760) {
     echo json_encode(array('error' => 'Message size exceeds 10 MiB.'));
     exit;
   }
   if (!empty($mailc['msg'])) {
+    // Init message array
+    $data = array();
+    // Init parser
+    $mail_parser = new PhpMimeMailParser\Parser();
+    $html2text = new Html2Text\Html2Text();
+    // Load msg to parser
+    $mail_parser->setText($mailc['msg']);
+    // Get mail recipients
+    {
+      $recipientsList = array();
+      addAddresses($recipientsList, $mail_parser, 'to');
+      addAddresses($recipientsList, $mail_parser, 'cc');
+      addAddresses($recipientsList, $mail_parser, 'bcc');
+      $recipientsList[] = array('address' => $mailc['rcpt'], 'type' => 'smtp');
+      $data['recipients'] = $recipientsList;
+    }
+    // Get from
+    $data['header_from'] = $mail_parser->getHeader('from');
+    $data['env_from'] = $mailc['sender'];
+    // Get rspamd score
+    $data['score'] = $mailc['score'];
+    // Get rspamd symbols
+    $data['symbols'] = json_decode($mailc['symbols']);
+    $data['subject'] = $mail_parser->getHeader('subject');
+    (empty($data['subject'])) ? $data['subject'] = '-' : null;
+    echo json_encode($data);
+  }
+}
+elseif (!empty($_GET['id']) && ctype_alnum($_GET['id'])) {
+  if (!isset($_SESSION['mailcow_cc_role'])) {
+    echo json_encode(array('error' => 'Access denied'));
+    exit();
+  }
+  $tmpdir = '/tmp/' . $_GET['id'] . '/';
+  $mailc = quarantine('details', $_GET['id']);
+  if ($mailc === false) {
+    echo json_encode(array('error' => 'Access denied'));
+    exit;
+  }
+  if (strlen($mailc['msg']) > 10485760) {
+    echo json_encode(array('error' => 'Message size exceeds 10 MiB.'));
+    exit;
+  }
+  if (!empty($mailc['msg'])) {
+    if (isset($_GET['quick_release'])) {
+      $hash = hash('sha256', $mailc['id'] . $mailc['qid']);
+      header('Location: /qhandler/release/' . $hash);
+      exit;
+    }
+    if (isset($_GET['quick_delete'])) {
+      $hash = hash('sha256', $mailc['id'] . $mailc['qid']);
+      header('Location: /qhandler/delete/' . $hash);
+      exit;
+    }
     // Init message array
     $data = array();
     // Init parser
@@ -51,9 +108,12 @@ if (!empty($_GET['id']) && ctype_alnum($_GET['id'])) {
       addAddresses($recipientsList, $mail_parser, 'to');
       addAddresses($recipientsList, $mail_parser, 'cc');
       addAddresses($recipientsList, $mail_parser, 'bcc');
+      $recipientsList[] = array('address' => $mailc['rcpt'], 'type' => 'smtp');
       $data['recipients'] = $recipientsList;
     }
-
+    // Get from
+    $data['header_from'] = $mail_parser->getHeader('from');
+    $data['env_from'] = $mailc['sender'];
     // Get rspamd score
     $data['score'] = $mailc['score'];
     // Get rspamd symbols

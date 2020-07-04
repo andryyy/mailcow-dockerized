@@ -387,7 +387,7 @@
         "release_body": "Hem adjuntat el teu missatge com a eml en aquest missatge.",
         "release_subject": "Element potencialment perillós %s en quarantena",
         "remove": "Esborrar",
-        "sender": "Emissor",
+        "sender": "Emissor (SMTP)",
         "show_item": "Mostrar",
         "subj": "Assumpte",
         "text_from_html_content": "Contingut (a partir del HTML)",

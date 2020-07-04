@@ -33,10 +33,14 @@ if [[ -z ${CERT_DOMAINS[*]} ]]; then
 fi
 
 if [[ "${LE_STAGING}" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+  if [[ ! -z "${DIRECTORY_URL}" ]]; then
+    log_f "Cannot use DIRECTORY_URL with LE_STAGING=y - ignoring DIRECTORY_URL"
+  fi
   log_f "Using Let's Encrypt staging servers"
-  STAGING_PARAMETER='--directory-url https://acme-staging-v02.api.letsencrypt.org/directory'
-else
-  STAGING_PARAMETER=
+  DIRECTORY_URL='--directory-url https://acme-staging-v02.api.letsencrypt.org/directory'
+elif [[ ! -z "${DIRECTORY_URL}" ]]; then
+  log_f "Using custom directory URL ${DIRECTORY_URL}"
+  DIRECTORY_URL="--directory-url ${DIRECTORY_URL}"
 fi
 
 if [[ -f ${DOMAINS_FILE} && "$(cat ${DOMAINS_FILE})" ==  "${CERT_DOMAINS[*]}" ]]; then
@@ -85,7 +89,7 @@ openssl req -new -sha256 -key ${KEY} -subj "/" -reqexts SAN -config <(cat /etc/s
 # - redirect acme-tiny stderr to stdout (logs to variable ACME_RESPONSE)
 # - tee stderr to get live output and log to dockerd
 
-ACME_RESPONSE=$(acme-tiny ${STAGING_PARAMETER} \
+ACME_RESPONSE=$(acme-tiny ${DIRECTORY_URL} \
   --account-key ${ACME_BASE}/acme/account.pem \
   --disable-check \
   --csr ${CSR} \

@@ -13,3 +13,5 @@
 /.*promio\.de.*/i
 /.*mailer-service\.com.*/i
 /.*mailer-service\.de.*/i
+/.*dynamic-lht.*/i
+/.*light-house-traffic.*/i

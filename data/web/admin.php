@@ -302,13 +302,13 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
             <div class="form-group">
               <label class="control-label col-sm-3" for="rspamd_ui_pass"><?=$lang['admin']['password'];?>:</label>
               <div class="col-sm-9">
-              <input type="password" class="form-control" name="rspamd_ui_pass" required>
+              <input type="password" class="form-control" name="rspamd_ui_pass" autocomplete="new-password" required>
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-sm-3" for="rspamd_ui_pass2"><?=$lang['admin']['password_repeat'];?>:</label>
               <div class="col-sm-9">
-              <input type="password" class="form-control" name="rspamd_ui_pass2" required>
+              <input type="password" class="form-control" name="rspamd_ui_pass2" autocomplete="new-password" required>
               </div>
             </div>
             <div class="form-group">
@@ -408,7 +408,7 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
               </div>
               <div class="form-group">
                 <label for="password"><?=$lang['admin']['password'];?></label>
-                <input class="form-control" name="password">
+                <input class="form-control input-sm" name="password">
               </div>
               <!-- <div class="form-group">
                 <label>
@@ -1306,6 +1306,7 @@ echo "var log_pagination_size = '". $LOG_PAGINATION_SIZE . "';\n";
 <?php
 $js_minifier->add('/web/js/site/admin.js');
 $js_minifier->add('/web/js/presets/rspamd.js');
+$js_minifier->add('/web/js/site/pwgen.js');
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
 } else {
 	header('Location: /');

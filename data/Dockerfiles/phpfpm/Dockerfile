@@ -17,6 +17,7 @@ RUN apk add -U --no-cache autoconf \
   g++ \
   git \
   gettext-dev \
+  gmp-dev \
   gnupg \
   icu-dev \
   icu-libs \
@@ -58,7 +59,7 @@ RUN apk add -U --no-cache autoconf \
   && docker-php-ext-configure exif \
   && docker-php-ext-configure gd --with-freetype=/usr/include/ \  
     --with-jpeg=/usr/include/ \
-  && docker-php-ext-install -j 4 exif gd gettext intl ldap opcache pcntl pdo pdo_mysql soap sockets xmlrpc zip \
+  && docker-php-ext-install -j 4 exif gd gettext intl ldap opcache pcntl pdo pdo_mysql soap sockets xmlrpc zip bcmath gmp \
   && docker-php-ext-configure imap --with-imap --with-imap-ssl \
   && docker-php-ext-install -j 4 imap \
   && curl --silent --show-error https://getcomposer.org/installer | php \

@@ -88,6 +88,7 @@ log_msg() {
 
 function mail_error() {
   [[ -z ${1} ]] && return 1
+  # If exists, body will be the content of "/tmp/${1}", even if ${2} is set
   [[ -z ${2} ]] && BODY="Service was restarted on $(date), please check your mailcow installation." || BODY="$(date) - ${2}"
   WATCHDOG_NOTIFY_EMAIL=$(echo "${WATCHDOG_NOTIFY_EMAIL}" | sed 's/"//;s|"$||')
   # Some exceptions for subject and body formats
@@ -113,6 +114,7 @@ function mail_error() {
       --charset=UTF-8 \
       --subject="${SUBJECT}" \
       --body-plain="${BODY}" \
+      --add-header="X-Priority: 1" \
       --to=${rcpt} \
       --from="watchdog@${MAILCOW_HOSTNAME}" \
       --hello-host=${MAILCOW_HOSTNAME} \
@@ -456,7 +458,7 @@ dovecot_repl_checks() {
     progress "Dovecot replication" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
     if [[ $? == 10 ]]; then
       diff_c=0
-      sleep 1
+      sleep 60
     else
       diff_c=0
       sleep $(( ( RANDOM % 60 ) + 20 ))
@@ -515,6 +517,35 @@ ratelimit_checks() {
     if [[ $? == 10 ]]; then
       diff_c=0
       sleep 1
+    else
+      diff_c=0
+      sleep $(( ( RANDOM % 60 ) + 20 ))
+    fi
+  done
+  return 1
+}
+
+mailq_checks() {
+  err_count=0
+  diff_c=0
+  THRESHOLD=${MAILQ_THRESHOLD}
+  # Reduce error count by 2 after restarting an unhealthy container
+  trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
+  while [ ${err_count} -lt ${THRESHOLD} ]; do
+    touch /tmp/mail_queue_status; echo "$(tail -50 /tmp/mail_queue_status)" > /tmp/mail_queue_status
+    MAILQ_LOG_STATUS=$(find /var/spool/postfix/deferred -type f | wc -l)
+    echo "Mail queue contains ${MAILQ_LOG_STATUS} items (critical limit is ${MAILQ_CRIT}) at $(date)" >> /tmp/mail_queue_status
+    err_c_cur=${err_count}
+    if [ ${MAILQ_LOG_STATUS} -ge ${MAILQ_CRIT} ]; then
+      err_count=$(( ${err_count} + 1 ))
+      echo "Mail queue contains ${MAILQ_LOG_STATUS} items (critical limit is ${MAILQ_CRIT}) at $(date)" >> /tmp/mail_queue_status
+    fi
+    [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
+    [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
+    progress "Mail queue" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
+    if [[ $? == 10 ]]; then
+      diff_c=0
+      sleep 60
     else
       diff_c=0
       sleep $(( ( RANDOM % 60 ) + 20 ))
@@ -826,6 +857,18 @@ BACKGROUND_TASKS+=(${PID})
 
 (
 while true; do
+  if ! mailq_checks; then
+    log_msg "Mail queue hit error limit"
+    echo mail_queue_status > /tmp/com_pipe
+  fi
+done
+) &
+PID=$!
+echo "Spawned mailq_checks with PID ${PID}"
+BACKGROUND_TASKS+=(${PID})
+
+(
+while true; do
   if ! dovecot_checks; then
     log_msg "Dovecot hit error limit"
     echo dovecot-mailcow > /tmp/com_pipe
@@ -960,17 +1003,24 @@ while true; do
   if [[ ${com_pipe_answer} == "ratelimit" ]]; then
     log_msg "At least one ratelimit was applied"
     [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
+  elif [[ ${com_pipe_answer} == "mail_queue_status" ]]; then
+    log_msg "Mail queue status is critical"
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
   elif [[ ${com_pipe_answer} == "external_checks" ]]; then
     log_msg "Your mailcow is an open relay!"
+    # Define $2 to override message text, else print service was restarted at ...
     [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please stop mailcow now and check your network configuration!"
   elif [[ ${com_pipe_answer} == "mysql_repl_checks" ]]; then
     log_msg "MySQL replication is not working properly"
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
+    # Define $2 to override message text, else print service was restarted at ...
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check the SQL replication status"
   elif [[ ${com_pipe_answer} == "dovecot_repl_checks" ]]; then
-    log_msg "Dovecot replication is not working properly" "Please check doveadm replicator status"
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
+    log_msg "Dovecot replication is not working properly"
+    # Define $2 to override message text, else print service was restarted at ...
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check the Dovecot replicator status"
   elif [[ ${com_pipe_answer} == "acme-mailcow" ]]; then
     log_msg "acme-mailcow did not complete successfully"
+    # Define $2 to override message text, else print service was restarted at ...
     [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check acme-mailcow for further information."
   elif [[ ${com_pipe_answer} == "fail2ban" ]]; then
     F2B_RES=($(timeout 4s ${REDIS_CMDLINE} --raw GET F2B_RES 2> /dev/null))

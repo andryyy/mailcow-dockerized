@@ -2,7 +2,7 @@ version: '2.1'
 services:
 
     unbound-mailcow:
-      image: mailcow/unbound:1.11
+      image: mailcow/unbound:1.12
       environment:
         - TZ=${TZ}
       volumes:
@@ -56,7 +56,7 @@ services:
             - redis
 
     clamd-mailcow:
-      image: mailcow/clamd:1.35
+      image: mailcow/clamd:1.36
       restart: always
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
@@ -102,7 +102,7 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.62
+      image: mailcow/phpfpm:1.64
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
         - redis-mailcow
@@ -139,6 +139,8 @@ services:
         - POP_PORT=${POP_PORT:-110}
         - POPS_PORT=${POPS_PORT:-995}
         - SIEVE_PORT=${SIEVE_PORT:-4190}
+        - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
+        - IPV6_NETWORK=${IPV6_NETWORK:-fd4d:6169:6c63:6f77::/64}
         - SUBMISSION_PORT=${SUBMISSION_PORT:-587}
         - SMTPS_PORT=${SMTPS_PORT:-465}
         - SMTP_PORT=${SMTP_PORT:-25}
@@ -158,7 +160,7 @@ services:
             - phpfpm
 
     sogo-mailcow:
-      image: mailcow/sogo:1.74
+      image: mailcow/sogo:1.77
       environment:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
@@ -191,7 +193,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.124
+      image: mailcow/dovecot:1.126
       depends_on:
         - mysql-mailcow
       dns:
@@ -249,7 +251,7 @@ services:
             - dovecot
 
     postfix-mailcow:
-      image: mailcow/postfix:1.49
+      image: mailcow/postfix:1.50
       depends_on:
         - mysql-mailcow
       volumes:
@@ -340,7 +342,7 @@ services:
     acme-mailcow:
       depends_on:
         - nginx-mailcow
-      image: mailcow/acme:1.70
+      image: mailcow/acme:1.72
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       environment:
@@ -351,6 +353,7 @@ services:
         - DBUSER=${DBUSER}
         - DBPASS=${DBPASS}
         - SKIP_LETS_ENCRYPT=${SKIP_LETS_ENCRYPT:-n}
+        - DIRECTORY_URL=${DIRECTORY_URL:-}
         - ENABLE_SSL_SNI=${ENABLE_SSL_SNI:-n}
         - SKIP_ECDSA_CERT=${SKIP_ECDSA_CERT:-y}
         - SKIP_IP_CHECK=${SKIP_IP_CHECK:-n}
@@ -397,7 +400,7 @@ services:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.76
+      image: mailcow/watchdog:1.80
       # Debug
       #command: /watchdog.sh
       dns:
@@ -405,6 +408,7 @@ services:
       volumes:
         - rspamd-vol-1:/var/lib/rspamd
         - mysql-socket-vol-1:/var/run/mysqld/
+        - postfix-vol-1:/var/spool/postfix
         - ./data/assets/ssl:/etc/ssl/mail/:ro
       restart: always
       environment:
@@ -440,7 +444,7 @@ services:
         - POSTFIX_THRESHOLD=8
         - CLAMD_THRESHOLD=15
         - DOVECOT_THRESHOLD=12
-        - DOVECOT_REPL_THRESHOLD=2
+        - DOVECOT_REPL_THRESHOLD=20
         - PHPFPM_THRESHOLD=5
         - RATELIMIT_THRESHOLD=1
         - FAIL2BAN_THRESHOLD=1
@@ -448,6 +452,8 @@ services:
         - IPV6NAT_THRESHOLD=1
         - RSPAMD_THRESHOLD=5
         - OLEFY_THRESHOLD=5
+        - MAILQ_THRESHOLD=3
+        - MAILQ_CRIT=30
       networks:
         mailcow-network:
           aliases:
