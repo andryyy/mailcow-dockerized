@@ -31,8 +31,8 @@ sed -i -e 's/\([^\\]\)\$\([^\/]\)/\1\\$\2/g' /etc/rspamd/custom/sa-rules
 if [[ "$(cat /etc/rspamd/custom/sa-rules | md5sum | cut -d' ' -f1)" != "${HASH_SA_RULES}" ]]; then
   CONTAINER_NAME=rspamd-mailcow
   CONTAINER_ID=$(curl --silent --insecure https://dockerapi/containers/json | \
-    jq -r ".[] | {name: .Config.Labels[\"com.docker.compose.service\"], id: .Id}" | \
-    jq -rc "select( .name | tostring | contains(\"${CONTAINER_NAME}\")) | .id")
+    jq -r ".[] | {name: .Config.Labels[\"com.docker.compose.service\"], project: .Config.Labels[\"com.docker.compose.project\"], id: .Id}" | \
+    jq -rc "select( .name | tostring | contains(\"${CONTAINER_NAME}\")) | select( .project | tostring | contains(\"${COMPOSE_PROJECT_NAME}\")) | .id")
   if [[ ! -z ${CONTAINER_ID} ]]; then
     curl --silent --insecure -XPOST --connect-timeout 15 --max-time 120 https://dockerapi/containers/${CONTAINER_ID}/restart
   fi

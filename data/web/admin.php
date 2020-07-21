@@ -767,84 +767,81 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
         <?php
         endif;
         ?>
-        <form class="form" data-id="quarantine" role="form" method="post">
-          <div class="row">
-            <div class="col-sm-6">
-              <div class="form-group">
-                <label for="retention_size"><?=$lang['admin']['quarantine_retention_size'];?></label>
-                <input type="number" class="form-control" name="retention_size" value="<?=$q_data['retention_size'];?>" placeholder="0" required>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="form-group">
-                <label for="max_size"><?=$lang['admin']['quarantine_max_size'];?></label>
-                <input type="number" class="form-control" name="max_size" value="<?=$q_data['max_size'];?>" placeholder="0" required>
-              </div>
+        <form class="form-horizontal" data-id="quarantine" role="form" method="post">
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="retention_size"><?=$lang['admin']['quarantine_retention_size'];?></label>
+            <div class="col-sm-8">
+              <input type="number" class="form-control" name="retention_size" value="<?=$q_data['retention_size'];?>" placeholder="0" required>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-6">
-              <div class="form-group">
-                <label for="max_age"><?=$lang['admin']['quarantine_max_age'];?></label>
-                <input type="number" class="form-control" name="max_age" value="<?=$q_data['max_age'];?>" min="1" required>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="form-group">
-                <label for="sender"><span class="glyphicon glyphicon-copy"></span> <?=$lang['admin']['quarantine_bcc'];?></label>
-                <input type="email" class="form-control" name="bcc" value="<?=htmlspecialchars($q_data['bcc']);?>" placeholder="">
-              </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="max_size"><?=$lang['admin']['quarantine_max_size'];?></label>
+            <div class="col-sm-8">
+              <input type="number" class="form-control" name="max_size" value="<?=$q_data['max_size'];?>" placeholder="0" required>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-6">
-              <div class="form-group">
-                <label for="sender"><?=$lang['admin']['quarantine_notification_sender'];?>:</label>
-                <input type="email" class="form-control" name="sender" value="<?=htmlspecialchars($q_data['sender']);?>" placeholder="quarantine@localhost">
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="form-group">
-                <label for="subject"><?=$lang['admin']['quarantine_notification_subject'];?>:</label>
-                <input type="text" class="form-control" name="subject" value="<?=htmlspecialchars($q_data['subject']);?>" placeholder="Spam Quarantine Notification">
-              </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="max_age"><?=$lang['admin']['quarantine_max_age'];?></label>
+            <div class="col-sm-8">
+              <input type="number" class="form-control" name="max_age" value="<?=$q_data['max_age'];?>" min="1" required>
             </div>
           </div>
           <hr>
-          <div class="row">
-            <div class="col-sm-12">
-              <legend data-target="#quarantine_template" style="cursor:pointer" class="arrow-toggle" unselectable="on" data-toggle="collapse">
-                <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-menu-down"></span> <?=$lang['admin']['quarantine_notification_html'];?>
-              </legend>
-              <div id="quarantine_template" class="collapse" >
-                <textarea autocorrect="off" spellcheck="false" autocapitalize="none" class="form-control textarea-code" rows="20" name="html_tmpl"><?=$q_data['html_tmpl'];?></textarea>
-              </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="sender"><span class="glyphicon glyphicon-share-alt"></span> <?=$lang['admin']['quarantine_redirect'];?></label>
+            <div class="col-sm-8">
+              <input type="email" class="form-control" name="redirect" value="<?=htmlspecialchars($q_data['redirect']);?>" placeholder="">
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-6">
-              <div class="form-group">
-                <label for="release_format"><?=$lang['admin']['quarantine_release_format'];?>:</label>
-                <select data-width="100%" name="release_format" class="selectpicker" title="<?=$lang['tfa']['select'];?>">
-                  <option <?=($q_data['release_format'] == 'raw') ? 'selected' : null;?> value="raw"><?=$lang['admin']['quarantine_release_format_raw'];?></option>
-                  <option <?=($q_data['release_format'] == 'attachment') ? 'selected' : null;?> value="attachment"><?=$lang['admin']['quarantine_release_format_att'];?></option>
-                </select>
-              </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="sender"><span class="glyphicon glyphicon-copy"></span> <?=$lang['admin']['quarantine_bcc'];?></label>
+            <div class="col-sm-8">
+              <input type="email" class="form-control" name="bcc" value="<?=htmlspecialchars($q_data['bcc']);?>" placeholder="">
             </div>
-            <div class="col-sm-6">
-              <div class="form-group">
-                <label for="exclude_domains"><?=$lang['admin']['quarantine_exclude_domains'];?>:</label><br />
-                <select data-width="100%" name="exclude_domains" class="selectpicker" title="<?=$lang['tfa']['select'];?>" multiple>
-                <?php
-                foreach (array_merge(mailbox('get', 'domains'), mailbox('get', 'alias_domains')) as $domain):
-                ?>
-                  <option <?=(in_array($domain, $q_data['exclude_domains'])) ? 'selected' : null;?>><?=htmlspecialchars($domain);?></option>
-                <?php
-                endforeach;
-                ?>
-                </select>
-              </div>
+          </div>
+          <hr>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="sender"><?=$lang['admin']['quarantine_notification_sender'];?>:</label>
+            <div class="col-sm-8">
+              <input type="email" class="form-control" name="sender" value="<?=htmlspecialchars($q_data['sender']);?>" placeholder="quarantine@localhost">
             </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="subject"><?=$lang['admin']['quarantine_notification_subject'];?>:</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="subject" value="<?=htmlspecialchars($q_data['subject']);?>" placeholder="Spam Quarantine Notification">
+            </div>
+          </div>
+          <hr>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="release_format"><?=$lang['admin']['quarantine_release_format'];?>:</label>
+            <div class="col-sm-8">
+              <select data-width="100%" name="release_format" class="selectpicker" title="<?=$lang['tfa']['select'];?>">
+                <option <?=($q_data['release_format'] == 'raw') ? 'selected' : null;?> value="raw"><?=$lang['admin']['quarantine_release_format_raw'];?></option>
+                <option <?=($q_data['release_format'] == 'attachment') ? 'selected' : null;?> value="attachment"><?=$lang['admin']['quarantine_release_format_att'];?></option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-4 control-label" for="exclude_domains"><?=$lang['admin']['quarantine_exclude_domains'];?>:</label><br />
+            <div class="col-sm-8">
+              <select data-width="100%" name="exclude_domains" class="selectpicker" title="<?=$lang['tfa']['select'];?>" multiple>
+              <?php
+              foreach (array_merge(mailbox('get', 'domains'), mailbox('get', 'alias_domains')) as $domain):
+              ?>
+                <option <?=(in_array($domain, $q_data['exclude_domains'])) ? 'selected' : null;?>><?=htmlspecialchars($domain);?></option>
+              <?php
+              endforeach;
+              ?>
+              </select>
+            </div>
+          </div>
+          <hr>
+          <legend data-target="#quarantine_template" style="cursor:pointer" class="arrow-toggle" unselectable="on" data-toggle="collapse">
+            <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-menu-down"></span> <?=$lang['admin']['quarantine_notification_html'];?>
+          </legend>
+          <div id="quarantine_template" class="collapse" >
+            <textarea autocorrect="off" spellcheck="false" autocapitalize="none" class="form-control textarea-code" rows="40" name="html_tmpl"><?=$q_data['html_tmpl'];?></textarea>
           </div>
           <button class="btn btn-sm btn-success" data-action="edit_selected" data-item="self" data-id="quarantine" data-api-url='edit/quarantine' data-api-attr='{"action":"settings"}' href="#"><span class="glyphicon glyphicon-check"></span> <?=$lang['admin']['save'];?></button>
         </form>

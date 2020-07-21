@@ -428,6 +428,12 @@ if ! docker-compose config -q; then
   exit 1
 fi
 
+echo -e "\e[32mChecking for conflicting bridges...\e[0m"
+MAILCOW_BRIDGE=$(docker-compose config | grep -i com.docker.network.bridge.name | cut -d':' -f2)
+while read NAT_ID; do
+  iptables -t nat -D POSTROUTING $NAT_ID
+done < <(iptables -L -vn -t nat --line-numbers | grep $IPV4_NETWORK | grep -E 'MASQUERADE.*all' | grep -v ${MAILCOW_BRIDGE} | cut -d' ' -f1)
+
 DIFF_DIRECTORY=update_diffs
 DIFF_FILE=${DIFF_DIRECTORY}/diff_before_update_$(date +"%Y-%m-%d-%H-%M-%S")
 mv diff_before_update* ${DIFF_DIRECTORY}/ 2> /dev/null

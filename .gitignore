@@ -17,6 +17,7 @@ data/conf/postfix/allow_mailcow_local.regexp
 data/conf/dovecot/sql
 data/conf/dovecot/lua
 data/conf/dovecot/global_sieve_*
+data/conf/dovecot/sogo_trusted_ip.conf
 data/conf/nextcloud-*.bak
 data/web/inc/vars.local.inc.php
 data/web/css/build/0081-custom-mailcow.css

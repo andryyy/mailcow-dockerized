@@ -145,7 +145,7 @@ cat <<EOF > /var/lib/sogo/GNUstep/Defaults/sogod.plist
     <key>OCSAclURL</key>
     <string>mysql://${DBUSER}:${DBPASS}@%2Fvar%2Frun%2Fmysqld%2Fmysqld.sock/${DBNAME}/sogo_acl</string>
     <key>SOGoIMAPServer</key>
-    <string>imaps://${IPV4_NETWORK}.250:993</string>
+    <string>imap://${IPV4_NETWORK}.250:143/?TLS=NO</string>
     <key>SOGoTrustProxyAuthentication</key>
     <string>${TRUST_PROXY}</string>
     <key>SOGoEncryptionKey</key>

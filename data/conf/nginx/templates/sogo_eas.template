@@ -1,1 +1,0 @@
-proxy_pass http://${IPV4_NETWORK}.248:20000/SOGo/Microsoft-Server-ActiveSync;

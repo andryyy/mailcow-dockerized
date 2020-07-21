@@ -1,0 +1,19 @@
+##
+## Set haproxy_trusted_networks in Dovecots extra.conf!
+#ä
+
+version: '2.1'
+services:
+
+    dovecot-mailcow:
+      ports:
+        - "${IMAP_PORT_HAPROXY:-127.0.0.1:10143}:10143"
+        - "${IMAPS_PORT_HAPROXY:-127.0.0.1:10993}:10993"
+        - "${POP_PORT_HAPROXY:-127.0.0.1:10110}:10110"
+        - "${POPS_PORT_HAPROXY:-127.0.0.1:10995}:10995"
+
+    postfix-mailcow:
+      ports:
+        - "${SMTP_PORT_HAPROXY:-127.0.0.1:10025}:10025"
+        - "${SMTPS_PORT_HAPROXY:-127.0.0.1:10465}:10465"
+        - "${SUBMISSION_PORT_HAPROXY:-127.0.0.1:10587}:10587"

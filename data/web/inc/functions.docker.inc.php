@@ -25,7 +25,7 @@ function docker($action, $service_name = null, $attr1 = null, $attr2 = null, $ex
           foreach ($containers as $container) {
             if (isset($container['Config']['Labels']['com.docker.compose.service'])
               && $container['Config']['Labels']['com.docker.compose.service'] == $service_name
-              && $container['Config']['Labels']['com.docker.compose.project'] == strtolower(getenv('COMPOSE_PROJECT_NAME'))) {
+              && strtolower($container['Config']['Labels']['com.docker.compose.project']) == strtolower(getenv('COMPOSE_PROJECT_NAME'))) {
               return trim($container['Id']);
             }
           }
@@ -48,7 +48,7 @@ function docker($action, $service_name = null, $attr1 = null, $attr2 = null, $ex
         $containers = json_decode($response, true);
         if (!empty($containers)) {
           foreach ($containers as $container) {
-            if ($container['Config']['Labels']['com.docker.compose.project'] == strtolower(getenv('COMPOSE_PROJECT_NAME'))) {
+            if (strtolower($container['Config']['Labels']['com.docker.compose.project']) == strtolower(getenv('COMPOSE_PROJECT_NAME'))) {
               $out[$container['Config']['Labels']['com.docker.compose.service']]['State'] = $container['State'];
               $out[$container['Config']['Labels']['com.docker.compose.service']]['Config'] = $container['Config'];
             }
@@ -90,7 +90,7 @@ function docker($action, $service_name = null, $attr1 = null, $attr2 = null, $ex
           if (empty($service_name)) {
             foreach ($decoded_response as $container) {
               if (isset($container['Config']['Labels']['com.docker.compose.project'])
-                && $container['Config']['Labels']['com.docker.compose.project'] == strtolower(getenv('COMPOSE_PROJECT_NAME'))) {
+                && strtolower($container['Config']['Labels']['com.docker.compose.project']) == strtolower(getenv('COMPOSE_PROJECT_NAME'))) {
                 unset($container['Config']['Env']);
                 $out[$container['Config']['Labels']['com.docker.compose.service']]['State'] = $container['State'];
                 $out[$container['Config']['Labels']['com.docker.compose.service']]['Config'] = $container['Config'];
@@ -99,7 +99,7 @@ function docker($action, $service_name = null, $attr1 = null, $attr2 = null, $ex
           }
           else {
             if (isset($decoded_response['Config']['Labels']['com.docker.compose.project']) 
-              && $decoded_response['Config']['Labels']['com.docker.compose.project'] == strtolower(getenv('COMPOSE_PROJECT_NAME'))) {
+              && strtolower($decoded_response['Config']['Labels']['com.docker.compose.project']) == strtolower(getenv('COMPOSE_PROJECT_NAME'))) {
               unset($container['Config']['Env']);
               $out[$decoded_response['Config']['Labels']['com.docker.compose.service']]['State'] = $decoded_response['State'];
               $out[$decoded_response['Config']['Labels']['com.docker.compose.service']]['Config'] = $decoded_response['Config'];

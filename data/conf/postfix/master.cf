@@ -1,5 +1,8 @@
 # inter-mx with postscreen on 25/tcp
 smtp       inet  n       -       n       -       1       postscreen
+10025      inet  n       -       n       -       1       postscreen
+  -o postscreen_upstream_proxy_protocol=haproxy
+  -o syslog_name=haproxy
 smtpd      pass  -       -       n       -       -       smtpd
   -o smtpd_helo_restrictions=permit_mynetworks,reject_non_fqdn_helo_hostname
   -o smtpd_sasl_auth_enable=no
@@ -13,6 +16,13 @@ smtps    inet  n       -       n       -       -       smtpd
   -o smtpd_tls_mandatory_protocols=$smtps_smtpd_tls_mandatory_protocols
   -o tls_preempt_cipherlist=yes
   -o syslog_name=postfix/smtps
+10465    inet  n       -       n       -       -       smtpd
+  -o smtpd_upstream_proxy_protocol=haproxy
+  -o smtpd_tls_wrappermode=yes
+  -o smtpd_client_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
+  -o smtpd_tls_mandatory_protocols=$smtps_smtpd_tls_mandatory_protocols
+  -o tls_preempt_cipherlist=yes
+  -o syslog_name=postfix/smtps-haproxy
 
 # smtpd with starttls on 587/tcp
 # TLS protocol can be modified by setting submission_smtpd_tls_mandatory_protocols in extra.cf
@@ -23,6 +33,14 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_mandatory_protocols=$submission_smtpd_tls_mandatory_protocols
   -o tls_preempt_cipherlist=yes
   -o syslog_name=postfix/submission
+10587      inet n       -       n       -       -       smtpd
+  -o smtpd_upstream_proxy_protocol=haproxy
+  -o smtpd_client_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
+  -o smtpd_enforce_tls=yes
+  -o smtpd_tls_security_level=encrypt
+  -o smtpd_tls_mandatory_protocols=$submission_smtpd_tls_mandatory_protocols
+  -o tls_preempt_cipherlist=yes
+  -o syslog_name=postfix/submission-haproxy
 
 # used by SOGo
 # smtpd_sender_restrictions should match main.cf, but with check_sasl_access prepended for login-as-mailbox-user function

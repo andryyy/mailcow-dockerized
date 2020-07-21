@@ -551,7 +551,7 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
                 break;
 
                 default:
-                  $data = rsetting('details', $object);
+                  $data = rsettings('details', $object);
                   process_get_return($data);
                 break;
               }

@@ -86,11 +86,18 @@ def notify_rcpt(rcpt, msg_count, quarantine_acl):
       msg.attach(html_part)
       msg['To'] = str(rcpt)
       bcc = r.get('Q_BCC') or ""
+      redirect = r.get('Q_REDIRECT') or ""
       text = msg.as_string()
       if bcc == '':
-        server.sendmail(msg['From'], str(rcpt), text)
+        if redirect == '':
+          server.sendmail(msg['From'], str(rcpt), text)
+        else:
+          server.sendmail(msg['From'], str(redirect), text)
       else:
-        server.sendmail(msg['From'], [str(rcpt)] + [str(bcc)], text)
+        if redirect == '':
+          server.sendmail(msg['From'], [str(rcpt)] + [str(bcc)], text)
+        else:
+          server.sendmail(msg['From'], [str(redirect)] + [str(bcc)], text)
       server.quit()
       for res in meta_query:
         query_mysql('UPDATE quarantine SET notified = 1 WHERE id = "%d"' % (res['id']), update = True)

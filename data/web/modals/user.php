@@ -53,8 +53,8 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="mins_interval"><?=$lang['add']['mins_interval'];?></label>
 						<div class="col-sm-10">
-              <input type="number" class="form-control" name="mins_interval" min="1" max="3600" value="20" required>
-              <small class="help-block">1-3600</small>
+              <input type="number" class="form-control" name="mins_interval" min="1" max="43800" value="20" required>
+              <small class="help-block">1-43800</small>
 						</div>
 					</div>
 					<div class="form-group">

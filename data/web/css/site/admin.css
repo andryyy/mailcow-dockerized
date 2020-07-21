@@ -70,3 +70,6 @@ table tbody tr {
 table tbody tr td input[type="checkbox"] {
   cursor: pointer;
 }
+#quarantine_template {
+  margin:20px;
+}

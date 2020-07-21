@@ -735,7 +735,6 @@ function edit_user_account($_data) {
 	);
 }
 function user_get_alias_details($username) {
-	global $lang;
 	global $pdo;
   $data['direct_aliases'] = false;
   $data['shared_aliases'] = false;
@@ -817,7 +816,6 @@ function is_valid_domain_name($domain_name) {
 		   && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $domain_name));
 }
 function set_tfa($_data) {
-	global $lang;
 	global $pdo;
 	global $yubi;
 	global $u2f;
@@ -881,7 +879,7 @@ function set_tfa($_data) {
 			try {
         // We could also do a modhex translation here
         $yubico_modhex_id = substr($_data["otp_token"], 0, 12);
-        $stmt = $pdo->prepare("DELETE FROM `tfa` 
+        $stmt = $pdo->prepare("DELETE FROM `tfa`
           WHERE `username` = :username
             AND (`authmech` != 'yubi_otp')
             OR (`authmech` = 'yubi_otp' AND `secret` LIKE :modhex)");
@@ -1103,7 +1101,6 @@ function get_tfa($username = null) {
 }
 function verify_tfa_login($username, $token) {
 	global $pdo;
-	global $lang;
 	global $yubi;
 	global $u2f;
 	global $tfa;
@@ -1237,7 +1234,6 @@ function verify_tfa_login($username, $token) {
 }
 function admin_api($access, $action, $data = null) {
 	global $pdo;
-	global $lang;
 	if ($_SESSION['mailcow_cc_role'] != "admin") {
 		$_SESSION['return'][] =  array(
 			'type' => 'danger',
@@ -1425,7 +1421,6 @@ function license($action, $data = null) {
   }
 }
 function rspamd_ui($action, $data = null) {
-	global $lang;
 	if ($_SESSION['mailcow_cc_role'] != "admin") {
 		$_SESSION['return'][] =  array(
 			'type' => 'danger',
@@ -1511,7 +1506,6 @@ function get_logs($application, $lines = false) {
     $to = intval($to);
     if ($from < 1 || $to < $from) { return false; }
   }
-	global $lang;
 	global $redis;
 	global $pdo;
 	if ($_SESSION['mailcow_cc_role'] != "admin") {

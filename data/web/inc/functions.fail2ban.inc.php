@@ -1,7 +1,6 @@
 <?php
 function fail2ban($_action, $_data = null) {
   global $redis;
-  global $lang;
   $_data_log = $_data;
   switch ($_action) {
     case 'get':

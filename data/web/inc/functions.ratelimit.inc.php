@@ -1,7 +1,6 @@
 <?php
 function ratelimit($_action, $_scope, $_data = null) {
   global $redis;
-  global $lang;
   $_data_log = $_data;
   switch ($_action) {
     case 'edit':

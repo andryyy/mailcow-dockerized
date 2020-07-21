@@ -1,7 +1,6 @@
 <?php
 function pushover($_action, $_data = null) {
 	global $pdo;
-	global $lang;
   switch ($_action) {
     case 'edit':
       if (!isset($_SESSION['acl']['pushover']) || $_SESSION['acl']['pushover'] != "1" ) {

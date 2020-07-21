@@ -23,7 +23,7 @@ done
 # Check mysql_upgrade (master and slave)
 CONTAINER_ID=
 until [[ ! -z "${CONTAINER_ID}" ]] && [[ "${CONTAINER_ID}" =~ ^[[:alnum:]]*$ ]]; do
-  CONTAINER_ID=$(curl --silent --insecure https://dockerapi/containers/json | jq -r ".[] | {name: .Config.Labels[\"com.docker.compose.service\"], id: .Id}" 2> /dev/null | jq -rc "select( .name | tostring | contains(\"mysql-mailcow\")) | .id" 2> /dev/null)
+  CONTAINER_ID=$(curl --silent --insecure https://dockerapi/containers/json | jq -r ".[] | {name: .Config.Labels[\"com.docker.compose.service\"], project: .Config.Labels[\"com.docker.compose.project\"], id: .Id}" 2> /dev/null | jq -rc "select( .name | tostring | contains(\"mysql-mailcow\")) | select( .project | tostring | contains(\"${COMPOSE_PROJECT_NAME}\")) | .id" 2> /dev/null)
 done
 echo "MySQL @ ${CONTAINER_ID}"
 SQL_LOOP_C=0
@@ -58,7 +58,7 @@ done
 
 # doing post-installation stuff, if SQL was upgraded (master and slave)
 if [ ${SQL_CHANGED} -eq 1 ]; then
-  POSTFIX=($(curl --silent --insecure https://dockerapi/containers/json | jq -r '.[] | {name: .Config.Labels["com.docker.compose.service"], id: .Id}' | jq -rc 'select( .name | tostring | contains("postfix-mailcow")) | .id' | tr "\n" " "))
+  POSTFIX=($(curl --silent --insecure https://dockerapi/containers/json | jq -r '.[] | {name: .Config.Labels["com.docker.compose.service"], project: .Config.Labels[\"com.docker.compose.project\"], id: .Id}' | jq -rc 'select( .name | tostring | contains("postfix-mailcow")) | select( .project | tostring | contains(\"${COMPOSE_PROJECT_NAME}\")) | .id' | tr "\n" " "))
   if [[ -z ${POSTFIX} ]]; then
     echo "Could not determine Postfix container ID, skipping Postfix restart."
   else
@@ -116,8 +116,8 @@ if [[ "${MASTER}" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
   if [[ ${API_ALLOW_FROM} != "invalid" ]] && [[ ! -z ${API_ALLOW_FROM} ]]; then
     IFS=',' read -r -a API_ALLOW_FROM_ARR <<< "${API_ALLOW_FROM}"
     declare -a VALIDATED_API_ALLOW_FROM_ARR
-    REGEX_IP6='^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$'
-    REGEX_IP4='^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'
+    REGEX_IP6='^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}(/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$'
+    REGEX_IP4='^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/([0-9]|[1-2][0-9]|3[0-2]))?$'
     for IP in "${API_ALLOW_FROM_ARR[@]}"; do
       if [[ ${IP} =~ ${REGEX_IP6} ]] || [[ ${IP} =~ ${REGEX_IP4} ]]; then
         VALIDATED_API_ALLOW_FROM_ARR+=("${IP}")

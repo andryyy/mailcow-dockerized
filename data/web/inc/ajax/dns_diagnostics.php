@@ -275,7 +275,7 @@ $data_field = array(
       <th><?=$lang['diagnostics']['dns_records_status'];?></th>
     </tr>
 <?php
-foreach ($records as $record) {
+foreach ($records as &$record) {
   $record[1] = strtoupper($record[1]);
   $state = state_missing;
   if ($record[1] == 'TLSA') {
@@ -404,9 +404,42 @@ foreach ($records as $record) {
     <td class="dns-found">%s</td>
     <td class="dns-recommended">%s</td>
   </tr>', $record[0], $record[1], $record[2], $state);
+  $record[3] = explode('<br />', $state);
 }
+unset($record);
 ?>
   </table>
+<?php
+$data = sprintf("\$ORIGIN %s.\n", $domain);
+foreach ($records as $record) {
+  if ($domain == substr($record[0], -strlen($domain))) {
+    $label = substr($record[0], 0, -strlen($domain)-1);
+    $val = $record[2];
+    if (strlen($label) == 0)
+      $label = "@";
+    $vals = array();
+    if(strpos($val, "<a") !== FALSE) {
+      if(is_array($record[3]) && count($record[3]) == 1 && $record[3][0] == state_optional)
+      {
+        $record[3][0] = "**TODO**";
+        $label = ';' . $label;
+      }
+      foreach ($record[3] as $val) {
+        $val = str_replace(state_optional, '', $val);
+        $val = str_replace(state_good, '', $val);
+        if (strlen($val) > 0)
+          $vals[] = sprintf("%s\tIN\t%s\t%s\n", $label, $record[1], $val);
+      }
+    } else {
+      $vals[] = sprintf("%s\tIN\t%s\t%s\n", $label, $record[1], $val);
+    }
+    foreach ($vals as $val) {
+      $data .= str_replace($domain, $domain . '.', $val);
+    }
+  }
+}
+echo '<a target="_blank" href="data:text/plain;base64,' . base64_encode($data) .'">Download</a>';
+?>
 </div>
 <p class="help-block">
 <sup>1</sup> <?=$lang['diagnostics']['cname_from_a'];?><br />

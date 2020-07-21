@@ -325,8 +325,8 @@ paths:
                 dkim_selector:
                   description: the DKIM selector default dkim
                   type: string
-                domain:
-                  description: the domain which a key should be generated for
+                domains:
+                  description: a list of domains for which a dkim key should be generated
                   type: string
                 key_size:
                   description: the key size (1024 or 2048)
