@@ -137,8 +137,10 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
           <div class="col-md-9 col-xs-7">
             <p><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> <a href="/mobileconfig.php?only_email"><?=$lang['user']['email'];?></a> <small>IMAP, SMTP</small></p>
             <p class="help-block"><?=$lang['user']['apple_connection_profile_mailonly'];?></p>
+            <?php if (getenv('SKIP_SOGO') != "y") { ?>
             <p><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> <a href="/mobileconfig.php"><?=$lang['user']['email_and_dav'];?></a> <small>IMAP, SMTP, Cal/CardDAV</small></p>
             <p class="help-block"><?=$lang['user']['apple_connection_profile_complete'];?></p>
+            <?php } ?>
           </div>
         </div>
         <hr>

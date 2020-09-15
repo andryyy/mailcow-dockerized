@@ -10,6 +10,7 @@ function fail2ban($_action, $_data = null) {
       }
       try {
         $f2b_options = json_decode($redis->Get('F2B_OPTIONS'), true);
+        $f2b_options['regex'] = json_decode($redis->Get('F2B_REGEX'), true);
         $wl = $redis->hGetAll('F2B_WHITELIST');
         if (is_array($wl)) {
           foreach ($wl as $key => $value) {
@@ -87,20 +88,103 @@ function fail2ban($_action, $_data = null) {
         );
         return false;
       }
-      if (isset($_data['action']) && !empty($_data['network'])) {
-        $networks = (array) $_data['network'];
-        foreach ($networks as $network) {
+      // Start to read actions, if any
+      if (isset($_data['action'])) {
+        // Reset regex filters
+        if ($_data['action'] == "reset-regex") {
           try {
+            $redis->Del('F2B_REGEX');
+          }
+          catch (RedisException $e) {
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__, $_action, $_data_log),
+              'msg' => array('redis_error', $e)
+            );
+            return false;
+          }
+          // Rules will also be recreated on log events, but rules may seem empty for a second in the UI
+          docker('post', 'netfilter-mailcow', 'restart');
+          $fail_count = 0;
+          $regex_result = json_decode($redis->Get('F2B_REGEX'), true);
+          while (empty($regex_result) && $fail_count < 10) {
+            $regex_result = json_decode($redis->Get('F2B_REGEX'), true);
+            $fail_count++;
+            sleep(1);
+          }
+          if ($fail_count >= 10) {
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__, $_action, $_data_log),
+              'msg' => array('reset_f2b_regex')
+            );
+            return false;
+          }
+        }
+        elseif ($_data['action'] == "edit-regex") {
+          if (!empty($_data['regex'])) {
+            $rule_id = 1;
+            $regex_array = array();
+            foreach($_data['regex'] as $regex) {
+              $regex_array[$rule_id] = $regex;
+              $rule_id++;
+            }
+            if (!empty($regex_array)) {
+              $redis->Set('F2B_REGEX', json_encode($regex_array, JSON_UNESCAPED_SLASHES));
+            }
+          }
+          else {
+            $_SESSION['return'][] = array(
+              'type' => 'success',
+              'log' => array(__FUNCTION__, $_action, $_data_log),
+              'msg' => print_r($_data, true)
+            );
+            return false;
+          }
+          $_SESSION['return'][] = array(
+            'type' => 'success',
+            'log' => array(__FUNCTION__, $_action, $_data_log),
+            'msg' => array('object_modified', htmlspecialchars($network))
+          );
+          return true;
+        }
+
+        // Start actions in dependency of network
+        if (!empty($_data['network'])) {
+          $networks = (array)$_data['network'];
+          foreach ($networks as $network) {
+            // Unban network
             if ($_data['action'] == "unban") {
               if (valid_network($network)) {
-                $redis->hSet('F2B_QUEUE_UNBAN', $network, 1);
+                try {
+                  $redis->hSet('F2B_QUEUE_UNBAN', $network, 1);
+                }
+                catch (RedisException $e) {
+                  $_SESSION['return'][] = array(
+                    'type' => 'danger',
+                    'log' => array(__FUNCTION__, $_action, $_data_log),
+                    'msg' => array('redis_error', $e)
+                  );
+                  continue;
+                }
               }
             }
+            // Whitelist network
             elseif ($_data['action'] == "whitelist") {
               if (valid_network($network)) {
-                $redis->hSet('F2B_WHITELIST', $network, 1);
-                $redis->hDel('F2B_BLACKLIST', $network, 1);
-                $redis->hSet('F2B_QUEUE_UNBAN', $network, 1);
+                try {
+                  $redis->hSet('F2B_WHITELIST', $network, 1);
+                  $redis->hDel('F2B_BLACKLIST', $network, 1);
+                  $redis->hSet('F2B_QUEUE_UNBAN', $network, 1);
+                }
+                catch (RedisException $e) {
+                  $_SESSION['return'][] = array(
+                    'type' => 'danger',
+                    'log' => array(__FUNCTION__, $_action, $_data_log),
+                    'msg' => array('redis_error', $e)
+                  );
+                  continue;
+                }
               }
               else  {
                 $_SESSION['return'][] = array(
@@ -111,6 +195,7 @@ function fail2ban($_action, $_data = null) {
                 continue;
               }
             }
+            // Blacklist network
             elseif ($_data['action'] == "blacklist") {
               if (valid_network($network) && !in_array($network, array(
                 '0.0.0.0',
@@ -119,9 +204,19 @@ function fail2ban($_action, $_data = null) {
                 getenv('IPV4_NETWORK') . '0',
                 getenv('IPV6_NETWORK')
               ))) {
-                $redis->hSet('F2B_BLACKLIST', $network, 1);
-                $redis->hDel('F2B_WHITELIST', $network, 1);
-                //$response = docker('post', 'netfilter-mailcow', 'restart');
+                try {
+                  $redis->hSet('F2B_BLACKLIST', $network, 1);
+                  $redis->hDel('F2B_WHITELIST', $network, 1);
+                  //$response = docker('post', 'netfilter-mailcow', 'restart');
+                }
+                catch (RedisException $e) {
+                  $_SESSION['return'][] = array(
+                    'type' => 'danger',
+                    'log' => array(__FUNCTION__, $_action, $_data_log),
+                    'msg' => array('redis_error', $e)
+                  );
+                  continue;
+                }
               }
               else  {
                 $_SESSION['return'][] = array(
@@ -132,23 +227,16 @@ function fail2ban($_action, $_data = null) {
                 continue;
               }
             }
-          }
-          catch (RedisException $e) {
             $_SESSION['return'][] = array(
-              'type' => 'danger',
+              'type' => 'success',
               'log' => array(__FUNCTION__, $_action, $_data_log),
-              'msg' => array('redis_error', $e)
+              'msg' => array('object_modified', htmlspecialchars($network))
             );
-            continue;
           }
-          $_SESSION['return'][] = array(
-            'type' => 'success',
-            'log' => array(__FUNCTION__, $_action, $_data_log),
-            'msg' => array('object_modified', htmlspecialchars($network))
-          );
+          return true;
         }
-        return true;
       }
+      // Start default edit without specific action
       $is_now = fail2ban('get');
       if (!empty($is_now)) {
         $ban_time = intval((isset($_data['ban_time'])) ? $_data['ban_time'] : $is_now['ban_time']);

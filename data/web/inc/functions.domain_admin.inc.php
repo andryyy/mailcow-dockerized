@@ -121,17 +121,15 @@ function domain_admin($_action, $_data = null) {
         );
         return false;
       }
-      if ($valid_domains != 0) {
-        $stmt = $pdo->prepare("INSERT INTO `da_acl` (`username`) VALUES (:username)");
-        $stmt->execute(array(
-          ':username' => $username
-        ));
-        $_SESSION['return'][] = array(
-          'type' => 'success',
-          'log' => array(__FUNCTION__, $_action, $_data_log),
-          'msg' => array('domain_admin_added', htmlspecialchars($username))
-        );
-      }
+      $stmt = $pdo->prepare("INSERT INTO `da_acl` (`username`) VALUES (:username)");
+      $stmt->execute(array(
+        ':username' => $username
+      ));
+      $_SESSION['return'][] = array(
+        'type' => 'success',
+        'log' => array(__FUNCTION__, $_action, $_data_log),
+        'msg' => array('domain_admin_added', htmlspecialchars($username))
+      );
     break;
     case 'edit':
       if ($_SESSION['mailcow_cc_role'] != "admin" && $_SESSION['mailcow_cc_role'] != "domainadmin") {

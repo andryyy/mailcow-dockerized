@@ -73,3 +73,7 @@ table tbody tr td input[type="checkbox"] {
 #quarantine_template {
   margin:20px;
 }
+.regex-input {
+  font-family: Consolas,monaco,monospace;
+  font-size: 14px;
+}

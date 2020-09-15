@@ -937,15 +937,20 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
             $name = $local_part;
           }
           $active = intval($_data['active']);
+          $force_pw_update = (isset($_data['force_pw_update'])) ? intval($_data['force_pw_update']) : intval($MAILBOX_DEFAULT_ATTRIBUTES['force_pw_update']);
+          $tls_enforce_in = (isset($_data['tls_enforce_in'])) ? intval($_data['tls_enforce_in']) : intval($MAILBOX_DEFAULT_ATTRIBUTES['tls_enforce_in']);
+          $tls_enforce_out = (isset($_data['tls_enforce_out'])) ? intval($_data['tls_enforce_out']) : intval($MAILBOX_DEFAULT_ATTRIBUTES['tls_enforce_out']);
+          $sogo_access = (isset($_data['sogo_access'])) ? intval($_data['sogo_access']) : intval($MAILBOX_DEFAULT_ATTRIBUTES['sogo_access']);
+          $quarantine_notification = (isset($_data['quarantine_notification'])) ? strval($_data['quarantine_notification']) : strval($MAILBOX_DEFAULT_ATTRIBUTES['quarantine_notification']);
           $quota_b		= ($quota_m * 1048576);
           $mailbox_attrs = json_encode(
             array(
-              'force_pw_update' => strval(intval($MAILBOX_DEFAULT_ATTRIBUTES['force_pw_update'])),
-              'tls_enforce_in' => strval(intval($MAILBOX_DEFAULT_ATTRIBUTES['tls_enforce_in'])),
-              'tls_enforce_out' => strval(intval($MAILBOX_DEFAULT_ATTRIBUTES['tls_enforce_out'])),
-              'sogo_access' => (!isset($_SESSION['acl']['sogo_access']) || $_SESSION['acl']['sogo_access'] != "1") ? 0 : strval(intval($MAILBOX_DEFAULT_ATTRIBUTES['sogo_access'])),
+              'force_pw_update' => strval($force_pw_update),
+              'tls_enforce_in' => strval($tls_enforce_in),
+              'tls_enforce_out' => strval($tls_enforce_out),
+              'sogo_access' => strval($sogo_access),
               'mailbox_format' => strval($MAILBOX_DEFAULT_ATTRIBUTES['mailbox_format']),
-              'quarantine_notification' => strval($MAILBOX_DEFAULT_ATTRIBUTES['quarantine_notification'])
+              'quarantine_notification' => strval($quarantine_notification)
             )
           );
           if (!is_valid_domain_name($domain)) {
@@ -2010,7 +2015,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
               $is_now = mailbox('get', 'domain_details', $domain);
               if (!empty($is_now)) {
                 $gal                  = (isset($_data['gal'])) ? intval($_data['gal']) : $is_now['gal_int'];
-                $description          = (!empty($_data['description'])) ? $_data['description'] : $is_now['description'];
+                $description          = (!empty($_data['description']) && isset($_SESSION['acl']['domain_desc']) && $_SESSION['acl']['domain_desc'] == "1") ? $_data['description'] : $is_now['description'];
               }
               else {
                 $_SESSION['return'][] = array(

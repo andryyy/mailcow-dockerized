@@ -2,7 +2,7 @@ FROM debian:buster-slim
 LABEL maintainer "Andre Peters <andre.peters@servercow.de>"
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG SOGO_DEBIAN_REPOSITORY=http://packages.inverse.ca/SOGo/nightly/4/debian/
+ARG SOGO_DEBIAN_REPOSITORY=http://packages.inverse.ca/SOGo/nightly/5/debian/
 ENV LC_ALL C
 ENV GOSU_VERSION 1.11
 

@@ -3,7 +3,7 @@ function init_db_schema() {
   try {
     global $pdo;
 
-    $db_version = "14072020_1600";
+    $db_version = "19082020_1400";
 
     $stmt = $pdo->query("SHOW TABLES LIKE 'versions'");
     $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -280,6 +280,7 @@ function init_db_schema() {
           "username" => "VARCHAR(255) NOT NULL",
           "password" => "VARCHAR(255) NOT NULL",
           "name" => "VARCHAR(255)",
+          "description" => "VARCHAR(255)",
           // mailbox_path_prefix is followed by domain/local_part/
           "mailbox_path_prefix" => "VARCHAR(150) DEFAULT '/var/vmail/'",
           "quota" => "BIGINT(20) NOT NULL DEFAULT '102400'",
@@ -542,6 +543,7 @@ function init_db_schema() {
           "extend_sender_acl" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "unlimited_quota" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "alias_domains" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "domain_desc" => "TINYINT(1) NOT NULL DEFAULT '0'"
           ),
         "keys" => array(
           "primary" => array(

@@ -370,7 +370,7 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
                     echo $mailq;
                   }
                   else {
-                    echo '{}';
+                    echo '[]';
                   }
                 break;
               }
@@ -705,6 +705,10 @@ if (isset($_SESSION['mailcow_cc_role']) || isset($_SESSION['pending_mailcow_cc_u
                   else {
                     $logs = get_logs('rspamd-history');
                   }
+                  echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+                break;
+                case "rspamd-stats":
+                  $logs = get_logs('rspamd-stats');
                   echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
                 break;
                 // return no route found if no case is matched

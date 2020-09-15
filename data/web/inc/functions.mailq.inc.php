@@ -71,7 +71,7 @@ function mailq($_action, $_data = null) {
       }
     }
     if (!isset($line) || empty($line)) {
-      return '{}';
+      return '[]';
     }
     else {
       return json_encode($line);

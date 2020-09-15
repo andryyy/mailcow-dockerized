@@ -29,8 +29,8 @@ $(document).ready(function() {
       return String.fromCharCode(s.charCodeAt(0) + (s.toLowerCase() < 'n' ? 13 : -13))
     })
   }
-  $(".footer-text-enc").html(function(){
-    return str_rot13($(".footer-text-enc").html())
+  $(".rot-enc").html(function(){
+    return str_rot13($(this).html())
   });
   // https://stackoverflow.com/questions/4399005/implementing-jquerys-shake-effect-with-animate
   function shake(div,interval,distance,times) {

@@ -448,9 +448,9 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             <label class="control-label col-sm-2" for="enc1"><?=$lang['add']['enc_method'];?></label>
             <div class="col-sm-10">
               <select name="enc1" title="<?=$lang['add']['select'];?>" required>
-                <option selected>TLS</option>
-                <option>SSL</option>
-                <option>PLAIN</option>
+                <option value="SSL" selected>SSL</option>
+                <option value="TLS">STARTTLS</option>
+                <option value="PLAIN">PLAIN</option>
               </select>
             </div>
           </div>

@@ -22,7 +22,8 @@
         "spam_score": "Spam score",
         "syncjobs": "Sync jobs",
         "tls_policy": "TLS policy",
-        "unlimited_quota": "Unlimited quota for mailboxes"
+        "unlimited_quota": "Unlimited quota for mailboxes",
+        "domain_desc": "Change domain description"
     },
     "add": {
         "activate_filter_warn": "All other filters will be deactivated, when active is checked.",
@@ -163,11 +164,13 @@
         "excludes": "Excludes these recipients",
         "f2b_ban_time": "Ban time (s)",
         "f2b_blacklist": "Blacklisted networks/hosts",
+        "f2b_filter": "Regex filters",
         "f2b_list_info": "A blacklisted host or network will always outweigh a whitelist entity. <b>List updates will take a few seconds to be applied.</b>",
         "f2b_max_attempts": "Max. attempts",
         "f2b_netban_ipv4": "IPv4 subnet size to apply ban on (8-32)",
         "f2b_netban_ipv6": "IPv6 subnet size to apply ban on (8-128)",
         "f2b_parameters": "Fail2ban parameters",
+        "f2b_regex_info": "Logs taken into consideration: SOGo, Postfix, Dovecot, PHP-FPM.",
         "f2b_retry_window": "Retry window (s) for max. attempts",
         "f2b_whitelist": "Whitelisted networks/hosts",
         "filter_table": "Filter table",
@@ -394,6 +397,7 @@
         "redis_error": "Redis error: %s",
         "relayhost_invalid": "Map entry %s is invalid",
         "release_send_failed": "Message could not be released: %s",
+        "reset_f2b_regex": "Regex filter could not be reset in time, please try again or wait a few more seconds and reload the website.",
         "resource_invalid": "Resource name %s is invalid",
         "rl_timeframe": "Rate limit time frame is incorrect",
         "rspamd_ui_pw_length": "Rspamd UI password should be at least 6 chars long",

@@ -766,6 +766,9 @@ paths:
                           password: '*'
                           password2: '*'
                           quota: '3072'
+                          force_pw_update: '1'
+                          tls_enforce_in: '1'
+                          tls_enforce_out: '1'
                         - null
                       msg:
                         - mailbox_added
@@ -807,6 +810,9 @@ paths:
                 password: atedismonsin
                 password2: atedismonsin
                 quota: '3072'
+                force_pw_update: '1'
+                tls_enforce_in: '1'
+                tls_enforce_out: '1'
               properties:
                 active:
                   description: is mailbox active or not
@@ -829,6 +835,15 @@ paths:
                 quota:
                   description: mailbox quota
                   type: number
+                force_pw_update:
+                  description: forces the user to update its password on first login
+                  type: boolean
+                tls_enforce_in:
+                  description: force inbound email tls encryption
+                  type: boolean
+                tls_enforce_out:
+                  description: force oubound tmail tls encryption
+                  type: boolean
               type: object
       summary: Create mailbox
 
@@ -1174,6 +1189,94 @@ paths:
         containing a domain informations.
       operationId: Create sync job
       summary: Create sync job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                username: lisa@mailcow.tld
+                host1: mail.mailcow.tld
+                port1: '143'
+                user1: demo@mailcow.tld
+                password1: supersecretpw
+                enc1: TLS
+                mins_interval: '20'
+                subfolder2: "/SyncIntoSubfolder"
+                maxage: '0'
+                maxbytespersecond: '0'
+                timeout1: '600'
+                timeout2: '600'
+                exclude: "(?i)spam|(?i)junk"
+                custom_params: "--dry"
+                delete2duplicates: '1'
+                delete1: '1'
+                delete2: '0'
+                automap: '1'
+                skipcrossduplicates: '0'
+                subscribeall: '0'
+                active: '1'
+              properties:
+                parameters:
+                  description: your local mailcow mailbox
+                  type: string
+                host1:
+                  description: the smtp server where mails should be synced from
+                  type: string
+                port1:
+                  description: the smtp port of the target mail server
+                  type: string
+                password:
+                  description: the password of the mailbox
+                  type: string
+                enc1:
+                  description: the encryption method used to connect to the mailserver
+                  type: string
+                mins_internal:
+                  description: the interval in which messages should be syned
+                  type: number
+                subfolder2:
+                  description: sync into subfolder on destination (empty = do not use subfolder)
+                  type: string
+                maxage:
+                  description: only sync messages up to this age in days
+                  type: number
+                maxbytespersecond:
+                  description: max speed transfer limit for the sync
+                  type: number
+                timeout1:
+                  description: timeout for connection to remote host
+                  type: number
+                timeout2:
+                  description: timeout for connection to local host
+                  type: number
+                exclude:
+                  description: exclude objects (regex)
+                  type: string
+                custom_params:
+                  description: custom parameters
+                  type: string
+                delete2duplicates:
+                  description: delete duplicates on destination (--delete2duplicates)
+                  type: boolean
+                delete1:
+                  description: delete from source when completed (--delete1)
+                  type: boolean
+                delete2:
+                  description: delete messages on destination that are not on source (--delete2)
+                  type: boolean
+                automap:
+                  description: try to automap folders ("Sent items", "Sent" => "Sent" etc.) (--automap)
+                  type: boolean
+                skipcrossduplicates:
+                  description: skip duplicate messages across folders (first come, first serve) (--skipcrossduplicates)
+                  type: boolean
+                subscribeall:
+                  description: subscribe all folders (--subscribeall)
+                  type: boolean
+                active:
+                  description: enables or disables the sync job
+                  type: boolean
+              type: object
   /api/v1/add/tls-policy-map:
     post:
       responses:
@@ -4493,7 +4596,7 @@ paths:
                         - ratelimit
                         - edit
                         - domain
-                        - object: 
+                        - object:
                           - domain.tld
                           rl_value: "50"
                           rl_frame: "h"
@@ -4546,7 +4649,7 @@ paths:
                   description: contains list of domains you want to edit the ratelimit of
                   type: object
               type: object
-      summary: Edit domain ratelimits 
+      summary: Edit domain ratelimits
   /api/v1/get/status/containers:
     get:
       responses:

@@ -460,11 +460,17 @@ jQuery(function($){
     }
   })
   // App links
-  function add_table_row(table_id) {
+  function add_table_row(table_id, type) {
     var row = $('<tr />');
+    if (type == "app_link") {
     cols = '<td><input class="input-sm form-control" data-id="app_links" type="text" name="app" required></td>';
     cols += '<td><input class="input-sm form-control" data-id="app_links" type="text" name="href" required></td>';
-    cols += '<td><a href="#" role="button" class="btn btn-xs btn-default" type="button">Remove row</a></td>';
+    cols += '<td><a href="#" role="button" class="btn btn-xs btn-default" type="button">' + lang.remove_row + '</a></td>';
+    } else if (type == "f2b_regex") {
+    cols = '<td><input style="text-align:center" class="input-sm form-control" data-id="f2b_regex" type="text" value="+" disabled></td>';
+    cols += '<td><input class="input-sm form-control regex-input" data-id="f2b_regex" type="text" name="regex" required></td>';
+    cols += '<td><a href="#" role="button" class="btn btn-xs btn-default" type="button">' + lang.remove_row + '</a></td>';
+    }
     row.append(cols);
     table_id.append(row);
   }
@@ -472,8 +478,15 @@ jQuery(function($){
     e.preventDefault();
     $(this).parents('tr').remove();
   });
+  $('#f2b_regex_table').on('click', 'tr a', function (e) {
+    e.preventDefault();
+    $(this).parents('tr').remove();
+  });
   $('#add_app_link_row').click(function() {
-      add_table_row($('#app_link_table'));
+      add_table_row($('#app_link_table'), "app_link");
+  });
+  $('#add_f2b_regex_row').click(function() {
+      add_table_row($('#f2b_regex_table'), "f2b_regex");
   });
 });
 

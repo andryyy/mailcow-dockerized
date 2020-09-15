@@ -33,16 +33,6 @@ while True:
 
 pubsub = r.pubsub()
 
-RULES = {}
-RULES[1] = 'warning: .*\[([0-9a-f\.:]+)\]: SASL .+ authentication failed'
-RULES[2] = '-login: Disconnected \(auth failed, .+\): user=.*, method=.+, rip=([0-9a-f\.:]+),'
-RULES[3] = '-login: Aborted login \(tried to use disallowed .+\): user=.+, rip=([0-9a-f\.:]+), lip.+'
-RULES[4] = 'SOGo.+ Login from \'([0-9a-f\.:]+)\' for user .+ might not have worked'
-RULES[5] = 'mailcow UI: Invalid password for .+ by ([0-9a-f\.:]+)'
-RULES[6] = '([0-9a-f\.:]+) \"GET \/SOGo\/.* HTTP.+\" 403 .+'
-RULES[7] = 'Rspamd UI: Invalid password by ([0-9a-f\.:]+)'
-RULES[8] = '-login: Aborted login \(auth failed .+\): user=.+, rip=([0-9a-f\.:]+), lip.+'
-
 WHITELIST = []
 BLACKLIST= []
 
@@ -90,6 +80,28 @@ def refreshF2boptions():
       f2boptions = json.loads(r.get('F2B_OPTIONS'))
     except ValueError:
       print('Error loading F2B options: F2B_OPTIONS is not json')
+      quit_now = True
+
+def refreshF2bregex():
+  global f2bregex
+  global quit_now
+  if not r.get('F2B_REGEX'):
+    f2bregex = {}
+    f2bregex[1] = 'warning: .*\[([0-9a-f\.:]+)\]: SASL .+ authentication failed'
+    f2bregex[2] = '-login: Disconnected \(auth failed, .+\): user=.*, method=.+, rip=([0-9a-f\.:]+),'
+    f2bregex[3] = '-login: Aborted login \(tried to use disallowed .+\): user=.+, rip=([0-9a-f\.:]+), lip.+'
+    f2bregex[4] = 'SOGo.+ Login from \'([0-9a-f\.:]+)\' for user .+ might not have worked'
+    f2bregex[5] = 'mailcow UI: Invalid password for .+ by ([0-9a-f\.:]+)'
+    f2bregex[6] = '([0-9a-f\.:]+) \"GET \/SOGo\/.* HTTP.+\" 403 .+'
+    f2bregex[7] = 'Rspamd UI: Invalid password by ([0-9a-f\.:]+)'
+    f2bregex[8] = '-login: Aborted login \(auth failed .+\): user=.+, rip=([0-9a-f\.:]+), lip.+'
+    r.set('F2B_REGEX', json.dumps(f2bregex, ensure_ascii=False))
+  else:
+    try:
+      f2bregex = {}
+      f2bregex = json.loads(r.get('F2B_REGEX'))
+    except ValueError:
+      print('Error loading F2B options: F2B_REGEX is not json')
       quit_now = True
 
 if r.exists('F2B_LOG'):
@@ -290,15 +302,19 @@ def watch():
 
   while not quit_now:
     for item in pubsub.listen():
-      for rule_id, rule_regex in RULES.items():
+      refreshF2bregex()
+      for rule_id, rule_regex in f2bregex.items():
         if item['data'] and item['type'] == 'message':
-          result = re.search(rule_regex, item['data'])
+          try:
+            result = re.search(rule_regex, item['data'])
+          except re.error:
+            result = False
           if result:
             addr = result.group(1)
             ip = ipaddress.ip_address(addr)
             if ip.is_private or ip.is_loopback:
               continue
-            logWarn('%s matched rule id %d (%s)' % (addr, rule_id, item['data']))
+            logWarn('%s matched rule id %s (%s)' % (addr, rule_id, item['data']))
             ban(addr)
 
 def snat4(snat_target):
@@ -322,7 +338,7 @@ def snat4(snat_target):
         chain = iptc.Chain(table, 'POSTROUTING')
         table.autocommit = False
         if get_snat4_rule() not in chain.rules:
-          logCrit('Added POSTROUTING rule for source network %s to SNAT target %s' % (get_snat4_rule().src, snat_target))  
+          logCrit('Added POSTROUTING rule for source network %s to SNAT target %s' % (get_snat4_rule().src, snat_target))
           chain.insert_rule(get_snat4_rule())
           table.commit()
         else:
@@ -405,7 +421,7 @@ def genNetworkList(list):
     hostname_ips = []
     for rdtype in ['A', 'AAAA']:
       try:
-        answer = resolver.query(qname=hostname, rdtype=rdtype, lifetime=3)
+        answer = resolver.resolve(qname=hostname, rdtype=rdtype, lifetime=3)
       except dns.exception.Timeout:
         logInfo('Hostname %s timedout on resolve' % hostname)
         break

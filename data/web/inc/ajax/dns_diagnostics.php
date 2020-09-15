@@ -265,6 +265,7 @@ $data_field = array(
   'TLSA' => 'data',
   'TXT' => 'txt',
 );
+
 ?>
 <div class="table-responsive" id="dnstable">
   <table class="table table-striped">
@@ -292,6 +293,12 @@ foreach ($records as &$record) {
   }
   else {
     $currents = dns_get_record($record[0], $record_types[$record[1]]);
+    if ($record[0] == $mailcow_hostname && ($record[1] == "A" || $record[1] == "AAAA")) {
+      if (!empty(dns_get_record($record[0], DNS_CNAME))) {
+        $currents[0]['ip'] = state_missing . ' <b>(CNAME)</b>';
+        $currents[0]['ipv6'] = state_missing . ' <b>(CNAME)</b>';
+      }
+    }
     if ($record[1] == 'SRV') {
       foreach ($currents as &$current) {
         if ($current['target'] == '') {
@@ -407,39 +414,48 @@ foreach ($records as &$record) {
   $record[3] = explode('<br />', $state);
 }
 unset($record);
-?>
-  </table>
-<?php
-$data = sprintf("\$ORIGIN %s.\n", $domain);
+
+$dns_data = sprintf("\$ORIGIN %s.\n", $domain);
 foreach ($records as $record) {
   if ($domain == substr($record[0], -strlen($domain))) {
     $label = substr($record[0], 0, -strlen($domain)-1);
     $val = $record[2];
-    if (strlen($label) == 0)
+    if (strlen($label) == 0) {
       $label = "@";
+    }
     $vals = array();
-    if(strpos($val, "<a") !== FALSE) {
-      if(is_array($record[3]) && count($record[3]) == 1 && $record[3][0] == state_optional)
-      {
+    if (strpos($val, "<a") !== FALSE) {
+      if(is_array($record[3]) && count($record[3]) == 1 && $record[3][0] == state_optional) {
         $record[3][0] = "**TODO**";
         $label = ';' . $label;
       }
       foreach ($record[3] as $val) {
         $val = str_replace(state_optional, '', $val);
         $val = str_replace(state_good, '', $val);
-        if (strlen($val) > 0)
+        if (strlen($val) > 0) {
           $vals[] = sprintf("%s\tIN\t%s\t%s\n", $label, $record[1], $val);
+        }
       }
-    } else {
+    }
+    else {
       $vals[] = sprintf("%s\tIN\t%s\t%s\n", $label, $record[1], $val);
     }
     foreach ($vals as $val) {
-      $data .= str_replace($domain, $domain . '.', $val);
+      $dns_data .= str_replace($domain, $domain . '.', $val);
     }
   }
 }
-echo '<a target="_blank" href="data:text/plain;base64,' . base64_encode($data) .'">Download</a>';
+
 ?>
+  </table>
+  <a id='download-zonefile' data-zonefile="<?=base64_encode($dns_data);?>" download='<?=$_GET['domain'];?>.txt' type='text/csv'>Download</a>
+  <script>
+      var zonefile_dl_link = document.getElementById('download-zonefile');
+      var zonefile = atob(zonefile_dl_link.getAttribute('data-zonefile'));
+      var data = new Blob([zonefile]);
+      var download_zonefile_link = document.getElementById('download-zonefile');
+      download_zonefile_link.href = URL.createObjectURL(data);
+  </script>
 </div>
 <p class="help-block">
 <sup>1</sup> <?=$lang['diagnostics']['cname_from_a'];?><br />

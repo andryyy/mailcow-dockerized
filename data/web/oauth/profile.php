@@ -11,6 +11,7 @@ $stmt->execute(array(':username' => $token['user_id']));
 $mailbox = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!empty($mailbox)) {
   if ($token['scope'] == 'profile') {
+    header('Content-Type: application/json');
     echo json_encode(array(
       'success' => true,
       'username' => $token['user_id'],

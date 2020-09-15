@@ -1679,6 +1679,20 @@ function get_logs($application, $lines = false) {
     curl_close($curl);
     return false;
   }
+  if ($application == "rspamd-stats") {
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+    curl_setopt($curl, CURLOPT_URL,"http://rspamd/stat");
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    $stats = curl_exec($curl);
+    if (!curl_errno($curl)) {
+      $data_array = json_decode($stats, true);
+      curl_close($curl);
+      return $data_array;
+    }
+    curl_close($curl);
+    return false;
+  }
   return false;
 }
 function getGUID() {

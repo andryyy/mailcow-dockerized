@@ -186,7 +186,7 @@ $(document).ready(function() {
 
   <div class="container footer">
   <?php if (!empty($UI_TEXTS['ui_footer'])) { ?>
-   <hr><span class="footer-text-enc"><?=str_rot13($UI_TEXTS['ui_footer']);?></span>
+   <hr><span class="rot-enc"><?=str_rot13($UI_TEXTS['ui_footer']);?></span>
   <?php } ?>
   </div>
 </body>

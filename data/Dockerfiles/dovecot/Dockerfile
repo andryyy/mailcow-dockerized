@@ -2,7 +2,7 @@ FROM debian:buster-slim
 LABEL maintainer "Andre Peters <andre.peters@servercow.de>"
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG DOVECOT=2.3.10.1
+ARG DOVECOT=2.3.11.3
 ENV LC_ALL C
 
 # Add groups and users before installing Dovecot to not break compatibility

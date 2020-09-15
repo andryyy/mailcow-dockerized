@@ -165,6 +165,7 @@ REDIS_PORT=127.0.0.1:7654
 TZ=${MAILCOW_TZ}
 
 # Fixed project name
+# Please use lowercase letters only
 
 COMPOSE_PROJECT_NAME=mailcowdockerized
 
@@ -235,9 +236,9 @@ SKIP_SOLR=${SKIP_SOLR}
 
 SOLR_HEAP=1024
 
-# Enable watchdog (watchdog-mailcow) to restart unhealthy containers (experimental)
+# Enable watchdog (watchdog-mailcow) to restart unhealthy containers
 
-USE_WATCHDOG=n
+USE_WATCHDOG=y
 
 # Allow admins to log into SOGo as email user (without any password)
 

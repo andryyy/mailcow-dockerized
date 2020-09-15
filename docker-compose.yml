@@ -17,7 +17,7 @@ services:
             - unbound
 
     mysql-mailcow:
-      image: mariadb:10.3
+      image: mariadb:10.4
       depends_on:
         - unbound-mailcow
       stop_grace_period: 45s
@@ -74,7 +74,6 @@ services:
       image: mailcow/rspamd:1.68
       stop_grace_period: 30s
       depends_on:
-        - nginx-mailcow
         - dovecot-mailcow
       environment:
         - TZ=${TZ}
@@ -102,7 +101,7 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.65
+      image: mailcow/phpfpm:1.69
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
         - redis-mailcow
@@ -160,7 +159,7 @@ services:
             - phpfpm
 
     sogo-mailcow:
-      image: mailcow/sogo:1.80
+      image: mailcow/sogo:1.84
       environment:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
@@ -193,7 +192,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.128
+      image: mailcow/dovecot:1.130
       depends_on:
         - mysql-mailcow
       dns:
@@ -344,7 +343,7 @@ services:
     acme-mailcow:
       depends_on:
         - nginx-mailcow
-      image: mailcow/acme:1.73
+      image: mailcow/acme:1.74
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       environment:
@@ -380,7 +379,7 @@ services:
             - acme
 
     netfilter-mailcow:
-      image: mailcow/netfilter:1.37
+      image: mailcow/netfilter:1.38
       stop_grace_period: 30s
       depends_on:
         - dovecot-mailcow
@@ -403,7 +402,7 @@ services:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.81
+      image: mailcow/watchdog:1.82
       # Debug
       #command: /watchdog.sh
       dns:
@@ -496,7 +495,7 @@ services:
             - solr
 
     olefy-mailcow:
-      image: mailcow/olefy:1.3
+      image: mailcow/olefy:1.4
       restart: always
       environment:
         - TZ=${TZ}
