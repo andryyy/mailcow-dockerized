@@ -250,6 +250,11 @@ ALLOW_ADMIN_EMAIL_LOGIN=n
 #WATCHDOG_NOTIFY_EMAIL=a@example.com,b@example.com,c@example.com
 #WATCHDOG_NOTIFY_EMAIL=
 
+# Send watchdog notifications via a slack webhook.
+# The webhook URL can be generated using the guide here: https://api.slack.com/messaging/webhooks
+
+# WATCHDOG_SLACK_URL=https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
+
 # Notify about banned IP (includes whois lookup)
 WATCHDOG_NOTIFY_BAN=n
 

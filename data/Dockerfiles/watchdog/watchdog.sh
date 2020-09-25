@@ -90,7 +90,6 @@ function mail_error() {
   [[ -z ${1} ]] && return 1
   # If exists, body will be the content of "/tmp/${1}", even if ${2} is set
   [[ -z ${2} ]] && BODY="Service was restarted on $(date), please check your mailcow installation." || BODY="$(date) - ${2}"
-  WATCHDOG_NOTIFY_EMAIL=$(echo "${WATCHDOG_NOTIFY_EMAIL}" | sed 's/"//;s|"$||')
   # Some exceptions for subject and body formats
   if [[ ${1} == "fail2ban" ]]; then
     SUBJECT="${BODY}"
@@ -98,30 +97,39 @@ function mail_error() {
   else
     SUBJECT="Watchdog ALERT: ${1}"
   fi
-  IFS=',' read -r -a MAIL_RCPTS <<< "${WATCHDOG_NOTIFY_EMAIL}"
-  for rcpt in "${MAIL_RCPTS[@]}"; do
-    RCPT_DOMAIN=
-    #RCPT_MX=
-    RCPT_DOMAIN=$(echo ${rcpt} | awk -F @ {'print $NF'})
-    # Latest smtp-cli looks up mx via dns
-    #RCPT_MX=$(dig +short ${RCPT_DOMAIN} mx | sort -n | awk '{print $2; exit}')
-    #if [[ -z ${RCPT_MX} ]]; then
-    #  log_msg "Cannot determine MX for ${rcpt}, skipping email notification..."
-    #  return 1
-    #fi
-    [ -f "/tmp/${1}" ] && BODY="/tmp/${1}"
-    timeout 10s ./smtp-cli --missing-modules-ok \
-      --charset=UTF-8 \
-      --subject="${SUBJECT}" \
-      --body-plain="${BODY}" \
-      --add-header="X-Priority: 1" \
-      --to=${rcpt} \
-      --from="watchdog@${MAILCOW_HOSTNAME}" \
-      --hello-host=${MAILCOW_HOSTNAME} \
-      --ipv4
-      #--server="${RCPT_MX}"
-    log_msg "Sent notification email to ${rcpt}"
-  done
+  if [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]]; then
+    WATCHDOG_NOTIFY_EMAIL=$(echo "${WATCHDOG_NOTIFY_EMAIL}" | sed 's/"//;s|"$||')
+    IFS=',' read -r -a MAIL_RCPTS <<< "${WATCHDOG_NOTIFY_EMAIL}"
+    for rcpt in "${MAIL_RCPTS[@]}"; do
+      RCPT_DOMAIN=
+      #RCPT_MX=
+      RCPT_DOMAIN=$(echo ${rcpt} | awk -F @ {'print $NF'})
+      # Latest smtp-cli looks up mx via dns
+      #RCPT_MX=$(dig +short ${RCPT_DOMAIN} mx | sort -n | awk '{print $2; exit}')
+      #if [[ -z ${RCPT_MX} ]]; then
+      #  log_msg "Cannot determine MX for ${rcpt}, skipping email notification..."
+      #  return 1
+      #fi
+      [ -f "/tmp/${1}" ] && BODY="/tmp/${1}"
+      timeout 10s ./smtp-cli --missing-modules-ok \
+        --charset=UTF-8 \
+        --subject="${SUBJECT}" \
+        --body-plain="${BODY}" \
+        --add-header="X-Priority: 1" \
+        --to=${rcpt} \
+        --from="watchdog@${MAILCOW_HOSTNAME}" \
+        --hello-host=${MAILCOW_HOSTNAME} \
+        --ipv4
+        #--server="${RCPT_MX}"
+      log_msg "Sent notification email to ${rcpt}"
+    done
+  fi
+  # send slack msg, too
+  if [ ! -z "$WATCHDOG_SLACK_URL" ]; then
+    content="\"text\": \"${SUBJECT}\",\"blocks\": [{\"type\": \"section\",\"text\":{\"type\": \"mrkdwn\",\"text\":\"*${SUBJECT}*\"}},{\"type\": \"section\",\"text\":{\"type\": \"mrkdwn\",\"text\":\"${BODY}\"}}]"
+    curl -X POST --data-urlencode "payload={$content}" $WATCHDOG_SLACK_URL
+    log_msg "Sent Slack notification"
+  fi
 }
 
 get_container_ip() {
@@ -719,9 +727,7 @@ olefy_checks() {
 }
 
 # Notify about start
-if [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]]; then
-  mail_error "watchdog-mailcow" "Watchdog started monitoring mailcow."
-fi
+mail_error "watchdog-mailcow" "Watchdog started monitoring mailcow."
 
 # Create watchdog agents
 
@@ -1002,26 +1008,26 @@ while true; do
   fi
   if [[ ${com_pipe_answer} == "ratelimit" ]]; then
     log_msg "At least one ratelimit was applied"
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
+    mail_error "${com_pipe_answer}"
   elif [[ ${com_pipe_answer} == "mail_queue_status" ]]; then
     log_msg "Mail queue status is critical"
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
+    mail_error "${com_pipe_answer}"
   elif [[ ${com_pipe_answer} == "external_checks" ]]; then
     log_msg "Your mailcow is an open relay!"
     # Define $2 to override message text, else print service was restarted at ...
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please stop mailcow now and check your network configuration!"
+    mail_error "${com_pipe_answer}" "Please stop mailcow now and check your network configuration!"
   elif [[ ${com_pipe_answer} == "mysql_repl_checks" ]]; then
     log_msg "MySQL replication is not working properly"
     # Define $2 to override message text, else print service was restarted at ...
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check the SQL replication status"
+    mail_error "${com_pipe_answer}" "Please check the SQL replication status"
   elif [[ ${com_pipe_answer} == "dovecot_repl_checks" ]]; then
     log_msg "Dovecot replication is not working properly"
     # Define $2 to override message text, else print service was restarted at ...
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check the Dovecot replicator status"
+    mail_error "${com_pipe_answer}" "Please check the Dovecot replicator status"
   elif [[ ${com_pipe_answer} == "acme-mailcow" ]]; then
     log_msg "acme-mailcow did not complete successfully"
     # Define $2 to override message text, else print service was restarted at ...
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check acme-mailcow for further information."
+    mail_error "${com_pipe_answer}" "Please check acme-mailcow for further information."
   elif [[ ${com_pipe_answer} == "fail2ban" ]]; then
     F2B_RES=($(timeout 4s ${REDIS_CMDLINE} --raw GET F2B_RES 2> /dev/null))
     if [[ ! -z "${F2B_RES}" ]]; then
@@ -1031,7 +1037,7 @@ while true; do
         log_msg "Banned ${host}"
         rm /tmp/fail2ban 2> /dev/null
         timeout 2s whois "${host}" > /tmp/fail2ban
-        [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && [[ ${WATCHDOG_NOTIFY_BAN} =~ ^([yY][eE][sS]|[yY])+$ ]] && mail_error "${com_pipe_answer}" "IP ban: ${host}"
+        [[ ${WATCHDOG_NOTIFY_BAN} =~ ^([yY][eE][sS]|[yY])+$ ]] && mail_error "${com_pipe_answer}" "IP ban: ${host}"
       done
     fi
   elif [[ ${com_pipe_answer} =~ .+-mailcow ]]; then
@@ -1052,7 +1058,7 @@ while true; do
         log_msg "Sending restart command to ${CONTAINER_ID}..."
         curl --silent --insecure -XPOST https://dockerapi/containers/${CONTAINER_ID}/restart
         if [[ ${com_pipe_answer} != "ipv6nat-mailcow" ]]; then
-          [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}"
+          mail_error "${com_pipe_answer}"
         fi
         log_msg "Wait for restarted container to settle and continue watching..."
         sleep 35

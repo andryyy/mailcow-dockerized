@@ -456,6 +456,7 @@ services:
         - OLEFY_THRESHOLD=5
         - MAILQ_THRESHOLD=20
         - MAILQ_CRIT=30
+          WATCHDOG_SLACK_URL=${WATCHDOG_SLACK_URL}
       networks:
         mailcow-network:
           aliases:
