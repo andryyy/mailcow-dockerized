@@ -80,6 +80,7 @@ postscreen_greet_wait = 3s
 postscreen_non_smtp_command_enable = no
 postscreen_pipelining_enable = no
 proxy_read_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_sasl_passwd_maps_transport_maps.cf,
+  proxy:mysql:/opt/postfix/conf/sql/mysql_sasl_access_maps.cf,
   proxy:mysql:/opt/postfix/conf/sql/mysql_tls_enforce_in_policy.cf,
   $sender_dependent_default_transport_maps,
   $smtp_tls_policy_maps,
@@ -117,7 +118,8 @@ smtpd_error_sleep_time = 10s
 smtpd_hard_error_limit = ${stress?1}${stress:5}
 smtpd_helo_required = yes
 smtpd_proxy_timeout = 600s
-smtpd_recipient_restrictions = permit_sasl_authenticated,
+smtpd_recipient_restrictions = check_sasl_access proxy:mysql:/opt/postfix/conf/sql/mysql_sasl_access_maps.cf,
+  permit_sasl_authenticated,
   permit_mynetworks,
   check_recipient_access proxy:mysql:/opt/postfix/conf/sql/mysql_tls_enforce_in_policy.cf,
   reject_invalid_helo_hostname,
@@ -191,6 +193,7 @@ smtp_sasl_auth_soft_bounce = no
 postscreen_discard_ehlo_keywords = silent-discard, dsn
 compatibility_level = 2
 smtputf8_enable = no
+smtpd_last_auth = check_policy_service inet:127.0.0.1:10028
 # Define protocols for SMTPS and submission service
 submission_smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
 smtps_smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1

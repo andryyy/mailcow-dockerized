@@ -50,6 +50,5 @@ data/gitea/
 data/gogs/
 data/conf/sogo/plist_ldap
 update_diffs/
-.github/
 docker-compose.override.yml
 refresh_images.sh

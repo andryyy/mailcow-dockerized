@@ -41,7 +41,7 @@ table.footable>tbody>tr.footable-empty>td {
 tbody {
   font-size:14px;
 }
-.container-indicator {
+.status-indicator {
   width: 15px;
   height: 15px;
 }

@@ -42,22 +42,6 @@ table.footable>tbody>tr.footable-empty>td {
   border-color: #FF4136;
 }
 
-.dot-danger {
-  height: 10px;
-  width: 10px;
-  background-color: #ff4136;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.dot-neutral {
-  height: 10px;
-  width: 10px;
-  background-color: #d4d4d4;
-  border-radius: 50%;
-  display: inline-block;
-}
-
 .modal#qidDetailModal p {
   word-break: break-all;
 }
@@ -111,4 +95,8 @@ table tbody tr {
 
 table tbody tr td input[type="checkbox"] {
   cursor: pointer;
+}
+.label-rspamd-action {
+  font-size:110%;
+  margin:20px;
 }

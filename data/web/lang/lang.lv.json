@@ -377,7 +377,6 @@
         "check_hash": "Meklēt faila hašu @ VT",
         "empty": "Nav rezultātu",
         "qid": "Rspamd QID",
-        "qinfo": "Karantīnas sistēma saglabās noraidīto vēstuli datubāzē, kamēr sūtītājs <em> nesaņems </em> iespaidu par piegādāto pastu.",
         "qitem": "Karantīnas vienumi",
         "quarantine": "Karantīna",
         "quick_actions": "Darbības",

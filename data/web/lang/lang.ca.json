@@ -376,7 +376,6 @@
         "check_hash": "Comprovar el hash del fitxer a VT",
         "empty": "No hi ha elements",
         "qid": "Rspamd QID",
-        "qinfo": "El sistema de quarantena desa a la base de dades els missatges que han estat refusats. El missatge, al emissor, li consta com a <em>no</em> lliurat.",
         "qitem": "Element en quarantena",
         "quarantine": "Quarantena",
         "quick_actions": "Accions",

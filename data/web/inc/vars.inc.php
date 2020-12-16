@@ -17,6 +17,7 @@ $database_name = getenv('DBNAME');
 
 // Other variables
 $mailcow_hostname = getenv('MAILCOW_HOSTNAME');
+$default_pass_scheme = getenv('MAILCOW_PASS_SCHEME');
 
 // Autodiscover settings
 // ===
@@ -78,7 +79,7 @@ $DETECT_LANGUAGE = true;
 $DEFAULT_LANG = 'en';
 
 // Available languages
-$AVAILABLE_LANGUAGES = array('ca', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'it', 'lv', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sv');
+$AVAILABLE_LANGUAGES = array('ca', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ko', 'lv', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sv', 'zh');
 
 // Change theme (default: lumen)
 // Needs to be one of those: cerulean, cosmo, cyborg, darkly, flatly, journal, lumen, paper, readable, sandstone,
@@ -157,6 +158,21 @@ $MAILBOX_DEFAULT_ATTRIBUTES['sogo_access'] = true;
 // Send notification when quarantine is not empty (never, hourly, daily, weekly)
 $MAILBOX_DEFAULT_ATTRIBUTES['quarantine_notification'] = 'hourly';
 
+// Mailbox has IMAP access by default
+$MAILBOX_DEFAULT_ATTRIBUTES['imap_access'] = true;
+
+// Mailbox has POP3 access by default
+$MAILBOX_DEFAULT_ATTRIBUTES['pop3_access'] = true;
+
+// Mailbox has SMTP access by default
+$MAILBOX_DEFAULT_ATTRIBUTES['smtp_access'] = true;
+
+// Mailbox receives notifications about...
+// "add_header" - mail that was put into the Junk folder
+// "reject" - mail that was rejected
+// "all" - mail that was rejected and put into the Junk folder
+$MAILBOX_DEFAULT_ATTRIBUTES['quarantine_category'] = 'reject';
+
 // Default mailbox format, should not be changed unless you know exactly, what you do, keep the trailing ":"
 // Check dovecot.conf for further changes (e.g. shared namespace)
 $MAILBOX_DEFAULT_ATTRIBUTES['mailbox_format'] = 'maildir:';
@@ -164,6 +180,14 @@ $MAILBOX_DEFAULT_ATTRIBUTES['mailbox_format'] = 'maildir:';
 // Show last IMAP and POP3 logins
 $SHOW_LAST_LOGIN = true;
 
+// UV flag handling in FIDO2/WebAuthn - defaults to false to allow iOS logins
+// true = required
+// false = preferred
+// string 'required' 'preferred' 'discouraged'
+$FIDO2_UV_FLAG_REGISTER = 'preferred';
+$FIDO2_UV_FLAG_LOGIN = 'preferred'; // iOS ignores the key via NFC if required - known issue
+$FIDO2_USER_PRESENT_FLAG = true;
+$FIDO2_FORMATS = array('apple', 'android-key', 'android-safetynet', 'fido-u2f', 'none', 'packed', 'tpm');
 
 // Set visible Rspamd maps in mailcow UI, do not change unless you know what you are doing
 $RSPAMD_MAPS = array(

@@ -59,7 +59,16 @@ $_SESSION['index_query_string'] = $_SERVER['QUERY_STRING'];
               </div>
             </div>
             <div class="form-group">
-              <button type="submit" class="btn btn-success" value="Login"><?= $lang['login']['login']; ?></button>
+              <div class="btn-group">
+                <button type="submit" class="btn btn-success" value="Login"><?= $lang['login']['login']; ?></button>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  <?= $lang['login']['other_logins']; ?> <span class="caret"></span></button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" id="fido2-login"><?= $lang['login']['fido2_webauthn']; ?></a></li>
+                  </ul>
+                </div>
+              </div>
               <?php if(!isset($_SESSION['oauth2_request'])) { ?>
               <div class="btn-group pull-right">
                 <button type="button" <?=(isset($_SESSION['mailcow_locale']) && count($AVAILABLE_LANGUAGES) === 1) ? 'disabled="true"' : '' ?> class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -81,6 +90,7 @@ $_SESSION['index_query_string'] = $_SERVER['QUERY_STRING'];
             ?>
             <p><div class="alert alert-info"><?= sprintf($lang['login']['delayed'], $_SESSION['ldelay']); ?></b></div></p>
             <?php } ?>
+            <div id="fido2-alerts"></div>
           <?php if(!isset($_SESSION['oauth2_request'])) { ?>
             <legend><span class="glyphicon glyphicon-link" aria-hidden="true"></span> <?=$UI_TEXTS['apps_name'];?></legend>
             <?php

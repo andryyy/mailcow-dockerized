@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: ❓ Community-driven support
+    url: https://mailcow.github.io/mailcow-dockerized-docs/#get-support
+    about: Please use the community forum for questions or assistance
+  - name: 🚨 Report a security vulnerability
+    url: https://www.servercow.de/anfrage?lang=en
+    about: Please give us appropriate time to verify, respond and fix before disclosure.

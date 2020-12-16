@@ -115,7 +115,7 @@ function bcc($_action, $_data = null, $attr = null) {
       foreach ($ids as $id) {
         $is_now = bcc('details', $id);
         if (!empty($is_now)) {
-          $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active_int'];
+          $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active'];
           $bcc_dest = (!empty($_data['bcc_dest'])) ? $_data['bcc_dest'] : $is_now['bcc_dest'];
           $local_dest = $is_now['local_dest'];
           $type = (!empty($_data['type'])) ? $_data['type'] : $is_now['type'];
@@ -180,8 +180,7 @@ function bcc($_action, $_data = null, $attr = null) {
       $stmt = $pdo->prepare("SELECT `id`,
         `local_dest`,
         `bcc_dest`,
-        `active` AS `active_int`,
-        CASE `active` WHEN 1 THEN '".$lang['mailbox']['yes']."' ELSE '".$lang['mailbox']['no']."' END AS `active`,
+        `active`,
         `type`,
         `created`,
         `domain`,
@@ -315,7 +314,7 @@ function recipient_map($_action, $_data = null, $attr = null) {
       foreach ($ids as $id) {
         $is_now = recipient_map('details', $id);
         if (!empty($is_now)) {
-          $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active_int'];
+          $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active'];
           $new_dest = (!empty($_data['recipient_map_new'])) ? $_data['recipient_map_new'] : $is_now['recipient_map_new'];
           $old_dest = (!empty($_data['recipient_map_old'])) ? $_data['recipient_map_old'] : $is_now['recipient_map_old'];
           if (substr($old_dest, 0, 1) == '@') {
@@ -389,8 +388,7 @@ function recipient_map($_action, $_data = null, $attr = null) {
       $stmt = $pdo->prepare("SELECT `id`,
         `old_dest` AS `recipient_map_old`,
         `new_dest` AS `recipient_map_new`,
-        `active` AS `active_int`,
-        CASE `active` WHEN 1 THEN '".$lang['mailbox']['yes']."' ELSE '".$lang['mailbox']['no']."' END AS `active`,
+        `active`,
         `created`,
         `modified` FROM `recipient_maps`
           WHERE `id` = :id");

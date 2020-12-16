@@ -591,7 +591,6 @@
         "neutral_danger": "Neutral",
         "qhandler_success": "Solicitud enviada con éxito al sistema, puede cerrar la ventana",
         "qid": "Rspamd QID",
-        "qinfo": "El sistema de cuarentena guardará el correo rechazado en la base de datos, mientras que el remitente <em>no</em> tendrá la impresión de un correo entregado.\r\n  <br><b>Aprender como spam y eliminar</b> aprenderá un mensaje como correo no deseado a través del teorema bayesiano y también calculará hashes para rechazar mensajes similares en el futuro.\r\n  Ten en cuenta que aprender varios mensajes puede ser lento, dependiendo de las especificaciones del servidor.",
         "qitem": "Quarantine item",
         "quarantine": "Cuarentena",
         "quick_actions": "Acciones",

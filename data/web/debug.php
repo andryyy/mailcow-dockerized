@@ -131,7 +131,7 @@ $clamd_status = (preg_match("/^([yY][eE][sS]|[yY])+$/", $_ENV["SKIP_CLAMD"])) ? 
               ?>
               <small>(<?=$lang['debug']['started_on'];?> <?=$started;?>),
               <a href data-toggle="modal" data-container="<?=$container;?>" data-target="#RestartContainer"><?=$lang['debug']['restart_container'];?></a></small>
-              <span class="pull-right container-indicator label label-<?=($container_info['State'] !== false && !empty($container_info['State'])) ? (($container_info['State']['Running'] == 1) ? 'success' : 'danger') : 'default'; ?>">&nbsp;</span>
+              <span class="pull-right status-indicator label label-<?=($container_info['State'] !== false && !empty($container_info['State'])) ? (($container_info['State']['Running'] == 1) ? 'success' : 'danger') : 'default'; ?>">&nbsp;</span>
               </li>
               <?php
               }

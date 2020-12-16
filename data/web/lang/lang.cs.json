@@ -748,7 +748,6 @@
         "notified": "Oznámeno",
         "qhandler_success": "Požadavek úspěšně přijat. Můžete nyní zavřít okno.",
         "qid": "Rspamd QID",
-        "qinfo": "Karanténní systém uloží odmítnutou poštu do databáze a odesílatel <em>nebude</em> informován o nedoručené poště.\r\n  <br>\"Naučit jako spam a smazat\" naučí systém, že zpráva je spam, pomocí Bayes teorému a také vypočítá \"fuzzy hashes\" pro odmítnutí podobných zpráv v budoucnu.\r\n  <br>Upozornění: Učení se vícera zpráv najednou může být v závislosti na výkonu systému časově náročné.",
         "qitem": "Položka v karanténě",
         "quarantine": "Karanténa",
         "quick_actions": "Akce",

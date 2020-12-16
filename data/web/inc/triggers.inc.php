@@ -89,6 +89,9 @@ if (isset($_SESSION['mailcow_cc_role']) && ($_SESSION['mailcow_cc_role'] == "adm
 	if (isset($_POST["unset_tfa_key"])) {
 		unset_tfa_key($_POST);
 	}
+	if (isset($_POST["unset_fido2_key"])) {
+		fido2(array("action" => "unset_fido2_key", "post_data" => $_POST));
+	}
 }
 if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == "admin") {
   // TODO: Move file upload to API?

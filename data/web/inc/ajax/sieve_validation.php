@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
 header('Content-Type: application/json');
 if (!isset($_SESSION['mailcow_cc_role'])) {

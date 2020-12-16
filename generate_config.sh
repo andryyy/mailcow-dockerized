@@ -17,13 +17,17 @@ if [[ "$(uname -r)" =~ ^4\.4\. ]]; then
 fi
 
 if grep --help 2>&1 | grep -q -i "busybox"; then
-  echo "BusybBox grep detected, please install gnu grep, \"apk add --no-cache --upgrade grep\""
+  echo "BusyBox grep detected, please install gnu grep, \"apk add --no-cache --upgrade grep\""
   exit 1
 fi
 if cp --help 2>&1 | grep -q -i "busybox"; then
-  echo "BusybBox cp detected, please install coreutils, \"apk add --no-cache --upgrade coreutils\""
+  echo "BusyBox cp detected, please install coreutils, \"apk add --no-cache --upgrade coreutils\""
   exit 1
 fi
+
+for bin in openssl curl docker-compose docker git awk sha1sum; do
+  if [[ -z $(which ${bin}) ]]; then echo "Cannot find ${bin}, exiting..."; exit 1; fi
+done
 
 if [ -f mailcow.conf ]; then
   read -r -p "A config file exists and will be overwritten, are you sure you want to contine? [y/N] " response
@@ -113,6 +117,11 @@ cat << EOF > mailcow.conf
 
 MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
 
+# Password hash algorithm
+# Only certain password hash algorithm are supported. For a fully list of supported schemes,
+# see https://mailcow.github.io/mailcow-dockerized-docs/model-passwd/
+MAILCOW_PASS_SCHEME=BLF-CRYPT
+
 # ------------------------------
 # SQL database configuration
 # ------------------------------
@@ -161,6 +170,8 @@ SOLR_PORT=127.0.0.1:18983
 REDIS_PORT=127.0.0.1:7654
 
 # Your timezone
+# See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a list of timezones
+# Use the row named 'TZ database name' + pay attention for 'Notes' row
 
 TZ=${MAILCOW_TZ}
 
@@ -180,7 +191,7 @@ ACL_ANYONE=disallow
 # How long should objects remain in the garbage until they are being deleted? (value in minutes)
 # Check interval is hourly
 
-MAILDIR_GC_TIME=1440
+MAILDIR_GC_TIME=7200
 
 # Additional SAN for the certificate
 #
@@ -236,15 +247,15 @@ SKIP_SOLR=${SKIP_SOLR}
 
 SOLR_HEAP=1024
 
-# Enable watchdog (watchdog-mailcow) to restart unhealthy containers
-
-USE_WATCHDOG=y
-
 # Allow admins to log into SOGo as email user (without any password)
 
 ALLOW_ADMIN_EMAIL_LOGIN=n
 
-# Send notifications by mail (sent from watchdog@MAILCOW_HOSTNAME)
+# Enable watchdog (watchdog-mailcow) to restart unhealthy containers
+
+USE_WATCHDOG=y
+
+# Send watchdog notifications by mail (sent from watchdog@MAILCOW_HOSTNAME)
 # CAUTION:
 # 1. You should use external recipients
 # 2. Mails are sent unsigned (no DKIM)
@@ -255,7 +266,7 @@ ALLOW_ADMIN_EMAIL_LOGIN=n
 #WATCHDOG_NOTIFY_EMAIL=
 
 # Notify about banned IP (includes whois lookup)
-WATCHDOG_NOTIFY_BAN=y
+WATCHDOG_NOTIFY_BAN=n
 
 # Checks if mailcow is an open relay. Requires a SAL. More checks will follow.
 # https://www.servercow.de/mailcow?lang=en
@@ -303,6 +314,14 @@ MAILDIR_SUB=Maildir
 # SOGo session timeout in minutes
 SOGO_EXPIRE_SESSION=480
 
+# DOVECOT_MASTER_USER and DOVECOT_MASTER_PASS must both be provided. No special chars.
+# Empty by default to auto-generate master user and password on start.
+# User expands to DOVECOT_MASTER_USER@mailcow.local
+# LEAVE EMPTY IF UNSURE
+DOVECOT_MASTER_USER=
+# LEAVE EMPTY IF UNSURE
+DOVECOT_MASTER_PASS=
+
 EOF
 
 mkdir -p data/assets/ssl
@@ -310,4 +329,8 @@ mkdir -p data/assets/ssl
 chmod 600 mailcow.conf
 
 # copy but don't overwrite existing certificate
+echo "Generating snake-oil certificate..."
+# Making Willich more popular
+openssl req -x509 -newkey rsa:4096 -keyout data/assets/ssl-example/key.pem -out data/assets/ssl-example/cert.pem -days 365 -subj "/C=DE/ST=NRW/L=Willich/O=mailcow/OU=mailcow/CN=${MAILCOW_HOSTNAME}" -sha256 -nodes
+echo "Copying snake-oil certificate..."
 cp -n -d data/assets/ssl-example/*.pem data/assets/ssl/

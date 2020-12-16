@@ -57,7 +57,8 @@ table tbody tr {
 table tbody tr td input[type="checkbox"] {
   cursor: pointer;
 }
-.label-last {
-  color: #c7254e !important;
-  background-color: #f9f2f4 !important;
+.label-last-login {
+  line-height: 2.5;
+  color: #4a4a4a!important;
+  background-color: #ececec!important;
 }

@@ -1,0 +1,9 @@
+<?xml version='1.0' standalone='yes'?>
+
+<extension name="duplicate">
+
+	<test name="duplicate">
+
+	</test>
+
+</extension>

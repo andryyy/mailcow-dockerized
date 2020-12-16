@@ -125,6 +125,18 @@ $(document).ready(function() {
       }
     });
   });
+  // Add Mailbox Modal
+  var addMailboxModalShown = false;
+  $('#addMailboxModal').on('show.bs.modal', function(e) {
+    if (addMailboxModalShown) {
+      return;
+    }
+    addMailboxModalShown = true;
+    var $domainSelect = $("#mailbox_table select");
+    if ($domainSelect[0].selectedIndex > 0) { // not "All Domains"
+      $("#addSelectDomain").val($domainSelect.val()).change().selectpicker("render");
+    }
+  });
   // Log modal
   $('#dnsInfoModal').on('show.bs.modal', function(e) {
     var domain = $(e.relatedTarget).data('domain');
@@ -204,7 +216,7 @@ jQuery(function($){
   function escapeHtml(n){return String(n).replace(/[&<>"'`=\/]/g,function(n){return entityMap[n]})}
   // http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
   function humanFileSize(i){if(Math.abs(i)<1024)return i+" B";var B=["KiB","MiB","GiB","TiB","PiB","EiB","ZiB","YiB"],e=-1;do{i/=1024,++e}while(Math.abs(i)>=1024&&e<B.length-1);return i.toFixed(1)+" "+B[e]}
-  function unix_time_format(i){return""==i?lang.no:new Date(i?1e3*i:0).toLocaleDateString(void 0,{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"})}
+  function unix_time_format(i){return""==i?'&#10005;':new Date(i?1e3*i:0).toLocaleDateString(void 0,{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"})}
   $(".refresh_table").on('click', function(e) {
     e.preventDefault();
     var table_name = $(this).data('table');
@@ -254,9 +266,9 @@ jQuery(function($){
         {"name":"def_quota_for_mbox","title":lang.mailbox_defquota,"breakpoints":"xs sm md","style":{"width":"125px"}},
         {"name":"max_quota_for_mbox","title":lang.mailbox_quota,"breakpoints":"xs sm","style":{"width":"125px"}},
         {"name":"rl","title":"RL","breakpoints":"xs sm md lg","style":{"maxWidth":"100px","width":"100px"}},
-        {"name":"backupmx","filterable": false,"style":{"maxWidth":"120px","width":"120px"},"title":lang.backup_mx,"breakpoints":"xs sm md lg"},
+        {"name":"backupmx","filterable": false,"style":{"maxWidth":"120px","width":"120px"},"title":lang.backup_mx,"breakpoints":"xs sm md lg","formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"domain_admins","title":lang.domain_admins,"style":{"word-break":"break-all","min-width":"200px"},"breakpoints":"xs sm md lg","filterable":(role == "admin"),"visible":(role == "admin")},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"240px","width":"240px"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
       ],
       "rows": $.ajax({
@@ -291,10 +303,10 @@ jQuery(function($){
               item.action += '<a href="/edit/domain/' + encodeURIComponent(item.domain_name) + '" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span> ' + lang.edit + '</a>';
             }
             item.action += '<a href="#dnsInfoModal" class="btn btn-xs btn-info" data-toggle="modal" data-domain="' + encodeURIComponent(item.domain_name) + '"><span class="glyphicon glyphicon-question-sign"></span> DNS</a></div>';
-            if (item.backupmx_int == 1) {
-              if (item.relay_unknown_only_int == 1) {
+            if (item.backupmx == 1) {
+              if (item.relay_unknown_only == 1) {
                 item.domain_name = '<div class="label label-info">Relay Non-Local</div> ' + item.domain_name;
-              } else if (item.relay_all_recipients_int == 1) {
+              } else if (item.relay_all_recipients == 1) {
                 item.domain_name = '<div class="label label-info">Relay All</div> ' + item.domain_name;
               } else {
                 item.domain_name = '<div class="label label-info">Relay</div> ' + item.domain_name;
@@ -356,6 +368,9 @@ jQuery(function($){
         {"name":"spam_aliases","filterable": false,"title":lang.spam_aliases,"breakpoints":"all"},
         {"name":"tls_enforce_in","filterable": false,"title":lang.tls_enforce_in,"breakpoints":"all"},
         {"name":"tls_enforce_out","filterable": false,"title":lang.tls_enforce_out,"breakpoints":"all"},
+        {"name":"smtp_access","filterable": false,"title":"SMTP","breakpoints":"all"},
+        {"name":"imap_access","filterable": false,"title":"IMAP","breakpoints":"all"},
+        {"name":"pop3_access","filterable": false,"title":"POP3","breakpoints":"all"},
         {"name":"last_mail_login","breakpoints":"xs sm","title":lang.last_mail_login,"style":{"width":"170px"},
         "sortValue": function(value){
           res = value.split("/");
@@ -363,17 +378,19 @@ jQuery(function($){
         },
         "formatter": function(value){
           res = value.split("/");
-          return '<div class="label label-last">IMAP @ ' + unix_time_format(Number(res[0])) + '</div> ' +
-            '<div class="label label-last">POP3 @ ' + unix_time_format(Number(res[1])) + '</div>';
+          return '<div class="label label-last-login">IMAP @ ' + unix_time_format(Number(res[0])) + '</div><br>' +
+            '<div class="label label-last-login">POP3 @ ' + unix_time_format(Number(res[1])) + '</div><br>' + 
+            '<div class="label label-last-login">SMTP @ ' + unix_time_format(Number(res[2])) + '</div>';
         }},
         {"name":"quarantine_notification","filterable": false,"title":lang.quarantine_notification,"breakpoints":"all"},
+        {"name":"quarantine_category","filterable": false,"title":lang.quarantine_category,"breakpoints":"all"},
         {"name":"in_use","filterable": false,"type":"html","title":lang.in_use,"sortValue": function(value){
           return Number($(value).find(".progress-bar-mailbox").attr('aria-valuenow'));
         },
         },
         {"name":"messages","filterable": false,"title":lang.msg_num,"breakpoints":"xs sm md"},
         {"name":"rl","title":"RL","breakpoints":"all","style":{"width":"125px"}},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':(0==value?'&#10005;':2==value&&'&#8212;');}},
         {"name":"action","filterable": false,"sortable": false,"style":{"min-width":"290px","text-align":"right"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
       ],
       "empty": lang.empty,
@@ -388,7 +405,7 @@ jQuery(function($){
           $.each(data, function (i, item) {
             item.quota = item.quota_used + "/" + item.quota;
             item.max_quota_for_mbox = humanFileSize(item.max_quota_for_mbox);
-            item.last_mail_login = item.last_imap_login + '/' + item.last_pop3_login;
+            item.last_mail_login = item.last_imap_login + '/' + item.last_pop3_login + '/' + item.last_smtp_login;
             if (!item.rl) {
               item.rl = '∞';
             } else {
@@ -402,6 +419,9 @@ jQuery(function($){
             item.chkbox = '<input type="checkbox" data-id="mailbox" name="multi_select" value="' + encodeURIComponent(item.username) + '" />';
             item.tls_enforce_in = '<span class="text-' + (item.attributes.tls_enforce_in == 1 ? 'success' : 'danger') + ' glyphicon glyphicon-lock"></span>';
             item.tls_enforce_out = '<span class="text-' + (item.attributes.tls_enforce_out == 1 ? 'success' : 'danger') + ' glyphicon glyphicon-lock"></span>';
+            item.pop3_access = '<span class="text-' + (item.attributes.pop3_access == 1 ? 'success' : 'danger') + ' glyphicon glyphicon-' + (item.attributes.pop3_access == 1 ? 'ok' : 'remove') + '"></span>';
+            item.imap_access = '<span class="text-' + (item.attributes.imap_access == 1 ? 'success' : 'danger') + ' glyphicon glyphicon-' + (item.attributes.imap_access == 1 ? 'ok' : 'remove') + '"></span>';
+            item.smtp_access = '<span class="text-' + (item.attributes.smtp_access == 1 ? 'success' : 'danger') + ' glyphicon glyphicon-' + (item.attributes.smtp_access == 1 ? 'ok' : 'remove') + '"></span>';
             if (item.attributes.quarantine_notification === 'never') {
               item.quarantine_notification = lang.never;
             } else if (item.attributes.quarantine_notification === 'hourly') {
@@ -410,6 +430,13 @@ jQuery(function($){
               item.quarantine_notification = lang.daily;
             } else if (item.attributes.quarantine_notification === 'weekly') {
               item.quarantine_notification = lang.weekly;
+            }
+            if (item.attributes.quarantine_category === 'reject') {
+              item.quarantine_category = '<span class="text-danger">' + lang.q_reject + '</span>';
+            } else if (item.attributes.quarantine_category === 'add_header') {
+              item.quarantine_category = '<span class="text-warning">' + lang.q_add_header + '</span>';
+            } else if (item.attributes.quarantine_category === 'all') {
+              item.quarantine_category = lang.q_all;
             }
             if (acl_data.login_as === 1) {
             item.action = '<div class="btn-group">' +
@@ -479,7 +506,7 @@ jQuery(function($){
         {"name":"kind","title":lang.kind},
         {"name":"domain","title":lang.domain,"breakpoints":"xs sm"},
         {"name":"multiple_bookings","filterable": false,"style":{"maxWidth":"150px","width":"140px"},"title":lang.multiple_bookings,"breakpoints":"xs sm"},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
       "empty": lang.empty,
@@ -552,7 +579,7 @@ jQuery(function($){
         {"name":"local_dest","title":lang.bcc_local_dest},
         {"name":"bcc_dest","title":lang.bcc_destinations},
         {"name":"domain","title":lang.domain,"breakpoints":"xs sm"},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
       "empty": lang.empty,
@@ -619,7 +646,7 @@ jQuery(function($){
         {"sorted": true,"name":"id","title":"ID","style":{"maxWidth":"60px","width":"60px","text-align":"center"}},
         {"name":"recipient_map_old","title":lang.recipient_map_old},
         {"name":"recipient_map_new","title":lang.recipient_map_new},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":(role == "admin" ? lang.action : ""),"breakpoints":"xs sm"}
       ],
       "empty": lang.empty,
@@ -684,7 +711,7 @@ jQuery(function($){
         {"name":"dest","title":lang.tls_map_dest},
         {"name":"policy","title":lang.tls_map_policy},
         {"name":"parameters","title":lang.tls_map_parameters},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":(role == "admin" ? lang.action : ""),"breakpoints":"xs sm"}
       ],
       "empty": lang.empty,
@@ -757,7 +784,7 @@ jQuery(function($){
         {"name":"public_comment","title":lang.public_comment,"breakpoints":"all"},
         {"name":"private_comment","title":lang.private_comment,"breakpoints":"all"},
         {"name":"sogo_visible","title":lang.sogo_visible,"breakpoints":"all"},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
       "empty": lang.empty,
@@ -851,7 +878,7 @@ jQuery(function($){
         {"name":"chkbox","title":"","style":{"maxWidth":"60px","width":"60px"},"filterable": false,"sortable": false,"type":"html"},
         {"sorted": true,"name":"alias_domain","title":lang.alias,"style":{"width":"250px"}},
         {"name":"target_domain","title":lang.target_domain,"type":"html"},
-        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"250px","width":"250px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
       "empty": lang.empty,
@@ -922,7 +949,7 @@ jQuery(function($){
         {"name":"mins_interval","title":lang.mins_interval,"breakpoints":"all"},
         {"name":"last_run","title":lang.last_run,"breakpoints":"xs sm md"},
         {"name":"log","title":"Log"},
-        {"name":"active","filterable": false,"style":{"maxWidth":"70px","width":"70px"},"title":lang.active},
+        {"name":"active","filterable": false,"style":{"maxWidth":"70px","width":"70px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"is_running","filterable": false,"style":{"maxWidth":"120px","width":"100px"},"title":lang.status},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"180px","width":"180px"},"type":"html","title":lang.action,"breakpoints":"xs sm"}
       ],
@@ -1015,7 +1042,7 @@ jQuery(function($){
         },
         success: function (data) {
           $.each(data, function (i, item) {
-            if (item.active_int == 1) {
+            if (item.active == 1) {
               item.active = '<span id="active-script" class="label label-success">' + lang.active + '</span>';
             } else {
               item.active = '<span id="inactive-script" class="label label-warning">' + lang.inactive + '</span>';

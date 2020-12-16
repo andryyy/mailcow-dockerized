@@ -15,9 +15,11 @@ if(!file_exists($JSPath)) {
 $lang_footer = json_encode($lang['footer']);
 $lang_acl = json_encode($lang['acl']);
 $lang_tfa = json_encode($lang['tfa']);
+$lang_fido2 = json_encode($lang['fido2']);
 echo "var lang_footer = ". $lang_footer . ";\n";
 echo "var lang_acl = ". $lang_acl . ";\n";
 echo "var lang_tfa = ". $lang_tfa . ";\n";
+echo "var lang_fido2 = ". $lang_fido2 . ";\n";
 echo "var docker_timeout = ". $DOCKER_TIMEOUT * 1000 . ";\n";
 ?>
 $(window).scroll(function() {
@@ -27,6 +29,39 @@ $(window).scroll(function() {
 function setLang(sel) {
   $.post( "<?= $_SERVER['REQUEST_URI']; ?>", {lang: sel} );
   window.location.href = window.location.pathname + window.location.search;
+}
+// FIDO2 functions
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  let bytes = new Uint8Array(buffer);
+  let len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode( bytes[ i ] );
+  }
+  return window.btoa(binary);
+}
+function recursiveBase64StrToArrayBuffer(obj) {
+  let prefix = '=?BINARY?B?';
+  let suffix = '?=';
+  if (typeof obj === 'object') {
+    for (let key in obj) {
+      if (typeof obj[key] === 'string') {
+        let str = obj[key];
+        if (str.substring(0, prefix.length) === prefix && str.substring(str.length - suffix.length) === suffix) {
+          str = str.substring(prefix.length, str.length - suffix.length);
+          let binary_string = window.atob(str);
+          let len = binary_string.length;
+          let bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            bytes[i] = binary_string.charCodeAt(i);
+          }
+          obj[key] = bytes.buffer;
+        }
+      } else {
+        recursiveBase64StrToArrayBuffer(obj[key]);
+      }
+    }
+  }
 }
 $(window).load(function() {
   $(".overlay").hide();
@@ -97,8 +132,85 @@ $(document).ready(function() {
       });
   });
   <?php endif; ?>
-
-  // Set TFA modals
+  // Validate FIDO2
+  $("#fido2-login").click(function(){
+    $('#fido2-alerts').html();
+    if (!window.fetch || !navigator.credentials || !navigator.credentials.create) {
+      window.alert('Browser not supported.');
+      return;
+    }
+    window.fetch("/api/v1/get/fido2-get-args", {method:'GET',cache:'no-cache'}).then(function(response) {
+      return response.json();
+    }).then(function(json) {
+    if (json.success === false) {
+      throw new Error();
+    }
+    recursiveBase64StrToArrayBuffer(json);
+    return json;
+    }).then(function(getCredentialArgs) {
+      return navigator.credentials.get(getCredentialArgs);
+    }).then(function(cred) {
+      return {
+        id: cred.rawId ? arrayBufferToBase64(cred.rawId) : null,
+        clientDataJSON: cred.response.clientDataJSON  ? arrayBufferToBase64(cred.response.clientDataJSON) : null,
+        authenticatorData: cred.response.authenticatorData ? arrayBufferToBase64(cred.response.authenticatorData) : null,
+        signature : cred.response.signature ? arrayBufferToBase64(cred.response.signature) : null
+      };
+    }).then(JSON.stringify).then(function(AuthenticatorAttestationResponse) {
+      return window.fetch("/api/v1/process/fido2-args", {method:'POST', body: AuthenticatorAttestationResponse, cache:'no-cache'});
+    }).then(function(response) {
+      return response.json();
+    }).then(function(json) {
+      if (json.success) {
+        window.location = window.location.href.split("#")[0];
+      } else {
+        throw new Error();
+      }
+    }).catch(function(err) {
+      if (typeof err.message === 'undefined') {
+        mailcow_alert_box(lang_fido2.fido2_validation_failed, "danger");
+      } else {
+        mailcow_alert_box(lang_fido2.fido2_validation_failed + ":<br><i>" + err.message + "</i>", "danger");
+      }
+    });
+  });
+  // Set TFA/FIDO2
+  $("#register-fido2").click(function(){
+    $("option:selected").prop("selected", false);
+    if (!window.fetch || !navigator.credentials || !navigator.credentials.create) {
+        window.alert('Browser not supported.');
+        return;
+    }
+    window.fetch("/api/v1/get/fido2-registration/<?= (isset($_SESSION['mailcow_cc_username'])) ? rawurlencode($_SESSION['mailcow_cc_username']) : null; ?>", {method:'GET',cache:'no-cache'}).then(function(response) {
+      return response.json();
+    }).then(function(json) {
+      if (json.success === false) {
+        throw new Error(json.msg);
+      }
+      recursiveBase64StrToArrayBuffer(json);
+      return json;
+    }).then(function(createCredentialArgs) {
+      console.log(createCredentialArgs);
+      return navigator.credentials.create(createCredentialArgs);
+    }).then(function(cred) {
+      return {
+        clientDataJSON: cred.response.clientDataJSON  ? arrayBufferToBase64(cred.response.clientDataJSON) : null,
+        attestationObject: cred.response.attestationObject ? arrayBufferToBase64(cred.response.attestationObject) : null
+      };
+    }).then(JSON.stringify).then(function(AuthenticatorAttestationResponse) {
+      return window.fetch("/api/v1/add/fido2-registration", {method:'POST', body: AuthenticatorAttestationResponse, cache:'no-cache'});
+    }).then(function(response) {
+      return response.json();
+    }).then(function(json) {
+      if (json.success) {
+        window.location = window.location.href.split("#")[0];
+      } else {
+        throw new Error(json.msg);
+      }
+    }).catch(function(err) {
+      $('#fido2-alerts').html('<span class="text-danger"><b>' + err.message + '</b></span>');
+    });
+  });
   $('#selectTFA').change(function () {
     if ($(this).val() == "yubi_otp") {
       $('#YubiOTPModal').modal('show');

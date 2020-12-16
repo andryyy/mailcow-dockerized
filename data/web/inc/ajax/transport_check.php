@@ -80,7 +80,7 @@ if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == "admi
     $password = $transport_details['password'];
 
     $mail = new PHPMailer;
-    $mail->Timeout = 10;
+    $mail->Timeout = 15;
     $mail->SMTPOptions = array(
       'ssl' => array(
         'verify_peer' => false,

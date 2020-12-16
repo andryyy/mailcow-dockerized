@@ -171,6 +171,7 @@ function fail2ban($_action, $_data = null) {
             }
             // Whitelist network
             elseif ($_data['action'] == "whitelist") {
+              if (empty($network)) { continue; }
               if (valid_network($network)) {
                 try {
                   $redis->hSet('F2B_WHITELIST', $network, 1);
@@ -197,6 +198,7 @@ function fail2ban($_action, $_data = null) {
             }
             // Blacklist network
             elseif ($_data['action'] == "blacklist") {
+              if (empty($network)) { continue; }
               if (valid_network($network) && !in_array($network, array(
                 '0.0.0.0',
                 '0.0.0.0/0',
@@ -240,7 +242,7 @@ function fail2ban($_action, $_data = null) {
       $is_now = fail2ban('get');
       if (!empty($is_now)) {
         $ban_time = intval((isset($_data['ban_time'])) ? $_data['ban_time'] : $is_now['ban_time']);
-        $max_attempts = intval((isset($_data['max_attempts'])) ? $_data['max_attempts'] : $is_now['active_int']);
+        $max_attempts = intval((isset($_data['max_attempts'])) ? $_data['max_attempts'] : $is_now['max_attempts']);
         $retry_window = intval((isset($_data['retry_window'])) ? $_data['retry_window'] : $is_now['retry_window']);
         $netban_ipv4 = intval((isset($_data['netban_ipv4'])) ? $_data['netban_ipv4'] : $is_now['netban_ipv4']);
         $netban_ipv6 = intval((isset($_data['netban_ipv6'])) ? $_data['netban_ipv6'] : $is_now['netban_ipv6']);

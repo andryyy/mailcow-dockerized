@@ -77,3 +77,12 @@ table tbody tr td input[type="checkbox"] {
   font-family: Consolas,monaco,monospace;
   font-size: 14px;
 }
+.label-keys {
+  font-size:100%;
+  margin: 0px !important;
+  white-space: normal !important;
+}
+.key-action {
+  font-weight:bold;
+  color:white !important;
+}

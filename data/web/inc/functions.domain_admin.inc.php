@@ -153,7 +153,7 @@ function domain_admin($_action, $_data = null) {
           $is_now = domain_admin('details', $username);
           $domains = (isset($_data['domains'])) ? (array)$_data['domains'] : null;
           if (!empty($is_now)) {
-            $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active_int'];
+            $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active'];
             $domains = (!empty($domains)) ? $domains : $is_now['selected_domains'];
             $username_new = (!empty($_data['username_new'])) ? $_data['username_new'] : $is_now['username'];
           }
@@ -358,6 +358,14 @@ function domain_admin($_action, $_data = null) {
         $stmt->execute(array(
           ':username' => $username,
         ));
+        $stmt = $pdo->prepare("DELETE FROM `tfa` WHERE `username` = :username");
+        $stmt->execute(array(
+          ':username' => $username,
+        ));
+        $stmt = $pdo->prepare("DELETE FROM `fido2` WHERE `username` = :username");
+        $stmt->execute(array(
+          ':username' => $username,
+        ));
         $_SESSION['return'][] = array(
           'type' => 'success',
           'log' => array(__FUNCTION__, $_action, $_data_log),
@@ -400,12 +408,10 @@ function domain_admin($_action, $_data = null) {
         return false;
       }
       $stmt = $pdo->prepare("SELECT
-        `tfa`.`active` AS `tfa_active_int`,
-        CASE `tfa`.`active` WHEN 1 THEN '".$lang['mailbox']['yes']."' ELSE '".$lang['mailbox']['no']."' END AS `tfa_active`,
+        `tfa`.`active` AS `tfa_active`,
         `domain_admins`.`username`,
         `domain_admins`.`created`,
-        `domain_admins`.`active` AS `active_int`,
-        CASE `domain_admins`.`active` WHEN 1 THEN '".$lang['mailbox']['yes']."' ELSE '".$lang['mailbox']['no']."' END AS `active`
+        `domain_admins`.`active` AS `active`
           FROM `domain_admins`
           LEFT OUTER JOIN `tfa` ON `tfa`.`username`=`domain_admins`.`username`
             WHERE `domain_admins`.`username`= :domain_admin");
@@ -417,10 +423,10 @@ function domain_admin($_action, $_data = null) {
         return false;
       }
       $domainadmindata['username'] = $row['username'];
-      $domainadmindata['tfa_active'] = $row['tfa_active'];
+      $domainadmindata['tfa_active'] = (is_null($row['tfa_active'])) ? 0 : $row['tfa_active'];
+      $domainadmindata['tfa_active_int'] = (is_null($row['tfa_active'])) ? 0 : $row['tfa_active'];
       $domainadmindata['active'] = $row['active'];
-      $domainadmindata['tfa_active_int'] = $row['tfa_active_int'];
-      $domainadmindata['active_int'] = $row['active_int'];
+      $domainadmindata['active_int'] = $row['active'];
       $domainadmindata['created'] = $row['created'];
       // GET SELECTED
       $stmt = $pdo->prepare("SELECT `domain` FROM `domain`

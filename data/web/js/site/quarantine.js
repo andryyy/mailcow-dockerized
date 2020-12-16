@@ -52,11 +52,12 @@ jQuery(function($){
         {"name":"qid","breakpoints":"all","type":"text","title":lang.qid,"style":{"width":"125px"}},
         {"name":"sender","title":lang.sender},
         {"name":"subject","title":lang.subj, "type": "text"},
+        {"name":"rspamdaction","title":lang.rspamd_result, "type": "html"},
         {"name":"rcpt","title":lang.rcpt, "breakpoints":"xs sm md", "type": "text"},
         {"name":"virus","title":lang.danger, "type": "text"},
         {"name":"score","title": lang.spam_score, "type": "text"},
         {"name":"notified","title":lang.notified, "type": "text"},
-        {"name":"created","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.received,"style":{"width":"170px"}},
+        {"name":"created","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.received,"style":{"width":"170px"}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right"},"style":{"min-width":"200px"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
       ],
       "rows": $.ajax({
@@ -77,9 +78,16 @@ jQuery(function($){
               item.score = '-';
             }
             if (item.virus_flag > 0) {
-              item.virus = '<span class="dot-danger"></span>';
+              item.virus = '<span class="label label-danger">' + lang.high_danger + '</span>';
             } else {
-              item.virus = '<span class="dot-neutral"></span>';
+              item.virus = '<span class="label label-default">' + lang.neutral_danger + '</span>';
+            }
+            if (item.action === "reject") {
+              item.rspamdaction = '<span class="label label-danger">' + lang.rejected + '</span>';
+            } else if (item.action === "add header") {
+              item.rspamdaction = '<span class="label label-warning">' + lang.junk_folder + '</span>';
+            } else if (item.action === "rewrite subject") {
+              item.rspamdaction = '<span class="label label-warning">' + lang.rewrite_subject + '</span>';
             }
             if(item.notified > 0) {
               item.notified = '&#10004;';
@@ -103,6 +111,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": pagination_size},
+      "state": {"enabled": true},
       "sorting": {"enabled": true},
       "filtering": {"enabled": true,"position": "left","connectors": false,"placeholder": lang.filter_table},
       "toggleSelector": "table tbody span.footable-toggle",
@@ -122,7 +131,7 @@ jQuery(function($){
 
   $('body').on('click', '.show_qid_info', function (e) {
     e.preventDefault();
-    var qitem = $(this).data('item');
+    var qitem = $(this).attr('data-item');
     var qError = $("#qid_error");
 
     $('#qidDetailModal').modal('show');
@@ -133,21 +142,22 @@ jQuery(function($){
       data: { id: qitem },
       dataType: 'json',
       success: function(data){
-        if (typeof data.error !== 'undefined') {
-          qError.text(data.error);
-          qError.show();
-        }
+
         $('[data-id="qitems_single"]').each(function(index) {
           $(this).attr("data-item", qitem);
         });
 
+        $("#quick_download_link").attr("onclick", "window.open('/inc/ajax/qitem_details.php?id=" + qitem + "&eml', '_blank')");
+        $("#quick_release_link").attr("onclick", "window.open('/inc/ajax/qitem_details.php?id=" + qitem + "&quick_release', '_blank')");
+        $("#quick_delete_link").attr("onclick", "window.open('/inc/ajax/qitem_details.php?id=" + qitem + "&quick_delete', '_blank')");
+
         $('#qid_detail_subj').text(data.subject);
-        $('#qid_detail_text').text(data.text_plain);
-        $('#qid_detail_text_from_html').text(data.text_html);
         $('#qid_detail_hfrom').text(data.header_from);
         $('#qid_detail_efrom').text(data.env_from);
-        $('#qid_detail_score').text(data.score);
+        $('#qid_detail_score').html('');
+        $('#qid_detail_recipients').html('');
         $('#qid_detail_symbols').html('');
+        $('#qid_detail_fuzzy').html('');
         if (typeof data.symbols !== 'undefined') {
           data.symbols.sort(function (a, b) {
             if (a.score === 0) return 1
@@ -169,8 +179,22 @@ jQuery(function($){
           });
           $('[data-toggle="tooltip"]').tooltip()
         }
-
-        $('#qid_detail_recipients').html('');
+        if (typeof data.fuzzy_hashes === 'object' && data.fuzzy_hashes !== null && data.fuzzy_hashes.length !== 0) {
+          $.each(data.fuzzy_hashes, function (index, value) {
+            $('#qid_detail_fuzzy').append('<p style="font-family:monospace">' + value + '</p>');
+          });
+        } else {
+          $('#qid_detail_fuzzy').append('-');
+        }
+        if (typeof data.score !== 'undefined' && typeof data.action !== 'undefined') {
+          if (data.action == "add header") {
+            $('#qid_detail_score').append('<span class="label-rspamd-action label label-warning"><b>' + data.score + '</b> - ' + lang.junk_folder + '</span>');
+          } else if (data.action == "reject") {
+            $('#qid_detail_score').append('<span class="label-rspamd-action label label-danger"><b>' + data.score + '</b> - ' + lang.rejected + '</span>');
+          } else if (data.action == "rewrite subject") {
+            $('#qid_detail_score').append('<span class="label-rspamd-action label label-warning"><b>' + data.score + '</b> - ' + lang.rewrite_subject + '</span>');
+          }
+        }
         if (typeof data.recipients !== 'undefined') {
           $.each(data.recipients, function(index, value) {
             var elem = $('<span class="mail-address-item"></span>');
@@ -178,7 +202,8 @@ jQuery(function($){
             $('#qid_detail_recipients').append(elem);
           });
         }
-
+        $('#qid_detail_text').text(data.text_plain);
+        $('#qid_detail_text_from_html').text(data.text_html);
         var qAtts = $("#qid_detail_atts");
         if (typeof data.attachments !== 'undefined') {
           qAtts.text('');
@@ -191,6 +216,21 @@ jQuery(function($){
         }
         else {
           qAtts.text('-');
+        }
+      },
+      error: function(data){
+        if (typeof data.error !== 'undefined') {
+          $('#qid_detail_subj').text('-');
+          $('#qid_detail_hfrom').text('-');
+          $('#qid_detail_efrom').text('-');
+          $('#qid_detail_score').html('-');
+          $('#qid_detail_recipients').html('-');
+          $('#qid_detail_symbols').html('-');
+          $('#qid_detail_fuzzy').html('-');
+          $('#qid_detail_text').text('-');
+          $('#qid_detail_text_from_html').text('-');
+          qError.text("Error loading quarantine item");
+          qError.show();
         }
       }
     });

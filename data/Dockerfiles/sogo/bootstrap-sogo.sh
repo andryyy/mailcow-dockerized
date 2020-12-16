@@ -35,7 +35,7 @@ SELECT
    mailbox.username,
    mailbox.domain,
    mailbox.username,
-   if(json_extract(attributes, '$.force_pw_update') LIKE '%0%', if(json_extract(attributes, '$.sogo_access') LIKE '%1%', password, '{SSHA256}A123A123A321A321A321B321B321B123B123B321B432F123E321123123321321'), '{SSHA256}A123A123A321A321A321B321B321B123B123B321B432F123E321123123321321'),
+   IF(JSON_UNQUOTE(JSON_VALUE(attributes, '$.force_pw_update')) = '0', IF(JSON_UNQUOTE(JSON_VALUE(attributes, '$.sogo_access')) = 1, password, '{SSHA256}A123A123A321A321A321B321B321B123B123B321B432F123E321123123321321'), '{SSHA256}A123A123A321A321A321B321B321B123B123B321B432F123E321123123321321'),
    mailbox.name,
    mailbox.username,
    IFNULL(GROUP_CONCAT(ga.aliases ORDER BY ga.aliases SEPARATOR ' '), ''),
@@ -84,6 +84,7 @@ if [[ "${MASTER}" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     if [[ ! -z $(mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -B -e "SELECT 'OK' FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '_sogo_static_view'") ]]; then
       STATIC_VIEW_OK=OK
       echo "Updating _sogo_static_view content..."
+      # If changed, also update init_db.inc.php
       mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -B -e "REPLACE INTO _sogo_static_view (c_uid, domain, c_name, c_password, c_cn, mail, aliases, ad_aliases, ext_acl, kind, multiple_bookings) SELECT c_uid, domain, c_name, c_password, c_cn, mail, aliases, ad_aliases, ext_acl, kind, multiple_bookings from sogo_view;"
       mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -B -e "DELETE FROM _sogo_static_view WHERE c_uid NOT IN (SELECT username FROM mailbox WHERE active = '1')"
     else
@@ -145,7 +146,7 @@ cat <<EOF > /var/lib/sogo/GNUstep/Defaults/sogod.plist
     <key>OCSAclURL</key>
     <string>mysql://${DBUSER}:${DBPASS}@%2Fvar%2Frun%2Fmysqld%2Fmysqld.sock/${DBNAME}/sogo_acl</string>
     <key>SOGoIMAPServer</key>
-    <string>imap://${IPV4_NETWORK}.250:143/?TLS=NO</string>
+    <string>imap://${IPV4_NETWORK}.250:143/?TLS=YES&amp;tlsVerifyMode=none</string>
     <key>SOGoTrustProxyAuthentication</key>
     <string>${TRUST_PROXY}</string>
     <key>SOGoEncryptionKey</key>
@@ -203,7 +204,7 @@ while read -r line gal
                     <key>type</key>
                     <string>sql</string>
                     <key>userPasswordAlgorithm</key>
-                    <string>ssha256</string>
+                    <string>${MAILCOW_PASS_SCHEME}</string>
                     <key>prependPasswordScheme</key>
                     <string>YES</string>
                     <key>viewURL</key>

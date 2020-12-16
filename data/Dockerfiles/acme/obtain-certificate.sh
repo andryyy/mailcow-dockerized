@@ -89,6 +89,12 @@ openssl req -new -sha256 -key ${KEY} -subj "/" -reqexts SAN -config <(cat /etc/s
 # - redirect acme-tiny stderr to stdout (logs to variable ACME_RESPONSE)
 # - tee stderr to get live output and log to dockerd
 
+log_f "Checking resolver..."
+until dig letsencrypt.org +time=3 +tries=1 @unbound > /dev/null; do
+  sleep 2
+done
+log_f "Resolver OK"
+
 ACME_RESPONSE=$(acme-tiny ${DIRECTORY_URL} \
   --account-key ${ACME_BASE}/acme/account.pem \
   --disable-check \

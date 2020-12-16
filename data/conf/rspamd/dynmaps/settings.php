@@ -394,13 +394,8 @@ while ($row = array_shift($rows)) {
 */
 
 ?>
-  traps {
+  ham_trap {
 <?php
-  foreach (ucl_rcpts('spam@localhost', 'mailbox') as $rcpt) {
-?>
-    rcpt = <?=json_encode($rcpt, JSON_UNESCAPED_SLASHES);?>;
-<?php
-  }
   foreach (ucl_rcpts('ham@localhost', 'mailbox') as $rcpt) {
 ?>
     rcpt = <?=json_encode($rcpt, JSON_UNESCAPED_SLASHES);?>;
@@ -408,7 +403,29 @@ while ($row = array_shift($rows)) {
   }
 ?>
     priority = 9;
-    want_spam = yes;
+    apply "default" {
+      symbols_enabled = ["HISTORY_SAVE"];
+    }
+    symbols [
+      "HAM_TRAP"
+    ]
+  }
+
+  spam_trap {
+<?php
+  foreach (ucl_rcpts('spam@localhost', 'mailbox') as $rcpt) {
+?>
+    rcpt = <?=json_encode($rcpt, JSON_UNESCAPED_SLASHES);?>;
+<?php
+  }
+?>
+    priority = 9;
+    apply "default" {
+      symbols_enabled = ["HISTORY_SAVE"];
+    }
+    symbols [
+      "SPAM_TRAP"
+    ]
   }
 <?php
 // Start additional content

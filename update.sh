@@ -124,6 +124,7 @@ while (($#)); do
       fi
       if [[ -z $(git log HEAD --pretty=format:"%H" | grep "${LATEST_REV}") ]]; then
         echo "Updated code is available."
+        git log --date=short --pretty=format:"%ad - %s" $(git rev-parse --short HEAD)..origin/master
         exit 0
       else
         echo "No updates available."
@@ -154,7 +155,7 @@ while (($#)); do
       NO_UPDATE_COMPOSE=y
     ;;
     --help|-h)
-    echo './update.sh [-c|--check, --ours, --gc, --skip-start, -h|--help]
+    echo './update.sh [-c|--check, --ours, --gc, --no-update-compose, --prefetch, --skip-start, -f|--force, -h|--help]
 
   -c|--check           -   Check for updates and exit (exit codes => 0: update available, 3: no updates)
   --ours               -   Use merge strategy option "ours" to solve conflicts in favor of non-mailcow code (local changes over remote changes), not recommended!
@@ -179,8 +180,9 @@ if [ ${#DOTS} -lt 2 ]; then
   exit 1
 fi
 
-if grep --help 2>&1 | head -n 1 | grep -q -i "busybox"; then echo "BusybBox grep detected, please install gnu grep, \"apk add --no-cache --upgrade grep\""; exit 1; fi
-if cp --help 2>&1 | head -n 1 | grep -q -i "busybox"; then echo "BusybBox cp detected, please install coreutils, \"apk add --no-cache --upgrade coreutils\""; exit 1; fi
+if grep --help 2>&1 | head -n 1 | grep -q -i "busybox"; then echo "BusyBox grep detected, please install gnu grep, \"apk add --no-cache --upgrade grep\""; exit 1; fi
+if cp --help 2>&1 | head -n 1 | grep -q -i "busybox"; then echo "BusyBox cp detected, please install coreutils, \"apk add --no-cache --upgrade coreutils\""; exit 1; fi
+if sed --help 2>&1 | head -n 1 | grep -q -i "busybox"; then echo "BusyBox sed detected, please install gnu sed, \"apk add --no-cache --upgrade sed\""; exit 1; fi
 
 CONFIG_ARRAY=(
   "SKIP_LETS_ENCRYPT"
@@ -214,9 +216,12 @@ CONFIG_ARRAY=(
   "SKIP_HTTP_VERIFICATION"
   "SOGO_EXPIRE_SESSION"
   "REDIS_PORT"
+  "DOVECOT_MASTER_USER"
+  "DOVECOT_MASTER_PASS"
+  "MAILCOW_PASS_SCHEME"
 )
 
-sed -i '$a\' mailcow.conf
+sed -i --follow-symlinks '$a\' mailcow.conf
 for option in ${CONFIG_ARRAY[@]}; do
   if [[ ${option} == "ADDITIONAL_SAN" ]]; then
     if ! grep -q ${option} mailcow.conf; then
@@ -382,6 +387,29 @@ for option in ${CONFIG_ARRAY[@]}; do
       echo "Adding new option \"${option}\" to mailcow.conf"
       echo "REDIS_PORT=127.0.0.1:7654" >> mailcow.conf
   fi
+  elif [[ ${option} == "DOVECOT_MASTER_USER" ]]; then
+    if ! grep -q ${option} mailcow.conf; then
+      echo "Adding new option \"${option}\" to mailcow.conf"
+      echo '# DOVECOT_MASTER_USER and _PASS must _both_ be provided. No special chars.' >> mailcow.conf
+      echo '# Empty by default to auto-generate master user and password on start.' >> mailcow.conf
+      echo '# User expands to DOVECOT_MASTER_USER@mailcow.local' >> mailcow.conf
+      echo '# LEAVE EMPTY IF UNSURE' >> mailcow.conf
+      echo "DOVECOT_MASTER_USER=" >> mailcow.conf
+  fi
+  elif [[ ${option} == "DOVECOT_MASTER_PASS" ]]; then
+    if ! grep -q ${option} mailcow.conf; then
+      echo "Adding new option \"${option}\" to mailcow.conf"
+      echo '# LEAVE EMPTY IF UNSURE' >> mailcow.conf
+      echo "DOVECOT_MASTER_PASS=" >> mailcow.conf
+  fi
+  elif [[ ${option} == "MAILCOW_PASS_SCHEME" ]]; then
+    if ! grep -q ${option} mailcow.conf; then
+      echo "Adding new option \"${option}\" to mailcow.conf"
+      echo '# Password hash algorithm' >> mailcow.conf
+      echo '# Only certain password hash algorithm are supported. For a fully list of supported schemes,' >> mailcow.conf
+      echo '# see https://mailcow.github.io/mailcow-dockerized-docs/model-passwd/' >> mailcow.conf
+      echo "MAILCOW_PASS_SCHEME=BLF-CRYPT" >> mailcow.conf
+  fi
   elif ! grep -q ${option} mailcow.conf; then
     echo "Adding new option \"${option}\" to mailcow.conf"
     echo "${option}=n" >> mailcow.conf
@@ -491,6 +519,8 @@ fi
 
 if [[ ${NO_UPDATE_COMPOSE} == "y" ]]; then
   echo -e "\e[33mNot fetching latest docker-compose, please check for updates manually!\e[0m"
+elif [[ -e /etc/alpine-release ]]; then
+  echo -e "\e[33mNot fetching latest docker-compose, because you are using Alpine Linux without glibc support. Please update docker-compose via apk!\e[0m"
 else
   echo -e "\e[32mFetching new docker-compose version...\e[0m"
   sleep 1
@@ -536,7 +566,7 @@ if grep -q 'SYSCTL_IPV6_DISABLED=1' mailcow.conf; then
 fi
 
 # Checking for old project name bug
-sed -i 's#COMPOSEPROJECT_NAME#COMPOSE_PROJECT_NAME#g' mailcow.conf
+sed -i --follow-symlinks 's#COMPOSEPROJECT_NAME#COMPOSE_PROJECT_NAME#g' mailcow.conf
 
 # Fix Rspamd maps
 if [ -f data/conf/rspamd/custom/global_from_blacklist.map ]; then

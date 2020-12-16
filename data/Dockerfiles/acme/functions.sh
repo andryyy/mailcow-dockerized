@@ -68,13 +68,13 @@ check_domain(){
       log_f "Found AAAA record for ${DOMAIN}: ${AAAA_DOMAIN} - skipping A record check"
       if [[ $(expand ${IPV6:-"0000:0000:0000:0000:0000:0000:0000:0000"}) == $(expand ${AAAA_DOMAIN}) ]] || [[ ${SKIP_IP_CHECK} == "y" ]] || [[ ${SNAT6_TO_SOURCE} != "n" ]]; then
         if verify_challenge_path "${DOMAIN}" 6; then
-          log_f "Confirmed AAAA record with IP ${AAAA_DOMAIN}"
+          log_f "Confirmed AAAA record with IP $(expand ${AAAA_DOMAIN})"
           return 0
         else
-          log_f "Confirmed AAAA record with IP ${AAAA_DOMAIN}, but HTTP validation failed"
+          log_f "Confirmed AAAA record with IP $(expand ${AAAA_DOMAIN}), but HTTP validation failed"
         fi
       else
-        log_f "Cannot match your IP ${IPV6:-NO_IPV6_LINK} against hostname ${DOMAIN} (DNS returned $(expand ${AAAA_DOMAIN}))"
+        log_f "Cannot match your IP $(expand ${IPV6:-"0000:0000:0000:0000:0000:0000:0000:0000"}) against hostname ${DOMAIN} (DNS returned $(expand ${AAAA_DOMAIN}))"
       fi
     elif [[ ! -z ${A_DOMAIN} ]]; then
       log_f "Found A record for ${DOMAIN}: ${A_DOMAIN}"

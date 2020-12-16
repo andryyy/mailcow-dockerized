@@ -81,7 +81,7 @@ function get_spf_allowed_hosts($check_domain)
 	}
 	foreach ($hosts as &$host) {
 		if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-			$host = expand_ipv6($host);
+			$host = $host;
 		}
 	}
 	return $hosts;

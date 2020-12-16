@@ -87,9 +87,22 @@ log_msg() {
 }
 
 function mail_error() {
+  THROTTLE=
   [[ -z ${1} ]] && return 1
   # If exists, body will be the content of "/tmp/${1}", even if ${2} is set
   [[ -z ${2} ]] && BODY="Service was restarted on $(date), please check your mailcow installation." || BODY="$(date) - ${2}"
+  # If exists, mail will be throttled by argument in seconds
+  [[ ! -z ${3} ]] && THROTTLE=${3}
+  if [[ ! -z ${THROTTLE} ]]; then
+    TTL_LEFT="$(${REDIS_CMDLINE} TTL THROTTLE_${1} 2> /dev/null)"
+    if [[ "${TTL_LEFT}" == "-2" ]]; then
+      # Delay key not found, setting a delay key now
+      ${REDIS_CMDLINE} SET THROTTLE_${1} 1 EX ${THROTTLE}
+    else
+      log_msg "Not sending notification email now, blocked for ${TTL_LEFT} seconds..."
+      return 1
+    fi
+  fi
   WATCHDOG_NOTIFY_EMAIL=$(echo "${WATCHDOG_NOTIFY_EMAIL}" | sed 's/"//;s|"$||')
   # Some exceptions for subject and body formats
   if [[ ${1} == "fail2ban" ]]; then
@@ -467,6 +480,28 @@ dovecot_repl_checks() {
   return 1
 }
 
+cert_checks() {
+  err_count=0
+  diff_c=0
+  THRESHOLD=7
+  # Reduce error count by 2 after restarting an unhealthy container
+  trap "[ ${err_count} -gt 1 ] && err_count=$(( ${err_count} - 2 ))" USR1
+  while [ ${err_count} -lt ${THRESHOLD} ]; do
+    touch /tmp/certcheck; echo "$(tail -50 /tmp/certcheck)" > /tmp/certcheck
+    host_ip_postfix=$(get_container_ip postfix)
+    host_ip_dovecot=$(get_container_ip dovecot)
+    err_c_cur=${err_count}
+    /usr/lib/nagios/plugins/check_smtp -H ${host_ip_postfix} -p 589 -4 -S -D 7 2>> /tmp/certcheck 1>&2; err_count=$(( ${err_count} + $? ))
+    /usr/lib/nagios/plugins/check_imap -H ${host_ip_dovecot} -p 993 -4 -S -D 7 2>> /tmp/certcheck 1>&2; err_count=$(( ${err_count} + $? ))
+    [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
+    [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
+    progress "Primary certificate expiry check" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
+    # Always sleep 5 minutes, mail notifications are limited
+    sleep 300
+  done
+  return 1
+}
+
 phpfpm_checks() {
   err_count=0
   diff_c=0
@@ -672,12 +707,19 @@ rspamd_checks() {
 From: watchdog@localhost
 
 Empty
-' | usr/bin/curl -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/scan | jq -rc .default.required_score)
+' | usr/bin/curl --max-time 10 -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/scan | jq -rc .default.required_score)
     if [[ ${SCORE} != "9999" ]]; then
       echo "Rspamd settings check failed" 2>> /tmp/rspamd-mailcow 1>&2
       err_count=$(( ${err_count} + 1))
     else
       echo "Rspamd settings check succeeded" 2>> /tmp/rspamd-mailcow 1>&2
+    fi
+    # A dirty hack until a PING PONG event is implemented to worker proxy
+    # We expect an empty response, not a timeout
+    if [ "$(curl -s --max-time 10 ${host_ip}:9900 2> /dev/null ; echo $?)" == "28" ]; then
+      echo "Milter check failed" 2>> /tmp/rspamd-mailcow 1>&2; err_count=$(( ${err_count} + 1 ));
+    else
+      echo "Milter check succeeded" 2>> /tmp/rspamd-mailcow 1>&2
     fi
     [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
     [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
@@ -929,6 +971,18 @@ BACKGROUND_TASKS+=(${PID})
 
 (
 while true; do
+  if ! cert_checks; then
+    log_msg "Cert check hit error limit"
+    echo certcheck > /tmp/com_pipe
+  fi
+done
+) &
+PID=$!
+echo "Spawned cert_checks with PID ${PID}"
+BACKGROUND_TASKS+=(${PID})
+
+(
+while true; do
   if ! olefy_checks; then
     log_msg "Olefy hit error limit"
     echo olefy-mailcow > /tmp/com_pipe
@@ -1013,11 +1067,18 @@ while true; do
   elif [[ ${com_pipe_answer} == "mysql_repl_checks" ]]; then
     log_msg "MySQL replication is not working properly"
     # Define $2 to override message text, else print service was restarted at ...
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check the SQL replication status"
+    # Once mail per 10 minutes
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check the SQL replication status" 600
   elif [[ ${com_pipe_answer} == "dovecot_repl_checks" ]]; then
     log_msg "Dovecot replication is not working properly"
     # Define $2 to override message text, else print service was restarted at ...
-    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check the Dovecot replicator status"
+    # Once mail per 10 minutes
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please check the Dovecot replicator status" 600
+  elif [[ ${com_pipe_answer} == "certcheck" ]]; then
+    log_msg "Certificates are about to expire"
+    # Define $2 to override message text, else print service was restarted at ...
+    # Only mail once a day
+    [[ ! -z ${WATCHDOG_NOTIFY_EMAIL} ]] && mail_error "${com_pipe_answer}" "Please renew your certificate" 86400
   elif [[ ${com_pipe_answer} == "acme-mailcow" ]]; then
     log_msg "acme-mailcow did not complete successfully"
     # Define $2 to override message text, else print service was restarted at ...

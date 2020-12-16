@@ -107,8 +107,14 @@ $(document).ready(function() {
         if ($(this).prop('required')) {
           if (!$(this).val() && $(this).prop('disabled') === false) {
             invalid = true;
+            if ($(this).is("select")) {
+              $(this).selectpicker('setStyle', 'btn-input-missing', 'add');
+            }
             $(this).addClass('inputMissingAttr');
           } else {
+            if ($(this).is("select")) {
+              $(this).selectpicker('setStyle', 'btn-input-missing', 'remove');
+            }
             $(this).removeClass('inputMissingAttr');
           }
         }
@@ -219,8 +225,14 @@ $(document).ready(function() {
         if ($(this).prop('required')) {
           if (!$(this).val() && $(this).prop('disabled') === false) {
             invalid = true;
+            if ($(this).is("select")) {
+              $(this).selectpicker('setStyle', 'btn-input-missing', 'add');
+            }
             $(this).addClass('inputMissingAttr');
           } else {
+            if ($(this).is("select")) {
+              $(this).selectpicker('setStyle', 'btn-input-missing', 'remove');
+            }
             $(this).removeClass('inputMissingAttr');
           }
         }

@@ -665,7 +665,6 @@
         "neutral_danger": "Neutraali/ei pisteystä",
         "qhandler_success": "Pyyntö lähetettiin järjestelmään onnistuneesti. Voit nyt sulkea ikkunan.",
         "qid": "Rspamd QID",
-        "qinfo": "Karanteeni järjestelmä tallentaa hylätyn sähköpostin tieto kantaan, kun lähettäjä <em>ei</em> annetaan vaikutelma toimitetuksi sähköposti.\r\n  <br>\"Opeta roska postiksi ja poista\" oppii viestin roska postiksi Bayes-teoreettilta ja laskee myös sumea hash kieltää samanlaisia viestejä tulevaisuudessa.\r\n  <br>Huomaa, että useiden viestien oppiminen voi olla-riippuen järjestelmän ajasta.",
         "qitem": "Laita karanteeniin",
         "quarantine": "Karanteeni",
         "quick_actions": "Toiminnot",

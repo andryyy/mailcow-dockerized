@@ -6,4 +6,4 @@ upstream "local" {
   hosts = "rspamd:11333"
 }
 reject_message = "This message does not meet our delivery requirements";
-.include(try=true; priority=20) "$CONFDIR/override.d/worker-proxy.custom.inc"
+.include(try=true; priority=30) "$CONFDIR/override.d/worker-proxy.custom.inc"

@@ -11,6 +11,7 @@ services:
         - "${IMAPS_PORT_HAPROXY:-127.0.0.1:10993}:10993"
         - "${POP_PORT_HAPROXY:-127.0.0.1:10110}:10110"
         - "${POPS_PORT_HAPROXY:-127.0.0.1:10995}:10995"
+        - "${SIEVE_PORT_HAPROXY:-127.0.0.1:14190}:14190"
 
     postfix-mailcow:
       ports:

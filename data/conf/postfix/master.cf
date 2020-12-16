@@ -15,14 +15,18 @@ smtps    inet  n       -       n       -       -       smtpd
   -o smtpd_client_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
   -o smtpd_tls_mandatory_protocols=$smtps_smtpd_tls_mandatory_protocols
   -o tls_preempt_cipherlist=yes
+  -o cleanup_service_name=smtp_sender_cleanup
   -o syslog_name=postfix/smtps
+  -o smtpd_end_of_data_restrictions=$smtpd_last_auth
 10465    inet  n       -       n       -       -       smtpd
   -o smtpd_upstream_proxy_protocol=haproxy
   -o smtpd_tls_wrappermode=yes
   -o smtpd_client_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
   -o smtpd_tls_mandatory_protocols=$smtps_smtpd_tls_mandatory_protocols
   -o tls_preempt_cipherlist=yes
+  -o cleanup_service_name=smtp_sender_cleanup
   -o syslog_name=postfix/smtps-haproxy
+  -o smtpd_end_of_data_restrictions=$smtpd_last_auth
 
 # smtpd with starttls on 587/tcp
 # TLS protocol can be modified by setting submission_smtpd_tls_mandatory_protocols in extra.cf
@@ -32,7 +36,9 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
   -o smtpd_tls_mandatory_protocols=$submission_smtpd_tls_mandatory_protocols
   -o tls_preempt_cipherlist=yes
+  -o cleanup_service_name=smtp_sender_cleanup
   -o syslog_name=postfix/submission
+  -o smtpd_end_of_data_restrictions=$smtpd_last_auth
 10587      inet n       -       n       -       -       smtpd
   -o smtpd_upstream_proxy_protocol=haproxy
   -o smtpd_client_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
@@ -40,7 +46,9 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
   -o smtpd_tls_mandatory_protocols=$submission_smtpd_tls_mandatory_protocols
   -o tls_preempt_cipherlist=yes
+  -o cleanup_service_name=smtp_sender_cleanup
   -o syslog_name=postfix/submission-haproxy
+  -o smtpd_end_of_data_restrictions=$smtpd_last_auth
 
 # used by SOGo
 # smtpd_sender_restrictions should match main.cf, but with check_sasl_access prepended for login-as-mailbox-user function
@@ -48,7 +56,9 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_client_restrictions=permit_mynetworks,permit_sasl_authenticated,reject
   -o smtpd_tls_auth_only=no
   -o smtpd_sender_restrictions=check_sasl_access,regexp:/opt/postfix/conf/allow_mailcow_local.regexp,reject_authenticated_sender_login_mismatch,permit_mynetworks,permit_sasl_authenticated,reject_unlisted_sender,reject_unknown_sender_domain
+  -o cleanup_service_name=smtp_sender_cleanup
   -o syslog_name=postfix/sogo
+  -o smtpd_end_of_data_restrictions=$smtpd_last_auth
 
 # used to reinject quarantine mails
 590 inet n      -       n       -       -       smtpd
@@ -58,6 +68,7 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_milters=
   -o non_smtpd_milters=
   -o syslog_name=postfix/quarantine
+  -o smtpd_end_of_data_restrictions=$smtpd_last_auth
 
 # enforced smtp connector
 smtp_enforced_tls      unix  -       -       n       -       -       smtp
@@ -98,8 +109,13 @@ scache     unix  -       -       n       -       1       scache
 maildrop   unix  -       n       n       -       -       pipe flags=DRhu
     user=vmail argv=/usr/bin/maildrop -d ${recipient}
 
+# used to anonymize sender IP
+smtp_sender_cleanup unix n - y - 0 cleanup
+  -o header_checks=$smtp_header_checks
+
 # start whitelist_fwd
 127.0.0.1:10027 inet n n n - 0 spawn user=nobody argv=/usr/local/bin/whitelist_forwardinghosts.sh
+127.0.0.1:10028 inet n n n - 0 spawn user=nobody argv=/usr/local/bin/smtpd_last_login.sh
 # end whitelist_fwd
 
 # start watchdog-specific
@@ -126,5 +142,4 @@ watchdog_rewrite    unix  -       -       n       -       -       trivial-rewrit
 watchdog_discard    unix  -       -       n       -       -       discard
    -o syslog_facility=local7
    -o syslog_name=watchdog
-
 # end watchdog-specific

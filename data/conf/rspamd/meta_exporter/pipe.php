@@ -51,6 +51,7 @@ $raw_data = mb_convert_encoding($raw_data_content, 'HTML-ENTITIES', "UTF-8");
 $headers = getallheaders();
 
 $qid      = $headers['X-Rspamd-Qid'];
+$fuzzy    = $headers['X-Rspamd-Fuzzy'];
 $subject  = $headers['X-Rspamd-Subject'];
 $score    = $headers['X-Rspamd-Score'];
 $rcpts    = $headers['X-Rspamd-Rcpt'];
@@ -65,6 +66,10 @@ $raw_size = (int)$_SERVER['CONTENT_LENGTH'];
 if (empty($sender)) {
   error_log("QUARANTINE: Unknown sender, assuming empty-env-from@localhost" . PHP_EOL);
   $sender = 'empty-env-from@localhost';
+}
+
+if ($fuzzy == 'unknown') {
+  $fuzzy = '[]';
 }
 
 try {
@@ -153,7 +158,7 @@ foreach (json_decode($rcpts, true) as $rcpt) {
       // Loop through all found gotos
       foreach ($gotos_array as $index => &$goto) {
         error_log("RCPT RESOVLER: http pipe: query " . $goto . " as username from mailbox" . PHP_EOL);
-        $stmt = $pdo->prepare("SELECT `username` FROM `mailbox` WHERE `username` = :goto AND `active`= '1';");
+        $stmt = $pdo->prepare("SELECT `username` FROM `mailbox` WHERE `username` = :goto AND (`active`= '1' OR `active`= '2');");
         $stmt->execute(array(':goto' => $goto));
         $username = $stmt->fetch(PDO::FETCH_ASSOC)['username'];
         if (!empty($username)) {
@@ -173,15 +178,15 @@ foreach (json_decode($rcpts, true) as $rcpt) {
             $stmt->execute(array(':goto' => $goto));
             $goto_branch = $stmt->fetch(PDO::FETCH_ASSOC)['goto'];
             if ($goto_branch) {
-              error_log("RCPT RESOVLER: http pipe: goto address " . $goto . " is a alias branch for " . $goto_branch . PHP_EOL);
+              error_log("RCPT RESOVLER: http pipe: goto address " . $goto . " is an alias branch for " . $goto_branch . PHP_EOL);
               $goto_branch_array = explode(',', $goto_branch);
             } else {
               $stmt = $pdo->prepare("SELECT `target_domain` FROM `alias_domain` WHERE `alias_domain` = :domain AND `active` AND '1'");
               $stmt->execute(array(':domain' => $parsed_goto['domain']));
               $goto_branch = $stmt->fetch(PDO::FETCH_ASSOC)['target_domain'];
               if ($goto_branch) {
-                error_log("RCPT RESOVLER: http pipe: goto domain " . $parsed_gto['domain'] . " is a domain alias branch for " . $goto_branch . PHP_EOL);
-                $goto_branch_array = array($parsed_gto['local'] . '@' . $goto_branch);
+                error_log("RCPT RESOVLER: http pipe: goto domain " . $parsed_goto['domain'] . " is a domain alias branch for " . $goto_branch . PHP_EOL);
+                $goto_branch_array = array($parsed_goto['local'] . '@' . $goto_branch);
               }
             }
           }
@@ -215,8 +220,8 @@ foreach (json_decode($rcpts, true) as $rcpt) {
 foreach ($rcpt_final_mailboxes as $rcpt_final) {
   error_log("QUARANTINE: quarantine pipe: processing quarantine message for rcpt " . $rcpt_final . PHP_EOL);
   try {
-    $stmt = $pdo->prepare("INSERT INTO `quarantine` (`qid`, `subject`, `score`, `sender`, `rcpt`, `symbols`, `user`, `ip`, `msg`, `action`)
-      VALUES (:qid, :subject, :score, :sender, :rcpt, :symbols, :user, :ip, :msg, :action)");
+    $stmt = $pdo->prepare("INSERT INTO `quarantine` (`qid`, `subject`, `score`, `sender`, `rcpt`, `symbols`, `user`, `ip`, `msg`, `action`, `fuzzy_hashes`)
+      VALUES (:qid, :subject, :score, :sender, :rcpt, :symbols, :user, :ip, :msg, :action, :fuzzy_hashes)");
     $stmt->execute(array(
       ':qid' => $qid,
       ':subject' => $subject,
@@ -227,7 +232,8 @@ foreach ($rcpt_final_mailboxes as $rcpt_final) {
       ':user' => $user,
       ':ip' => $ip,
       ':msg' => $raw_data,
-      ':action' => $action
+      ':action' => $action,
+      ':fuzzy_hashes' => $fuzzy
     ));
     $stmt = $pdo->prepare('DELETE FROM `quarantine` WHERE `rcpt` = :rcpt AND `id` NOT IN (
       SELECT `id`

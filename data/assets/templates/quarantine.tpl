@@ -42,15 +42,24 @@
     There are {{counter}} new messages waiting in quarantine:<br>
     {% endif %}
     <table>
-    <tr><th>Subject</th><th>Sender</th><th class="mob">Score</th><th class="mob">Arrived on</th>{% if quarantine_acl == 1 %}<th>Actions</th>{% endif %}</tr>
-    {% for line in meta %}
+    <tr><th>Subject</th><th>Sender</th><th class="mob">Score</th><th class="mob">Action</th><th class="mob">Arrived on</th>{% if quarantine_acl == 1 %}<th>Actions</th>{% endif %}</tr>
+    {% for line in meta|reverse %}
     <tr>
     <td>{{ line.subject|e }}</td>
     <td>{{ line.sender|e }}</td>
     <td class="mob">{{ line.score }}</td>
+    {% if line.action == "reject" %}
+      <td class="mob">Rejected</td>
+    {% else %}
+      <td class="mob">Sent to Junk folder</td>
+    {% endif %}
     <td class="mob">{{ line.created }}</td>
     {% if quarantine_acl == 1 %}
-    <td class="fixed"><a href="https://{{ hostname }}/qhandler/release/{{ line.qhash }}">release</a> | <a href="https://{{ hostname }}/qhandler/delete/{{ line.qhash }}">delete</a></td>
+      {% if line.action == "reject" %}
+        <td class="fixed"><a href="https://{{ hostname }}/qhandler/release/{{ line.qhash }}">Release to inbox</a> | <a href="https://{{ hostname }}/qhandler/delete/{{ line.qhash }}">delete</a></td>
+      {% else %}
+        <td class="fixed"><a href="https://{{ hostname }}/qhandler/release/{{ line.qhash }}">Send copy to inbox</a> | <a href="https://{{ hostname }}/qhandler/delete/{{ line.qhash }}">delete</a></td>
+      {% endif %}
     {% endif %}
     </tr>
     {% endfor %}

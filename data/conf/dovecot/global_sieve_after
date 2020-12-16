@@ -6,6 +6,7 @@ require "mailbox";
 require "variables";
 require "subaddress";
 require "envelope";
+require "duplicate";
 
 if header :contains "X-Spam-Flag" "YES" {
   fileinto "Junk";
@@ -21,4 +22,9 @@ if allof (
   } else {
     fileinto :create "INBOX/${tag}";
   }
+}
+
+if duplicate {
+  discard;
+  stop;
 }

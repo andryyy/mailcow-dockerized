@@ -26,6 +26,7 @@ if [[ ! -f /var/lib/clamav/whitelist.ign2 ]]; then
 Example-Signature.Ignore-1
 PUA.Win.Trojan.EmbeddedPDF-1
 PUA.Pdf.Trojan.EmbeddedJavaScript-1
+PUA.Pdf.Trojan.OpenActionObjectwithJavascript-1
 EOF
 fi
 

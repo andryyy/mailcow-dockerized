@@ -10,6 +10,7 @@ while [ "$1" != '' ]; do
   case "${1}" in
     -p|--purge) NC_PURGE=y && shift;;
     -i|--install) NC_INSTALL=y && shift;;
+    -r|--resetpw) NC_RESETPW=y && shift;;
     -h|--help) NC_HELP=y && shift;;
     *) echo "Unknown parameter: ${1}" && shift;;
   esac
@@ -18,11 +19,13 @@ done
 if [[ ${NC_HELP} == "y" ]]; then
   printf 'Usage:\n\n'
   printf '  -p|--purge\n    Purge Nextcloud\n'
-  printf '  -i|--install\n    Install Nextcloud\n\n'
+  printf '  -i|--install\n    Install Nextcloud\n'
+  printf '  -r|--resetpw\n    Reset password\n\n'
   exit 0
 fi
 
-[[ ${NC_PURGE} == "y" ]] && [[ ${NC_INSTALL} == "y" ]] && { echo "Cannot use -p and -i at the same time"; }
+[[ ${NC_PURGE} == "y" ]] && [[ ${NC_INSTALL} == "y" ]] && { echo "Cannot use -p and -i at the same time!"; exit 1; }
+[[ ${NC_PURGE} == "y" ]] && [[ ${NC_RESETPW} == "y" ]] && { echo "Cannot use -p and -r at the same time!"; exit 1; }
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${SCRIPT_DIR}/../
@@ -144,5 +147,20 @@ elif [[ ${NC_INSTALL} == "y" ]]; then
   docker restart $(docker ps -aqf name=nginx-mailcow)
 
   echo "Login as admin with password: ${ADMIN_NC_PASS}"
+
+elif [[ ${NC_RESETPW} == "y" ]]; then
+    printf 'You are about to set a new password for a Nextcloud user.\n\nDo not use this option if your Nextcloud is configured to use mailcow for authentication.\nSet a new password for the corresponding mailbox in mailcow, instead.\n\n'
+    read -r -p "Continue? [y/N] " response
+    response=${response,,}
+    if [[ ! "$response" =~ ^(yes|y)$ ]]; then
+      echo "OK, aborting."
+      exit 1
+    fi
+
+    NC_USER=
+    while [[ -z ${NC_USER} ]]; do
+      read -p "Enter the username: " NC_USER
+    done
+    docker exec -it -u www-data $(docker ps -f name=php-fpm-mailcow -q) /web/nextcloud/occ user:resetpassword ${NC_USER}
 
 fi

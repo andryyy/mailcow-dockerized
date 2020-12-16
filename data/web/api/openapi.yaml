@@ -16,7 +16,7 @@ info:
       - The read write key can be used for all endpoints
 
   title: mailcow API
-  version: '1.0.0'
+  version: "1.0.0"
 
 servers:
   - url: /
@@ -42,8 +42,8 @@ components:
                 type: string
                 example: authentication failed
             required:
-            - type
-            - msg
+              - type
+              - msg
 
 security:
   - ApiKeyAuth: []
@@ -52,9 +52,9 @@ paths:
   /api/v1/add/alias:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -64,7 +64,7 @@ paths:
                         - mailbox
                         - add
                         - alias
-                        - active: '1'
+                        - active: "1"
                           address: alias@domain.tld
                           goto: destination@domain.tld
                         - null
@@ -104,7 +104,7 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
+                active: "1"
                 address: alias@domain.tld
                 goto: destination@domain.tld
               properties:
@@ -115,7 +115,7 @@ paths:
                   description: 'alias address, for catchall use "@domain.tld"'
                   type: string
                 goto:
-                  description: 'destination address, comma separated'
+                  description: "destination address, comma separated"
                   type: string
                 goto_ham:
                   description: learn as ham
@@ -131,9 +131,9 @@ paths:
   /api/v1/add/app-passwd:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -142,7 +142,7 @@ paths:
                     - log:
                         - app_passwd
                         - add
-                        - active: '1'
+                        - active: "1"
                           app_name: emclient
                           app_passwd: keyleudecticidechothistishownsan31
                           app_passwd2: keyleudecticidechothistishownsan31
@@ -178,7 +178,7 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
+                active: "1"
                 username: info@domain.tld
                 app_name: wordpress
                 app_passwd: keyleudecticidechothistishownsan31
@@ -197,16 +197,16 @@ paths:
                   description: your app password
                   type: string
                 app_passwd2:
-                    description: your app password
-                    type: string
+                  description: your app password
+                  type: string
               type: object
       summary: Create App Password
   /api/v1/add/bcc:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -215,7 +215,7 @@ paths:
                     - log:
                         - bcc
                         - add
-                        - active: '1'
+                        - active: "1"
                           bcc_dest: bcc@awesomecow.tld
                           local_dest: mailcow.tld
                           type: sender
@@ -251,7 +251,7 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
+                active: "1"
                 bcc_dest: bcc@awesomecow.tld
                 local_dest: mailcow.tld
                 type: sender
@@ -273,9 +273,9 @@ paths:
   /api/v1/add/dkim:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -286,7 +286,7 @@ paths:
                         - add
                         - dkim_selector: dkim
                           domains: hanspeterlol.de
-                          key_size: '2048'
+                          key_size: "2048"
                       msg:
                         - dkim_added
                         - hanspeterlol.de
@@ -320,7 +320,7 @@ paths:
               example:
                 dkim_selector: dkim
                 domains: mailcow.tld
-                key_size: '2048'
+                key_size: "2048"
               properties:
                 dkim_selector:
                   description: the DKIM selector default dkim
@@ -336,9 +336,9 @@ paths:
   /api/v1/add/dkim_duplicate:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -395,9 +395,9 @@ paths:
   /api/v1/add/domain:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -409,7 +409,7 @@ paths:
                         - domain
                         - object: domain.tld
                           rl_frame: s
-                          rl_value: '10'
+                          rl_value: "10"
                       msg:
                         - rl_saved
                         - domain.tld
@@ -418,19 +418,19 @@ paths:
                         - mailbox
                         - add
                         - domain
-                        - active: '1'
-                          aliases: '400'
-                          backupmx: '0'
-                          defquota: '3072'
+                        - active: "1"
+                          aliases: "400"
+                          backupmx: "0"
+                          defquota: "3072"
                           description: some decsription
                           domain: domain.tld
                           lang: cs
-                          mailboxes: '10'
-                          maxquota: '10240'
-                          quota: '10240'
-                          relay_all_recipients: '0'
+                          mailboxes: "10"
+                          maxquota: "10240"
+                          quota: "10240"
+                          relay_all_recipients: "0"
                           rl_frame: s
-                          rl_value: '10'
+                          rl_value: "10"
                         - null
                       msg:
                         - domain_added
@@ -465,19 +465,19 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
-                aliases: '400'
-                backupmx: '0'
-                defquota: '3072'
+                active: "1"
+                aliases: "400"
+                backupmx: "0"
+                defquota: "3072"
                 description: some decsription
                 domain: domain.tld
                 lang: cs
-                mailboxes: '10'
-                maxquota: '10240'
-                quota: '10240'
-                relay_all_recipients: '0'
+                mailboxes: "10"
+                maxquota: "10240"
+                quota: "10240"
+                relay_all_recipients: "0"
                 rl_frame: s
-                rl_value: '10'
+                rl_value: "10"
               properties:
                 active:
                   description: is domain active or not
@@ -542,9 +542,9 @@ paths:
   /api/v1/add/domain-admin:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -553,10 +553,10 @@ paths:
                     - log:
                         - domain_admin
                         - add
-                        - active: '1'
+                        - active: "1"
                           domains: mailcow.tld
-                          password: '*'
-                          password2: '*'
+                          password: "*"
+                          password2: "*"
                           username: testadmin
                       msg:
                         - domain_admin_added
@@ -592,7 +592,7 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
+                active: "1"
                 domains: mailcow.tld
                 password: supersecurepw
                 password2: supersecurepw
@@ -615,12 +615,200 @@ paths:
                   type: string
               type: object
       summary: Create Domain Admin user
+  /api/v1/edit/da-acl:
+    post:
+      responses:
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - type: success
+                      log:
+                      - acl
+                      - edit
+                      - testadmin
+                      - username:
+                        - testadmin
+                        da_acl:
+                        - syncjobs
+                        - quarantine
+                        - login_as
+                        - sogo_access
+                        - app_passwds
+                        - bcc_maps
+                        - pushover
+                        - filters
+                        - ratelimit
+                        - spam_policy
+                        - extend_sender_acl
+                        - unlimited_quota
+                        - protocol_access
+                        - smtp_ip_access
+                        - alias_domains
+                        - domain_desc
+                      msg:
+                      - acl_saved
+                      - testadmin
+              schema:
+                properties:
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domain admin
+      description: >-
+        Using this endpoint you can edit the ACLs of a Domain Admin user. This user
+        has full control over a domain, and can create new mailboxes and
+        aliases.
+      operationId: Edit Domain Admin ACL
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                items:
+                - testadmin
+                attr:
+                  da_acl:
+                  - syncjobs
+                  - quarantine
+                  - login_as
+                  - sogo_access
+                  - app_passwds
+                  - bcc_maps
+                  - pushover
+                  - filters
+                  - ratelimit
+                  - spam_policy
+                  - extend_sender_acl
+                  - unlimited_quota
+                  - protocol_access
+                  - smtp_ip_access
+                  - alias_domains
+                  - domain_desc
+              properties:
+                items:
+                  description: contains the domain admin username you want to edit
+                  type: object
+                attr:
+                  properties:
+                    da_acl:
+                      description: contains the list of acl names that are active for this user
+                      type: object
+                  type: object
+      summary: Edit Domain Admin ACL
+  /api/v1/edit/domain-admin:
+    post:
+      responses:
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
+          content:
+            application/json:
+              examples:
+                response:
+                  value:
+                    - type: success
+                      log:
+                        - domain_admin
+                        - edit
+                        - username: testadmin
+                          active: ["0","1"]
+                          username_new: testadmin
+                          domains: ["domain.tld"]
+                          password: "*"
+                          password2: "*"
+                      msg:
+                        - domain_admin_modified
+                        - testadmin
+              schema:
+                properties:
+                  type:
+                    enum:
+                      - success
+                      - danger
+                      - error
+                    type: string
+                  log:
+                    description: contains request object
+                    items: {}
+                    type: array
+                  msg:
+                    items: {}
+                    type: array
+                type: object
+          description: OK
+          headers: {}
+      tags:
+        - Domain admin
+      description: >-
+        Using this endpoint you can edit a existing Domain Admin user. This user
+        has full control over a domain, and can create new mailboxes and
+        aliases.
+      operationId: Edit Domain Admin user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                items:
+                - testadmin
+                attr:
+                  active:
+                  - '0'
+                  - '1'
+                  username_new: testadmin
+                  domains: ["domain.tld"]
+                  password: supersecurepassword
+                  password2: supersecurepassword
+              properties:
+                attr:
+                  properties:
+                    active:
+                      description: is the domain admin active or not
+                      type: boolean
+                    username_new:
+                      description: the username of the domain admin, change this to change the username
+                      type: string
+                    domains:
+                      description: a list of all domains managed by this domain admin
+                      type: array
+                      items:
+                        type: string
+                    password:
+                      description: the new domain admin user password
+                      type: string
+                    password2:
+                      description: the new domain admin user password for confirmation
+                      type: string
+                  type: object
+                items:
+                  description: contains the domain admin username you want to edit
+                  type: object
+      summary: Edit Domain Admin user
   /api/v1/add/domain-policy:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -631,7 +819,7 @@ paths:
                         - add
                         - domain
                         - domain: domain.tld
-                          object_from: '*@baddomain.tld'
+                          object_from: "*@baddomain.tld"
                           object_list: bl
                       msg:
                         - domain_modified
@@ -667,7 +855,7 @@ paths:
             schema:
               example:
                 domain: domain.tld
-                object_from: '*@baddomain.tld'
+                object_from: "*@baddomain.tld"
                 object_list: bl
               properties:
                 domain:
@@ -686,9 +874,9 @@ paths:
   /api/v1/add/fwdhost:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -697,11 +885,11 @@ paths:
                     - log:
                         - fwdhost
                         - add
-                        - filter_spam: '0'
+                        - filter_spam: "0"
                           hostname: hosted.mailcow.de
                       msg:
                         - forwarding_host_added
-                        - '5.1.76.202, 2a00:f820:417::202'
+                        - "5.1.76.202, 2a00:f820:417::202"
                       type: success
               schema:
                 properties:
@@ -733,11 +921,11 @@ paths:
           application/json:
             schema:
               example:
-                filter_spam: '0'
+                filter_spam: "0"
                 hostname: hosted.mailcow.de
               properties:
                 filter_spam:
-                  description: '1 to enable spam filter, 0 to disable spam filter'
+                  description: "1 to enable spam filter, 0 to disable spam filter"
                   type: number
                 hostname:
                   description: contains the hostname you want to add
@@ -747,9 +935,9 @@ paths:
   /api/v1/add/mailbox:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -759,16 +947,16 @@ paths:
                         - mailbox
                         - add
                         - mailbox
-                        - active: '1'
+                        - active: "1"
                           domain: domain.tld
                           local_part: info
                           name: Full name
-                          password: '*'
-                          password2: '*'
-                          quota: '3072'
-                          force_pw_update: '1'
-                          tls_enforce_in: '1'
-                          tls_enforce_out: '1'
+                          password: "*"
+                          password2: "*"
+                          quota: "3072"
+                          force_pw_update: "1"
+                          tls_enforce_in: "1"
+                          tls_enforce_out: "1"
                         - null
                       msg:
                         - mailbox_added
@@ -803,16 +991,16 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
+                active: "1"
                 domain: domain.tld
                 local_part: info
                 name: Full name
                 password: atedismonsin
                 password2: atedismonsin
-                quota: '3072'
-                force_pw_update: '1'
-                tls_enforce_in: '1'
-                tls_enforce_out: '1'
+                quota: "3072"
+                force_pw_update: "1"
+                tls_enforce_in: "1"
+                tls_enforce_out: "1"
               properties:
                 active:
                   description: is mailbox active or not
@@ -850,9 +1038,9 @@ paths:
   /api/v1/add/oauth2-client:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -862,7 +1050,7 @@ paths:
                         - oauth2
                         - add
                         - client
-                        - redirect_uri: 'https://mailcow.tld'
+                        - redirect_uri: "https://mailcow.tld"
                       msg: Added client access
                       type: success
               schema:
@@ -892,7 +1080,7 @@ paths:
           application/json:
             schema:
               example:
-                redirect_uri: 'https://mailcow.tld'
+                redirect_uri: "https://mailcow.tld"
               properties:
                 redirect_uri:
                   description: the uri where you should be redirected after oAuth
@@ -902,9 +1090,9 @@ paths:
   /api/v1/add/recipient_map:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -913,7 +1101,7 @@ paths:
                     - log:
                         - recipient_map
                         - add
-                        - active: '1'
+                        - active: "1"
                           recipient_map_new: target@mailcow.tld
                           recipient_map_old: recipient@mailcow.tld
                         - null
@@ -950,7 +1138,7 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
+                active: "1"
                 recipient_map_new: target@mailcow.tld
                 recipient_map_old: recipient@mailcow.tld
               properties:
@@ -968,9 +1156,9 @@ paths:
   /api/v1/add/relayhost:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -979,12 +1167,12 @@ paths:
                     - log:
                         - relayhost
                         - add
-                        - hostname: 'mailcow.tld:25'
+                        - hostname: "mailcow.tld:25"
                           password: supersecurepassword
                           username: testuser
                       msg:
                         - relayhost_added
-                        - ''
+                        - ""
                       type: success
               schema:
                 properties:
@@ -1013,7 +1201,7 @@ paths:
           application/json:
             schema:
               example:
-                hostname: 'mailcow.tld:25'
+                hostname: "mailcow.tld:25"
                 password: supersecurepassword
                 username: testuser
               properties:
@@ -1031,9 +1219,9 @@ paths:
   /api/v1/add/resource:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1043,13 +1231,13 @@ paths:
                         - mailbox
                         - add
                         - resource
-                        - active: '1'
+                        - active: "1"
                           description: test
                           domain: mailcow.tld
                           kind: location
-                          multiple_bookings: '0'
-                          multiple_bookings_custom: ''
-                          multiple_bookings_select: '0'
+                          multiple_bookings: "0"
+                          multiple_bookings_custom: ""
+                          multiple_bookings_select: "0"
                         - null
                       msg:
                         - resource_added
@@ -1082,13 +1270,13 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
+                active: "1"
                 description: test
                 domain: mailcow.tld
                 kind: location
-                multiple_bookings: '0'
-                multiple_bookings_custom: ''
-                multiple_bookings_select: '0'
+                multiple_bookings: "0"
+                multiple_bookings_custom: ""
+                multiple_bookings_select: "0"
               properties:
                 active:
                   description: 1 for a active transport map 0 for a disabled transport map
@@ -1108,8 +1296,8 @@ paths:
                   type: string
                 multiple_bookings:
                   enum:
-                    - '-1'
-                    - '1'
+                    - "-1"
+                    - "1"
                     - custom
                   type: string
                 multiple_bookings_custom:
@@ -1117,8 +1305,8 @@ paths:
                   type: number
                 multiple_bookings_select:
                   enum:
-                    - '-1'
-                    - '1'
+                    - "-1"
+                    - "1"
                     - custom
                   type: string
               type: object
@@ -1126,9 +1314,9 @@ paths:
   /api/v1/add/syncjob:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1138,25 +1326,25 @@ paths:
                         - mailbox
                         - add
                         - syncjob
-                        - active: '1'
-                          automap: '1'
-                          custom_params: ''
-                          delete1: '0'
-                          delete2: '0'
-                          delete2duplicates: '1'
+                        - active: "1"
+                          automap: "1"
+                          custom_params: ""
+                          delete1: "0"
+                          delete2: "0"
+                          delete2duplicates: "1"
                           enc1: SSL
                           exclude: (?i)spam|(?i)junk
                           host1: imap.server.tld
-                          maxage: '0'
-                          maxbytespersecond: '0'
-                          mins_interval: '20'
+                          maxage: "0"
+                          maxbytespersecond: "0"
+                          mins_interval: "20"
                           password1: supersecret
                           port1: 993
-                          skipcrossduplicates: '0'
+                          skipcrossduplicates: "0"
                           subfolder2: External
-                          subscribeall: '1'
-                          timeout1: '600'
-                          timeout2: '600'
+                          subscribeall: "1"
+                          timeout1: "600"
+                          timeout2: "600"
                           user1: username
                           username: mailbox@domain.tld
                         - null
@@ -1196,25 +1384,25 @@ paths:
               example:
                 username: lisa@mailcow.tld
                 host1: mail.mailcow.tld
-                port1: '143'
+                port1: "143"
                 user1: demo@mailcow.tld
                 password1: supersecretpw
                 enc1: TLS
-                mins_interval: '20'
+                mins_interval: "20"
                 subfolder2: "/SyncIntoSubfolder"
-                maxage: '0'
-                maxbytespersecond: '0'
-                timeout1: '600'
-                timeout2: '600'
+                maxage: "0"
+                maxbytespersecond: "0"
+                timeout1: "600"
+                timeout2: "600"
                 exclude: "(?i)spam|(?i)junk"
                 custom_params: "--dry"
-                delete2duplicates: '1'
-                delete1: '1'
-                delete2: '0'
-                automap: '1'
-                skipcrossduplicates: '0'
-                subscribeall: '0'
-                active: '1'
+                delete2duplicates: "1"
+                delete1: "1"
+                delete2: "0"
+                automap: "1"
+                skipcrossduplicates: "0"
+                subscribeall: "0"
+                active: "1"
               properties:
                 parameters:
                   description: your local mailcow mailbox
@@ -1280,9 +1468,9 @@ paths:
   /api/v1/add/tls-policy-map:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1291,8 +1479,8 @@ paths:
                     - log:
                         - tls_policy_maps
                         - add
-                        - parameters: ''
-                          active: '1'
+                        - parameters: ""
+                          active: "1"
                           dest: mailcow.tld
                           policy: encrypt
                         - null
@@ -1327,8 +1515,8 @@ paths:
           application/json:
             schema:
               example:
-                parameters: ''
-                active: '1'
+                parameters: ""
+                active: "1"
                 dest: mailcow.tld
                 policy: encrypt
               properties:
@@ -1350,7 +1538,7 @@ paths:
                     - may
                     - encrypt
                     - dane
-                    - '''dane'
+                    - "'dane"
                     - fingerprint
                     - verify
                     - secure
@@ -1360,9 +1548,9 @@ paths:
   /api/v1/add/transport/all:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1371,14 +1559,14 @@ paths:
                     - log:
                         - transport
                         - add
-                        - active: '1'
+                        - active: "1"
                           destination: example2.org
-                          nexthop: 'host:25'
+                          nexthop: "host:25"
                           password: supersecurepw
                           username: testuser
                       msg:
                         - relayhost_added
-                        - ''
+                        - ""
                       type: success
               schema:
                 properties:
@@ -1407,9 +1595,9 @@ paths:
           application/json:
             schema:
               example:
-                active: '1'
+                active: "1"
                 destination: example.org
-                nexthop: 'host:25'
+                nexthop: "host:25"
                 password: supersecurepw
                 username: testuser
               properties:
@@ -1431,9 +1619,9 @@ paths:
   /api/v1/delete/alias:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1444,8 +1632,8 @@ paths:
                         - delete
                         - alias
                         - id:
-                            - '6'
-                            - '9'
+                            - "6"
+                            - "9"
                         - null
                       msg:
                         - alias_removed
@@ -1456,8 +1644,8 @@ paths:
                         - delete
                         - alias
                         - id:
-                            - '6'
-                            - '9'
+                            - "6"
+                            - "9"
                         - null
                       msg:
                         - alias_removed
@@ -1490,18 +1678,16 @@ paths:
           application/json:
             schema:
               items:
-                example:
-                  - '6'
-                  - '9'
+                example: "6"
                 type: string
               type: array
       summary: Delete alias
   /api/v1/delete/app-passwd:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1511,10 +1697,10 @@ paths:
                         - app_passwd
                         - delete
                         - id:
-                            - '2'
+                            - "2"
                       msg:
                         - app_passwd_removed
-                        - '2'
+                        - "2"
                       type: success
               schema:
                 properties:
@@ -1543,7 +1729,7 @@ paths:
           application/json:
             schema:
               example:
-                - '1'
+                - "1"
               properties:
                 items:
                   description: contains list of app passwords you want to delete
@@ -1553,9 +1739,9 @@ paths:
   /api/v1/delete/bcc:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1565,11 +1751,11 @@ paths:
                         - bcc
                         - delete
                         - id:
-                            - '4'
+                            - "4"
                         - null
                       msg:
                         - bcc_deleted
-                        - '4'
+                        - "4"
                       type: success
               schema:
                 properties:
@@ -1600,7 +1786,7 @@ paths:
           application/json:
             schema:
               example:
-                - '3'
+                - "3"
               properties:
                 items:
                   description: contains list of bcc maps you want to delete
@@ -1610,9 +1796,9 @@ paths:
   /api/v1/delete/dkim:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1662,9 +1848,9 @@ paths:
   /api/v1/delete/domain:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1732,9 +1918,9 @@ paths:
   /api/v1/delete/domain-admin:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1786,9 +1972,9 @@ paths:
   /api/v1/delete/domain-policy:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1799,22 +1985,22 @@ paths:
                         - delete
                         - domain
                         - prefid:
-                            - '1'
-                            - '2'
+                            - "1"
+                            - "2"
                       msg:
                         - item_deleted
-                        - '1'
+                        - "1"
                       type: success
                     - log:
                         - policy
                         - delete
                         - domain
                         - prefid:
-                            - '1'
-                            - '2'
+                            - "1"
+                            - "2"
                       msg:
                         - item_deleted
-                        - '2'
+                        - "2"
                       type: success
               schema:
                 properties:
@@ -1843,8 +2029,8 @@ paths:
           application/json:
             schema:
               example:
-                - '1'
-                - '2'
+                - "1"
+                - "2"
               properties:
                 items:
                   description: contains list of domain policys you want to delete
@@ -1854,9 +2040,9 @@ paths:
   /api/v1/delete/fwdhost:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1867,7 +2053,7 @@ paths:
                         - delete
                         - forwardinghost:
                             - 5.1.76.202
-                            - '2a00:f820:417::202'
+                            - "2a00:f820:417::202"
                       msg:
                         - forwarding_host_removed
                         - 5.1.76.202
@@ -1877,10 +2063,10 @@ paths:
                         - delete
                         - forwardinghost:
                             - 5.1.76.202
-                            - '2a00:f820:417::202'
+                            - "2a00:f820:417::202"
                       msg:
                         - forwarding_host_removed
-                        - '2a00:f820:417::202'
+                        - "2a00:f820:417::202"
                       type: success
               schema:
                 properties:
@@ -1912,7 +2098,7 @@ paths:
             schema:
               example:
                 - 5.1.76.202
-                - '2a00:f820:417::202'
+                - "2a00:f820:417::202"
               properties:
                 ip:
                   description: contains the ip of the fowarding host you want to delete
@@ -1922,9 +2108,9 @@ paths:
   /api/v1/delete/mailbox:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -1992,9 +2178,9 @@ paths:
   /api/v1/delete/mailq:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2027,9 +2213,9 @@ paths:
   /api/v1/delete/oauth2-client:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2040,10 +2226,10 @@ paths:
                         - delete
                         - client
                         - id:
-                            - '1'
+                            - "1"
                       msg:
                         - items_deleted
-                        - '1'
+                        - "1"
                       type: success
               schema:
                 properties:
@@ -2074,7 +2260,7 @@ paths:
           application/json:
             schema:
               example:
-                - '3'
+                - "3"
               properties:
                 items:
                   description: contains list of oAuth clients you want to delete
@@ -2084,9 +2270,9 @@ paths:
   /api/v1/delete/qitem:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2096,10 +2282,10 @@ paths:
                         - quarantine
                         - delete
                         - id:
-                            - '33'
+                            - "33"
                       msg:
                         - item_deleted
-                        - '33'
+                        - "33"
                       type: success
               schema:
                 properties:
@@ -2130,7 +2316,7 @@ paths:
           application/json:
             schema:
               example:
-                - '33'
+                - "33"
               properties:
                 items:
                   description: contains list of emails you want to delete
@@ -2140,9 +2326,9 @@ paths:
   /api/v1/delete/recipient_map:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2152,11 +2338,11 @@ paths:
                         - recipient_map
                         - delete
                         - id:
-                            - '1'
+                            - "1"
                         - null
                       msg:
                         - recipient_map_entry_deleted
-                        - '1'
+                        - "1"
                       type: success
               schema:
                 properties:
@@ -2187,7 +2373,7 @@ paths:
           application/json:
             schema:
               example:
-                - '1'
+                - "1"
               properties:
                 items:
                   description: contains list of recipient maps you want to delete
@@ -2197,9 +2383,9 @@ paths:
   /api/v1/delete/relayhost:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2209,10 +2395,10 @@ paths:
                         - relayhost
                         - delete
                         - id:
-                            - '1'
+                            - "1"
                       msg:
                         - relayhost_removed
-                        - '1'
+                        - "1"
                       type: success
               schema:
                 properties:
@@ -2243,7 +2429,7 @@ paths:
           application/json:
             schema:
               example:
-                - '1'
+                - "1"
               properties:
                 items:
                   description: >-
@@ -2255,9 +2441,9 @@ paths:
   /api/v1/delete/resource:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2313,9 +2499,9 @@ paths:
   /api/v1/delete/syncjob:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2356,8 +2542,8 @@ paths:
           application/json:
             schema:
               example:
-                - '6'
-                - '9'
+                - "6"
+                - "9"
               properties:
                 items:
                   description: contains list of aliases you want to delete
@@ -2367,9 +2553,9 @@ paths:
   /api/v1/delete/tls-policy-map:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2379,11 +2565,11 @@ paths:
                         - tls_policy_maps
                         - delete
                         - id:
-                            - '1'
+                            - "1"
                         - null
                       msg:
                         - tls_policy_map_entry_deleted
-                        - '1'
+                        - "1"
                       type: success
               schema:
                 properties:
@@ -2414,7 +2600,7 @@ paths:
           application/json:
             schema:
               example:
-                - '3'
+                - "3"
               properties:
                 items:
                   description: contains list of tls policy maps you want to delete
@@ -2424,9 +2610,9 @@ paths:
   /api/v1/delete/transport:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2436,10 +2622,10 @@ paths:
                         - transport
                         - delete
                         - id:
-                            - '1'
+                            - "1"
                       msg:
                         - relayhost_removed
-                        - '1'
+                        - "1"
                       type: success
               schema:
                 properties:
@@ -2470,7 +2656,7 @@ paths:
           application/json:
             schema:
               example:
-                - '1'
+                - "1"
               properties:
                 items:
                   description: contains list of transport maps you want to delete
@@ -2480,9 +2666,9 @@ paths:
   /api/v1/edit/alias:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2492,11 +2678,11 @@ paths:
                         - mailbox
                         - edit
                         - alias
-                        - active: '1'
+                        - active: "1"
                           address: alias@domain.tld
                           goto: destination@domain.tld
                           id:
-                            - '6'
+                            - "6"
                           private_comment: private comment
                           public_comment: public comment
                         - null
@@ -2534,12 +2720,12 @@ paths:
             schema:
               example:
                 attr:
-                  active: '1'
+                  active: "1"
                   address: alias@domain.tld
                   goto: destination@domain.tld
                   private_comment: private comment
                   public_comment: public comment
-                items: '6'
+                items: ["6"]
               properties:
                 attr:
                   properties:
@@ -2550,7 +2736,7 @@ paths:
                       description: 'alias address, for catchall use "@domain.tld"'
                       type: string
                     goto:
-                      description: 'destination address, comma separated'
+                      description: "destination address, comma separated"
                       type: string
                     goto_ham:
                       description: learn as ham
@@ -2574,11 +2760,11 @@ paths:
   /api/v1/edit/domain:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
-            '*/*':
+            "*/*":
               schema:
                 properties:
                   log:
@@ -2612,18 +2798,18 @@ paths:
             schema:
               example:
                 attr:
-                  active: '1'
-                  aliases: '400'
-                  backupmx: '1'
-                  defquota: '3072'
+                  active: "1"
+                  aliases: "400"
+                  backupmx: "1"
+                  defquota: "3072"
                   description: domain description
-                  gal: '1'
+                  gal: "1"
                   lang: cs
-                  mailboxes: '10'
-                  maxquota: '10240'
-                  quota: '10240'
-                  relay_all_recipients: '0'
-                  relayhost: '2'
+                  mailboxes: "10"
+                  maxquota: "10240"
+                  quota: "10240"
+                  relay_all_recipients: "0"
+                  relayhost: "2"
                 items: domain.tld
               properties:
                 attr:
@@ -2691,11 +2877,11 @@ paths:
   /api/v1/edit/fail2ban:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
-            '*/*':
+            "*/*":
               schema:
                 properties:
                   log:
@@ -2726,12 +2912,12 @@ paths:
             schema:
               example:
                 attr:
-                  ban_time: '86400'
-                  blacklist: '10.100.6.5/32,10.100.8.4/32'
-                  max_attempts: '5'
-                  netban_ipv4: '24'
-                  netban_ipv6: '64'
-                  retry_window: '600'
+                  ban_time: "86400"
+                  blacklist: "10.100.6.5/32,10.100.8.4/32"
+                  max_attempts: "5"
+                  netban_ipv4: "24"
+                  netban_ipv6: "64"
+                  retry_window: "600"
                   whitelist: mailcow.tld
                 items: none
               properties:
@@ -2769,9 +2955,9 @@ paths:
   /api/v1/edit/mailbox:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2781,18 +2967,18 @@ paths:
                         - mailbox
                         - edit
                         - mailbox
-                        - active: '1'
-                          force_pw_update: '0'
+                        - active: "1"
+                          force_pw_update: "0"
                           name: Full name
-                          password: '*'
-                          password2: '*'
-                          quota: '3072'
+                          password: "*"
+                          password2: "*"
+                          quota: "3072"
                           sender_acl:
                             - default
                             - info@domain2.tld
                             - domain3.tld
-                            - '*'
-                          sogo_access: '1'
+                            - "*"
+                          sogo_access: "1"
                           username:
                             - info@domain.tld
                         - null
@@ -2830,18 +3016,18 @@ paths:
             schema:
               example:
                 attr:
-                  active: '1'
-                  force_pw_update: '0'
+                  active: "1"
+                  force_pw_update: "0"
                   name: Full name
-                  password: ''
-                  password2: ''
-                  quota: '3072'
+                  password: ""
+                  password2: ""
+                  quota: "3072"
                   sender_acl:
                     - default
                     - info@domain2.tld
                     - domain3.tld
-                    - '*'
-                  sogo_access: '1'
+                    - "*"
+                  sogo_access: "1"
                 items: info@domain.tld
               properties:
                 attr:
@@ -2879,9 +3065,9 @@ paths:
   /api/v1/edit/mailq:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2914,9 +3100,9 @@ paths:
   /api/v1/edit/pushover:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -2925,13 +3111,13 @@ paths:
                     - log:
                         - pushover
                         - edit
-                        - active: '0'
-                          evaluate_x_prio: '0'
+                        - active: "0"
+                          evaluate_x_prio: "0"
                           key: 21e8918e1jksdjcpis712
-                          only_x_prio: '0'
-                          senders: ''
-                          senders_regex: ''
-                          text: ''
+                          only_x_prio: "0"
+                          senders: ""
+                          senders_regex: ""
+                          text: ""
                           title: Mail
                           token: 9023e2ohcwed27d1idu2
                           username:
@@ -2968,13 +3154,13 @@ paths:
             schema:
               example:
                 attr:
-                  active: '0'
-                  evaluate_x_prio: '0'
+                  active: "0"
+                  evaluate_x_prio: "0"
                   key: 21e8918e1jksdjcpis712
-                  only_x_prio: '0'
-                  senders: ''
-                  senders_regex: ''
-                  text: ''
+                  only_x_prio: "0"
+                  senders: ""
+                  senders_regex: ""
+                  text: ""
                   title: Mail
                   token: 9023e2ohcwed27d1idu2
                 items: info@domain.tld
@@ -3017,9 +3203,9 @@ paths:
   /api/v1/edit/quarantine_notification:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           description: OK
           headers: {}
       tags:
@@ -3059,9 +3245,9 @@ paths:
   /api/v1/edit/syncjob:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -3105,27 +3291,27 @@ paths:
             schema:
               example:
                 attr:
-                  active: '1'
-                  automap: '1'
-                  custom_params: ''
-                  delete1: '0'
-                  delete2: '0'
-                  delete2duplicates: '1'
+                  active: "1"
+                  automap: "1"
+                  custom_params: ""
+                  delete1: "0"
+                  delete2: "0"
+                  delete2duplicates: "1"
                   enc1: SSL
                   exclude: (?i)spam|(?i)junk
                   host1: imap.server.tld
-                  maxage: '0'
-                  maxbytespersecond: '0'
-                  mins_interval: '20'
+                  maxage: "0"
+                  maxbytespersecond: "0"
+                  mins_interval: "20"
                   password1: supersecret
-                  port1: '993'
-                  skipcrossduplicates: '0'
+                  port1: "993"
+                  skipcrossduplicates: "0"
                   subfolder2: External
-                  subscribeall: '1'
-                  timeout1: '600'
-                  timeout2: '600'
+                  subscribeall: "1"
+                  timeout1: "600"
+                  timeout2: "600"
                   user1: username
-                items: '1'
+                items: "1"
               properties:
                 attr:
                   properties:
@@ -3210,9 +3396,9 @@ paths:
   /api/v1/edit/user-acl:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -3297,7 +3483,7 @@ paths:
                   type: object
               type: object
       summary: Update mailbox ACL
-  '/api/v1/get/alias/{id}':
+  "/api/v1/get/alias/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -3308,10 +3494,10 @@ paths:
           schema:
             enum:
               - all
-              - '1'
-              - '2'
-              - '5'
-              - '10'
+              - "1"
+              - "2"
+              - "5"
+              - "10"
             type: string
         - description: e.g. api-key-string
           example: api-key-string
@@ -3321,34 +3507,32 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10004;'
-                      active_int: 1
+                    - active: "1"
                       address: alias@domain.tld
-                      created: '2019-04-04 19:29:49'
+                      created: "2019-04-04 19:29:49"
                       domain: domain.tld
                       goto: destination@domain.tld
                       id: 6
-                      in_primary_domain: ''
+                      in_primary_domain: ""
                       is_catch_all: 0
                       modified: null
                       private_comment: null
                       public_comment: null
-                    - active: '&#10004;'
-                      active_int: 1
-                      address: '@domain.tld'
-                      created: '2019-04-27 13:42:39'
+                    - active: "1"
+                      address: "@domain.tld"
+                      created: "2019-04-27 13:42:39"
                       domain: domain.tld
                       goto: destination@domain.tld
                       id: 10
-                      in_primary_domain: ''
+                      in_primary_domain: ""
                       is_catch_all: 1
                       modified: null
                       private_comment: null
@@ -3360,7 +3544,7 @@ paths:
       description: You can list mailbox aliases existing in system.
       operationId: Get aliases
       summary: Get aliases
-  '/api/v1/get/app-passwd/all/{mailbox}':
+  "/api/v1/get/app-passwd/all/{mailbox}":
     get:
       parameters:
         - description: mailbox of entry you want to get
@@ -3380,17 +3564,16 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10003;'
-                      active_int: 1
-                      created: '2019-12-21 16:04:55'
+                    - active: "1"
+                      created: "2019-12-21 16:04:55"
                       domain: mailcow.email
                       id: 2
                       mailbox: hello@mailcow.email
@@ -3405,7 +3588,7 @@ paths:
         mailbox.
       operationId: Get App Password
       summary: Get App Password
-  '/api/v1/get/bcc/{id}':
+  "/api/v1/get/bcc/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -3416,10 +3599,10 @@ paths:
           schema:
             enum:
               - all
-              - '1'
-              - '2'
-              - '5'
-              - '10'
+              - "1"
+              - "2"
+              - "5"
+              - "10"
             type: string
         - description: e.g. api-key-string
           example: api-key-string
@@ -3429,21 +3612,20 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10003;'
-                      active_int: 1
+                    - active: "1"
                       bcc_dest: bcc@awesomecow.tld
-                      created: '2019-10-02 21:44:34'
+                      created: "2019-10-02 21:44:34"
                       domain: mailcow.tld
                       id: 3
-                      local_dest: '@mailcow.tld'
+                      local_dest: "@mailcow.tld"
                       modified: null
                       type: sender
           description: OK
@@ -3453,7 +3635,7 @@ paths:
       description: Using this endpoint you can get all BCC maps.
       operationId: Get BCC Map
       summary: Get BCC Map
-  '/api/v1/get/dkim/{domain}':
+  "/api/v1/get/dkim/{domain}":
     get:
       parameters:
         - description: name of domain
@@ -3470,9 +3652,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -3481,8 +3663,8 @@ paths:
                     dkim_selector: dkim
                     dkim_txt: >-
                       v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA21tUSjyasQy/hJmVjPnlRGfzx6TPhYj8mXY9DVOzSAE64Gddw/GnE/GcCR6WXNT23u9q4zPnz1IPoNt5kFOps8vg/iNqrcH++494noaZuYyFPPFnebkfryO4EvEyxC/c66qts+gnOUml+M8uv5WObBJld2gG12jLwFM0263J/N6J8LuUsaXOB2uCIfx8Nf4zjuJ6Ieez2uyHNK5dXjDLfKA4mTr+EEK6W6e34M4KN1liWM6r9Oy5S1FlLrD42VpURxxBZtBiEtaJPEKSQuk6GQz8ihu7W20Yr53tyCdaORu8dhxXVUWVf+GjuuMEdAmQCjYkarXdYCrt56Psw703kwIDAQAB
-                    length: '2048'
-                    privkey: ''
+                    length: "2048"
+                    privkey: ""
                     pubkey: >-
                       MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA21tUSjyasQy/hJmVjPnlRGfzx6TPhYj8mXY9DVOzSAE64Gddw/GnE/GcCR6WXNT23u9q4zPnz1IPoNt5kFOps8vg/iNqrcH++494noaZuYyFPPFnebkfryO4EvEyxC/c66qts+gnOUml+M8uv5WObBJld2gG12jLwFM0263J/N6J8LuUsaXOB2uCIfx8Nf4zjuJ6Ieez2uyHNK5dXjDLfKA4mTr+EEK6W6e34M4KN1liWM6r9Oy5S1FlLrD42VpURxxBZtBiEtaJPEKSQuk6GQz8ihu7W20Yr53tyCdaORu8dhxXVUWVf+GjuuMEdAmQCjYkarXdYCrt56Psw703kwIDAQAB
           description: OK
@@ -3497,21 +3679,19 @@ paths:
   /api/v1/get/domain-admin/all:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10003;'
-                      active_int: 1
-                      created: '2019-10-02 10:29:41'
+                    - active: "1"
+                      created: "2019-10-02 10:29:41"
                       selected_domains:
                         - mailcow.tld
-                      tfa_active: '&#10005;'
-                      tfa_active_int: null
+                      tfa_active: "0"
                       unselected_domains:
                         - awesomemailcow.de
                         - mailcowisgreat.de
@@ -3520,10 +3700,10 @@ paths:
           headers: {}
       tags:
         - Domain admin
-      description: ''
+      description: ""
       operationId: Get Domain Admins
       summary: Get Domain Admins
-  '/api/v1/get/domain/{id}':
+  "/api/v1/get/domain/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -3544,27 +3724,24 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10004;'
-                      active_int: 1
+                    - active: "1"
                       aliases_in_domain: 0
                       aliases_left: 400
-                      backupmx: '&#10008;'
-                      backupmx_int: 0
-                      bytes_total: '5076666944'
+                      backupmx: "0"
+                      bytes_total: "5076666944"
                       def_new_mailbox_quota: 3221225472
                       def_quota_for_mbox: 3221225472
                       description: Some description
                       domain_name: domain.tld
-                      gal: '&#10008;'
-                      gal_int: 0
+                      gal: "0"
                       lang: en
                       max_new_mailbox_quota: 10737418240
                       max_num_aliases_for_domain: 400
@@ -3573,25 +3750,21 @@ paths:
                       max_quota_for_mbox: 10737418240
                       mboxes_in_domain: 0
                       mboxes_left: 10
-                      msgs_total: '172440'
-                      quota_used_in_domain: '0'
-                      relay_all_recipients: '&#10008;'
-                      relay_all_recipients_int: 0
-                      relayhost: '0'
+                      msgs_total: "172440"
+                      quota_used_in_domain: "0"
+                      relay_all_recipients: "0"
+                      relayhost: "0"
                       rl: false
-                    - active: '&#10004;'
-                      active_int: 1
+                    - active: "1"
                       aliases_in_domain: 0
                       aliases_left: 400
-                      backupmx: '&#10004;'
-                      backupmx_int: 1
-                      bytes_total: '5076666944'
+                      backupmx: "1"
+                      bytes_total: "5076666944"
                       def_new_mailbox_quota: 3221225472
                       def_quota_for_mbox: 3221225472
                       description: domain description
                       domain_name: domain2.tld
-                      gal: '&#10008;'
-                      gal_int: 0
+                      gal: "0"
                       lang: cs
                       max_new_mailbox_quota: 10737418240
                       max_num_aliases_for_domain: 400
@@ -3600,11 +3773,10 @@ paths:
                       max_quota_for_mbox: 10737418240
                       mboxes_in_domain: 0
                       mboxes_left: 10
-                      msgs_total: '172440'
-                      quota_used_in_domain: '0'
-                      relay_all_recipients: '&#10008;'
-                      relay_all_recipients_int: 0
-                      relayhost: '0'
+                      msgs_total: "172440"
+                      quota_used_in_domain: "0"
+                      relay_all_recipients: "0"
+                      relayhost: "0"
                       rl: false
           description: OK
           headers: {}
@@ -3616,9 +3788,9 @@ paths:
   /api/v1/get/fail2ban:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -3646,19 +3818,19 @@ paths:
   /api/v1/get/fwdhost/all:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
                     - host: 5.1.76.202
-                      keep_spam: 'yes'
+                      keep_spam: "yes"
                       source: hosted.mailcow.de
-                    - host: '2a00:f820:417::202'
-                      keep_spam: 'yes'
+                    - host: "2a00:f820:417::202"
+                      keep_spam: "yes"
                       source: hosted.mailcow.de
           description: OK
           headers: {}
@@ -3667,7 +3839,7 @@ paths:
       description: You can list all Forwarding Hosts in your mailcow.
       operationId: Get Forwarding Hosts
       summary: Get Forwarding Hosts
-  '/api/v1/get/logs/acme/{count}':
+  "/api/v1/get/logs/acme/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -3684,9 +3856,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -3695,7 +3867,7 @@ paths:
                     - message: >-
                         Certificate validation done, neither changed nor due for
                         renewal, sleeping for another day.
-                      time: '1569927728'
+                      time: "1569927728"
           description: OK
           headers: {}
       tags:
@@ -3708,7 +3880,7 @@ paths:
         the end of the api url.
       operationId: Get ACME logs
       summary: Get ACME logs
-  '/api/v1/get/logs/api/{count}':
+  "/api/v1/get/logs/api/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -3725,15 +3897,15 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - data: ''
+                    - data: ""
                       method: GET
                       remote: 1.1.1.1
                       time: 1569939001
@@ -3749,7 +3921,7 @@ paths:
         the end of the api url.
       operationId: Get Api logs
       summary: Get Api logs
-  '/api/v1/get/logs/autodiscover/{count}':
+  "/api/v1/get/logs/autodiscover/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -3766,9 +3938,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -3791,7 +3963,7 @@ paths:
         the end of the api url.
       operationId: Get Autodiscover logs
       summary: Get Autodiscover logs
-  '/api/v1/get/logs/dovecot/{count}':
+  "/api/v1/get/logs/dovecot/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -3808,9 +3980,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -3821,7 +3993,7 @@ paths:
                         secs): user=<>, rip=172.22.1.3, lip=172.22.1.250
                       priority: info
                       program: dovecot
-                      time: '1569938740'
+                      time: "1569938740"
           description: OK
           headers: {}
       tags:
@@ -3833,7 +4005,7 @@ paths:
         the end of the api url.
       operationId: Get Dovecot logs
       summary: Get Dovecot logs
-  '/api/v1/get/logs/netfilter/{count}':
+  "/api/v1/get/logs/netfilter/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -3850,15 +4022,15 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - message: 'Whitelist was changed, it has 1 entries'
+                    - message: "Whitelist was changed, it has 1 entries"
                       priority: info
                       time: 1569754911
                     - message: Add host/network 1.1.1.1/32 to blacklist
@@ -3875,7 +4047,7 @@ paths:
         the end of the api url.
       operationId: Get Netfilter logs
       summary: Get Netfilter logs
-  '/api/v1/get/logs/postfix/{count}':
+  "/api/v1/get/logs/postfix/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -3892,18 +4064,18 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - message: 'EF1711500458: removed'
+                    - message: "EF1711500458: removed"
                       priority: info
                       program: postfix/qmgr
-                      time: '1569937433'
+                      time: "1569937433"
           description: OK
           headers: {}
       tags:
@@ -3915,7 +4087,7 @@ paths:
         the end of the api url.
       operationId: Get Postfix logs
       summary: Get Postfix logs
-  '/api/v1/get/logs/ratelimited/{count}':
+  "/api/v1/get/logs/ratelimited/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -3932,9 +4104,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -3963,7 +4135,7 @@ paths:
         the end of the api url.
       operationId: Get Ratelimit logs
       summary: Get Ratelimit logs
-  '/api/v1/get/logs/rspamd-history/{count}':
+  "/api/v1/get/logs/rspamd-history/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -3980,9 +4152,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           description: OK
           headers: {}
       tags:
@@ -3994,7 +4166,7 @@ paths:
         the end of the api url.
       operationId: Get Rspamd logs
       summary: Get Rspamd logs
-  '/api/v1/get/logs/sogo/{count}':
+  "/api/v1/get/logs/sogo/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -4011,9 +4183,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4025,7 +4197,7 @@ paths:
                         "GET /SOGo.index/ HTTP/1.1" 200 2531/0 0.005 - - 0
                       priority: notice
                       program: sogod
-                      time: '1569938874'
+                      time: "1569938874"
           description: OK
           headers: {}
       tags:
@@ -4037,7 +4209,7 @@ paths:
         the end of the api url.
       operationId: Get SOGo logs
       summary: Get SOGo logs
-  '/api/v1/get/logs/watchdog/{count}':
+  "/api/v1/get/logs/watchdog/{count}":
     get:
       parameters:
         - description: Number of logs to return
@@ -4054,26 +4226,26 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - hpdiff: '0'
-                      hpnow: '1'
-                      hptotal: '1'
-                      lvl: '100'
+                    - hpdiff: "0"
+                      hpnow: "1"
+                      hptotal: "1"
+                      lvl: "100"
                       service: Fail2ban
-                      time: '1569938958'
-                    - hpdiff: '0'
-                      hpnow: '5'
-                      hptotal: '5'
-                      lvl: '100'
+                      time: "1569938958"
+                    - hpdiff: "0"
+                      hpnow: "5"
+                      hptotal: "5"
+                      lvl: "100"
                       service: Rspamd
-                      time: '1569938956'
+                      time: "1569938956"
           description: OK
           headers: {}
       tags:
@@ -4085,7 +4257,7 @@ paths:
         the end of the api url.
       operationId: Get Watchdog logs
       summary: Get Watchdog logs
-  '/api/v1/get/mailbox/{id}':
+  "/api/v1/get/mailbox/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -4106,23 +4278,22 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10004;'
-                      active_int: 1
+                    - active: "1"
                       attributes:
-                        force_pw_update: '0'
-                        mailbox_format: 'maildir:'
+                        force_pw_update: "0"
+                        mailbox_format: "maildir:"
                         quarantine_notification: never
-                        sogo_access: '1'
-                        tls_enforce_in: '0'
-                        tls_enforce_out: '0'
+                        sogo_access: "1"
+                        tls_enforce_in: "0"
+                        tls_enforce_out: "0"
                       domain: doman3.tld
                       is_relayed: 0
                       local_part: info
@@ -4146,9 +4317,9 @@ paths:
   /api/v1/get/mailq/all:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4168,7 +4339,7 @@ paths:
       description: Get the current mail queue and everything it contains.
       operationId: Get Queue
       summary: Get Queue
-  '/api/v1/get/oauth2-client/{id}':
+  "/api/v1/get/oauth2-client/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -4179,10 +4350,10 @@ paths:
           schema:
             enum:
               - all
-              - '1'
-              - '2'
-              - '5'
-              - '10'
+              - "1"
+              - "2"
+              - "5"
+              - "10"
             type: string
         - description: e.g. api-key-string
           example: api-key-string
@@ -4192,9 +4363,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4204,7 +4375,7 @@ paths:
                       client_secret: 73fc668a88147e32a31ff80c
                       grant_types: null
                       id: 1
-                      redirect_uri: 'https://mailcow.tld'
+                      redirect_uri: "https://mailcow.tld"
                       scope: profile
                       user_id: null
           description: OK
@@ -4214,7 +4385,7 @@ paths:
       description: Using this endpoint you can get all oAuth clients.
       operationId: Get oAuth Clients
       summary: Get oAuth Clients
-  '/api/v1/get/policy_bl_domain/{domain}':
+  "/api/v1/get/policy_bl_domain/{domain}":
     get:
       parameters:
         - description: name of domain
@@ -4231,9 +4402,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4241,7 +4412,7 @@ paths:
                   value:
                     - object: domain.tld
                       prefid: 2
-                      value: '*@baddomain.tld'
+                      value: "*@baddomain.tld"
           description: OK
           headers: {}
       tags:
@@ -4249,7 +4420,7 @@ paths:
       description: You can list all blacklist policies per domain.
       operationId: List blacklist domain policy
       summary: List blacklist domain policy
-  '/api/v1/get/policy_wl_domain/{domain}':
+  "/api/v1/get/policy_wl_domain/{domain}":
     get:
       parameters:
         - description: name of domain
@@ -4266,9 +4437,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4276,7 +4447,7 @@ paths:
                   value:
                     - object: domain.tld
                       prefid: 1
-                      value: '*@gooddomain.tld'
+                      value: "*@gooddomain.tld"
           description: OK
           headers: {}
       tags:
@@ -4287,9 +4458,9 @@ paths:
   /api/v1/get/quarantine/all:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4311,7 +4482,7 @@ paths:
       description: Get all mails that are currently in Quarantine.
       operationId: Get mails in Quarantine
       summary: Get mails in Quarantine
-  '/api/v1/get/recipient_map/{id}':
+  "/api/v1/get/recipient_map/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -4322,10 +4493,10 @@ paths:
           schema:
             enum:
               - all
-              - '1'
-              - '2'
-              - '5'
-              - '10'
+              - "1"
+              - "2"
+              - "5"
+              - "10"
             type: string
         - description: e.g. api-key-string
           example: api-key-string
@@ -4335,17 +4506,16 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10003;'
-                      active_int: 1
-                      created: '2019-10-02 22:06:29'
+                    - active: "1"
+                      created: "2019-10-02 22:06:29"
                       id: 3
                       modified: null
                       recipient_map_new: target@mailcow.tld
@@ -4357,7 +4527,7 @@ paths:
       description: Using this endpoint you can get all recipient maps.
       operationId: Get Recipient Map
       summary: Get Recipient Map
-  '/api/v1/get/relayhost/{id}':
+  "/api/v1/get/relayhost/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -4368,10 +4538,10 @@ paths:
           schema:
             enum:
               - all
-              - '1'
-              - '2'
-              - '5'
-              - '10'
+              - "1"
+              - "2"
+              - "5"
+              - "10"
             type: string
         - description: e.g. api-key-string
           example: api-key-string
@@ -4381,21 +4551,20 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10003;'
-                      active_int: 1
-                      hostname: 'mailcow.tld:25'
+                    - active: "1"
+                      hostname: "mailcow.tld:25"
                       id: 1
                       password: supersecurepassword
                       password_short: tes...
-                      used_by_domains: ''
+                      used_by_domains: ""
                       username: testuser
           description: OK
           headers: {}
@@ -4407,16 +4576,15 @@ paths:
   /api/v1/get/resource/all:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10003;'
-                      active_int: 1
+                    - active: "1"
                       description: test
                       domain: mailcow.tld
                       kind: location
@@ -4430,7 +4598,7 @@ paths:
       description: Using this endpoint you can get all Resources.
       operationId: Get Resources
       summary: Get Resources
-  '/api/v1/get/rl-mbox/{mailbox}':
+  "/api/v1/get/rl-mbox/{mailbox}":
     get:
       parameters:
         - description: name of mailbox or all
@@ -4447,9 +4615,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4457,10 +4625,10 @@ paths:
                   value:
                     - frame: s
                       mailbox: leon@mailcow.tld
-                      value: '5'
+                      value: "5"
                     - frame: s
                       mailbox: lisa@mailcow.tld
-                      value: '3'
+                      value: "3"
           description: OK
           headers: {}
       tags:
@@ -4470,7 +4638,7 @@ paths:
         You can use all for all mailboxes.
       operationId: Get mailbox ratelimits
       summary: Get mailbox ratelimits
-  '/api/v1/get/rl-domain/{domain}':
+  "/api/v1/get/rl-domain/{domain}":
     get:
       parameters:
         - description: name of domain or all
@@ -4487,9 +4655,9 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4497,10 +4665,10 @@ paths:
                   value:
                     - frame: s
                       domain: domain.tld
-                      value: '5'
+                      value: "5"
                     - frame: s
                       mailbox: domain2.tld
-                      value: '3'
+                      value: "3"
           description: OK
           headers: {}
       tags:
@@ -4513,9 +4681,9 @@ paths:
   /api/v1/edit/rl-mbox/:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4523,16 +4691,16 @@ paths:
                   value:
                     - type: success
                       log:
-                      - ratelimit
-                      - edit
-                      - mailbox
-                      - object:
-                        - info@domain.tld
-                        rl_value: "10"
-                        rl_frame: h
+                        - ratelimit
+                        - edit
+                        - mailbox
+                        - object:
+                            - info@domain.tld
+                          rl_value: "10"
+                          rl_frame: h
                       msg:
-                      - rl_saved
-                      - info@domain.tld
+                        - rl_saved
+                        - info@domain.tld
               schema:
                 properties:
                   log:
@@ -4562,9 +4730,10 @@ paths:
             schema:
               example:
                 attr:
-                  - rl_vlaue: "10"
-                    rl_frame: "h"
-                items: info@domain.tld
+                  rl_vlaue: "10"
+                  rl_frame: "h"
+                items:
+                  - info@domain.tld
               properties:
                 attr:
                   properties:
@@ -4583,9 +4752,9 @@ paths:
   /api/v1/edit/rl-domain/:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4597,7 +4766,7 @@ paths:
                         - edit
                         - domain
                         - object:
-                          - domain.tld
+                            - domain.tld
                           rl_value: "50"
                           rl_frame: "h"
                       msg:
@@ -4632,9 +4801,10 @@ paths:
             schema:
               example:
                 attr:
-                  - rl_vlaue: "10"
-                    rl_frame: "h"
-                items: domain.tld
+                  rl_vlaue: "10"
+                  rl_frame: "h"
+                items:
+                  - domain.tld
               properties:
                 attr:
                   properties:
@@ -4653,9 +4823,9 @@ paths:
   /api/v1/get/status/containers:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4663,110 +4833,110 @@ paths:
                   value:
                     acme-mailcow:
                       container: acme-mailcow
-                      image: 'mailcow/acme:1.63'
-                      started_at: '2019-12-22T21:00:08.270660275Z'
+                      image: "mailcow/acme:1.63"
+                      started_at: "2019-12-22T21:00:08.270660275Z"
                       state: running
                       type: info
                     clamd-mailcow:
                       container: clamd-mailcow
-                      image: 'mailcow/clamd:1.35'
-                      started_at: '2019-12-22T21:00:01.622856172Z'
+                      image: "mailcow/clamd:1.35"
+                      started_at: "2019-12-22T21:00:01.622856172Z"
                       state: running
                       type: info
                     dockerapi-mailcow:
                       container: dockerapi-mailcow
-                      image: 'mailcow/dockerapi:1.36'
-                      started_at: '2019-12-22T20:59:59.984797808Z'
+                      image: "mailcow/dockerapi:1.36"
+                      started_at: "2019-12-22T20:59:59.984797808Z"
                       state: running
                       type: info
                     dovecot-mailcow:
                       container: dovecot-mailcow
-                      image: 'mailcow/dovecot:1.104'
-                      started_at: '2019-12-22T21:00:08.988680259Z'
+                      image: "mailcow/dovecot:1.104"
+                      started_at: "2019-12-22T21:00:08.988680259Z"
                       state: running
                       type: info
                     ipv6nat-mailcow:
                       container: ipv6nat-mailcow
                       image: robbertkl/ipv6nat
-                      started_at: '2019-12-22T21:06:37.273225445Z'
+                      started_at: "2019-12-22T21:06:37.273225445Z"
                       state: running
                       type: info
                     memcached-mailcow:
                       container: memcached-mailcow
-                      image: 'memcached:alpine'
-                      started_at: '2019-12-22T20:59:58.0907785Z'
+                      image: "memcached:alpine"
+                      started_at: "2019-12-22T20:59:58.0907785Z"
                       state: running
                       type: info
                     mysql-mailcow:
                       container: mysql-mailcow
-                      image: 'mariadb:10.3'
-                      started_at: '2019-12-22T21:00:02.201937528Z'
+                      image: "mariadb:10.3"
+                      started_at: "2019-12-22T21:00:02.201937528Z"
                       state: running
                       type: info
                     netfilter-mailcow:
                       container: netfilter-mailcow
-                      image: 'mailcow/netfilter:1.31'
-                      started_at: '2019-12-22T21:00:09.851559297Z'
+                      image: "mailcow/netfilter:1.31"
+                      started_at: "2019-12-22T21:00:09.851559297Z"
                       state: running
                       type: info
                     nginx-mailcow:
                       container: nginx-mailcow
-                      image: 'nginx:mainline-alpine'
-                      started_at: '2019-12-22T21:00:12.9843038Z'
+                      image: "nginx:mainline-alpine"
+                      started_at: "2019-12-22T21:00:12.9843038Z"
                       state: running
                       type: info
                     olefy-mailcow:
                       container: olefy-mailcow
-                      image: 'mailcow/olefy:1.2'
-                      started_at: '2019-12-22T20:59:59.676259274Z'
+                      image: "mailcow/olefy:1.2"
+                      started_at: "2019-12-22T20:59:59.676259274Z"
                       state: running
                       type: info
                     php-fpm-mailcow:
                       container: php-fpm-mailcow
-                      image: 'mailcow/phpfpm:1.55'
-                      started_at: '2019-12-22T21:00:00.955808957Z'
+                      image: "mailcow/phpfpm:1.55"
+                      started_at: "2019-12-22T21:00:00.955808957Z"
                       state: running
                       type: info
                     postfix-mailcow:
                       container: postfix-mailcow
-                      image: 'mailcow/postfix:1.44'
-                      started_at: '2019-12-22T21:00:07.186717617Z'
+                      image: "mailcow/postfix:1.44"
+                      started_at: "2019-12-22T21:00:07.186717617Z"
                       state: running
                       type: info
                     redis-mailcow:
                       container: redis-mailcow
-                      image: 'redis:5-alpine'
-                      started_at: '2019-12-22T20:59:56.827166834Z'
+                      image: "redis:5-alpine"
+                      started_at: "2019-12-22T20:59:56.827166834Z"
                       state: running
                       type: info
                     rspamd-mailcow:
                       container: rspamd-mailcow
-                      image: 'mailcow/rspamd:1.56'
-                      started_at: '2019-12-22T21:00:12.456075355Z'
+                      image: "mailcow/rspamd:1.56"
+                      started_at: "2019-12-22T21:00:12.456075355Z"
                       state: running
                       type: info
                     sogo-mailcow:
                       container: sogo-mailcow
-                      image: 'mailcow/sogo:1.65'
-                      started_at: '2019-12-22T20:59:58.382274592Z'
+                      image: "mailcow/sogo:1.65"
+                      started_at: "2019-12-22T20:59:58.382274592Z"
                       state: running
                       type: info
                     solr-mailcow:
                       container: solr-mailcow
-                      image: 'mailcow/solr:1.7'
-                      started_at: '2019-12-22T20:59:59.635413798Z'
+                      image: "mailcow/solr:1.7"
+                      started_at: "2019-12-22T20:59:59.635413798Z"
                       state: running
                       type: info
                     unbound-mailcow:
                       container: unbound-mailcow
-                      image: 'mailcow/unbound:1.10'
-                      started_at: '2019-12-22T20:59:58.760595825Z'
+                      image: "mailcow/unbound:1.10"
+                      started_at: "2019-12-22T20:59:58.760595825Z"
                       state: running
                       type: info
                     watchdog-mailcow:
                       container: watchdog-mailcow
-                      image: 'mailcow/watchdog:1.65'
-                      started_at: '2019-12-22T20:59:56.028660382Z'
+                      image: "mailcow/watchdog:1.65"
+                      started_at: "2019-12-22T20:59:56.028660382Z"
                       state: running
                       type: info
           description: OK
@@ -4781,9 +4951,9 @@ paths:
   /api/v1/get/status/solr:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4805,9 +4975,9 @@ paths:
   /api/v1/get/status/vmail:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4830,38 +5000,37 @@ paths:
   /api/v1/get/syncjobs/all/no_log:
     get:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10003;'
-                      active_int: 1
+                    - active: "1"
                       authmd51: 0
                       authmech1: PLAIN
                       automap: 1
-                      created: '2019-05-22 11:37:25'
-                      custom_params: ''
+                      created: "2019-05-22 11:37:25"
+                      custom_params: ""
                       delete1: 0
                       delete2: 0
                       delete2duplicates: 1
-                      domain2: ''
+                      domain2: ""
                       enc1: TLS
                       exclude: (?i)spam|(?i)junk
                       host1: imap.server.tld
                       id: 1
                       is_running: 0
-                      last_run: '2019-05-22 11:40:02'
-                      log: ''
+                      last_run: "2019-05-22 11:40:02"
+                      log: ""
                       maxage: 0
-                      maxbytespersecond: '0'
-                      mins_interval: '20'
-                      modified: '2019-05-22 11:40:02'
+                      maxbytespersecond: "0"
+                      mins_interval: "20"
+                      modified: "2019-05-22 11:40:02"
                       port1: 993
-                      regextrans2: ''
+                      regextrans2: ""
                       skipcrossduplicates: 0
                       subfolder2: External
                       subscribeall: 1
@@ -4876,7 +5045,7 @@ paths:
       description: You can list all syn jobs existing in system.
       operationId: Get sync jobs
       summary: Get sync jobs
-  '/api/v1/get/tls-policy-map/{id}':
+  "/api/v1/get/tls-policy-map/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -4887,10 +5056,10 @@ paths:
           schema:
             enum:
               - all
-              - '1'
-              - '2'
-              - '5'
-              - '10'
+              - "1"
+              - "2"
+              - "5"
+              - "10"
             type: string
         - description: e.g. api-key-string
           example: api-key-string
@@ -4900,18 +5069,17 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - parameters: ''
-                      active: '&#10003;'
-                      active_int: 1
-                      created: '2019-10-03 08:42:12'
+                    - parameters: ""
+                      active: "1"
+                      created: "2019-10-03 08:42:12"
                       dest: mailcow.tld
                       id: 1
                       modified: null
@@ -4923,7 +5091,7 @@ paths:
       description: Using this endpoint you can get all TLS policy map override maps.
       operationId: Get TLS Policy Map
       summary: Get TLS Policy Map
-  '/api/v1/get/transport/{id}':
+  "/api/v1/get/transport/{id}":
     get:
       parameters:
         - description: id of entry you want to get
@@ -4934,10 +5102,10 @@ paths:
           schema:
             enum:
               - all
-              - '1'
-              - '2'
-              - '5'
-              - '10'
+              - "1"
+              - "2"
+              - "5"
+              - "10"
             type: string
         - description: e.g. api-key-string
           example: api-key-string
@@ -4947,21 +5115,19 @@ paths:
           schema:
             type: string
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
                 response:
                   value:
-                    - active: '&#10003;'
-                      active_int: 1
+                    - active: "1"
                       destination: example.org
                       id: 1
-                      lookup_mx: '&#10005;'
-                      lookup_mx_int: 0
-                      nexthop: 'host:25'
+                      lookup_mx: "0"
+                      nexthop: "host:25"
                       password: supersecurepw
                       password_short: sup...
                       username: testuser
@@ -4975,9 +5141,9 @@ paths:
   /api/v1/edit/spam-score/:
     post:
       responses:
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '200':
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "200":
           content:
             application/json:
               examples:
@@ -4985,15 +5151,15 @@ paths:
                   value:
                     - type: success
                       log:
-                      - mailbox
-                      - edit
-                      - spam_score
-                      - username:
-                        - info@domain.tld
-                        spam_score: '8,15'
+                        - mailbox
+                        - edit
+                        - spam_score
+                        - username:
+                            - info@domain.tld
+                          spam_score: "8,15"
                       msg:
-                      - mailbox_modified
-                      - info@domain.tld
+                        - mailbox_modified
+                        - info@domain.tld
               schema:
                 properties:
                   log:
@@ -5023,9 +5189,9 @@ paths:
             schema:
               example:
                 - items:
-                  - info@domain.tld
+                    - info@domain.tld
                   attr:
-                    spam_score: '8,15'
+                    spam_score: "8,15"
       summary: Edit mailbox spam filter score
 
 tags:
@@ -5042,9 +5208,9 @@ tags:
   - name: Fordwarding Hosts
     description: Forwarding Hosts enable you to send mail using a relay
   - name: Logs
-    description: Get all mailcow sysmte logs
+    description: Get all mailcow system logs
   - name: Queue Manager
-    description: Manage the postfix mailque
+    description: Manage the postfix mail queue
   - name: Quarantine
     description: Check what emails went to quarantine
   - name: Fail2Ban
@@ -5054,7 +5220,7 @@ tags:
   - name: Domain admin
     description: Create or udpdate domain admin users
   - name: Address Rewriting
-    description: Create BBC maps or recipient maps
+    description: Create BCC maps or recipient maps
   - name: Outgoing TLS Policy Map Overrides
     description: Force global TLS policys
   - name: oAuth Clients

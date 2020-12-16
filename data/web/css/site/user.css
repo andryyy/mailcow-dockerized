@@ -58,3 +58,12 @@ table tbody tr td input[type="checkbox"] {
   -webkit-transform:rotateX(180deg);
   transform:rotateX(180deg);
 }
+.label-keys {
+  font-size:100%;
+  margin: 0px !important;
+  white-space: normal !important;
+}
+.key-action {
+  font-weight:bold;
+  color:white !important;
+}

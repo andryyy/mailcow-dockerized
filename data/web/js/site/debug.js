@@ -36,7 +36,7 @@ jQuery(function($){
   function draw_autodiscover_logs() {
     ft_autodiscover_logs = FooTable.init('#autodiscover_log', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"ua","title":"User-Agent","style":{"min-width":"200px"}},
         {"name":"user","title":"Username","style":{"min-width":"200px"}},
         {"name":"service","title":"Service"},
@@ -54,7 +54,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -72,7 +72,7 @@ jQuery(function($){
   function draw_postfix_logs() {
     ft_postfix_logs = FooTable.init('#postfix_log', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"priority","title":lang.priority,"style":{"width":"80px"}},
         {"name":"message","title":lang.message},
       ],
@@ -89,7 +89,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -107,7 +107,7 @@ jQuery(function($){
   function draw_watchdog_logs() {
     ft_watchdog_logs = FooTable.init('#watchdog_log', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"service","title":"Service"},
         {"name":"trend","title":"Trend"},
         {"name":"message","title":lang.message},
@@ -125,7 +125,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -143,7 +143,7 @@ jQuery(function($){
   function draw_api_logs() {
     ft_api_logs = FooTable.init('#api_log', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"uri","title":"URI","style":{"width":"310px"}},
         {"name":"method","title":"Method","style":{"width":"80px"}},
         {"name":"remote","title":"IP","style":{"width":"80px"}},
@@ -162,7 +162,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -181,7 +181,7 @@ jQuery(function($){
     ft_rl_logs = FooTable.init('#rl_log', {
       "columns": [
         {"name":"indicator","title":" ","style":{"width":"50px"}},
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.last_applied,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.last_applied,"style":{"width":"170px"}},
         {"name":"rl_name","title":lang.rate_name},
         {"name":"from","title":lang.sender},
         {"name":"rcpt","title":lang.recipients},
@@ -207,7 +207,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -225,7 +225,7 @@ jQuery(function($){
   function draw_ui_logs() {
     ft_api_logs = FooTable.init('#ui_logs', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"type","title":"Type"},
         {"name":"task","title":"Task"},
         {"name":"user","title":"User"},
@@ -247,7 +247,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -265,7 +265,7 @@ jQuery(function($){
   function draw_acme_logs() {
     ft_acme_logs = FooTable.init('#acme_log', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"message","title":lang.message,"style":{"word-break":"break-all"}},
       ],
       "rows": $.ajax({
@@ -281,7 +281,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -299,7 +299,7 @@ jQuery(function($){
   function draw_netfilter_logs() {
     ft_netfilter_logs = FooTable.init('#netfilter_log', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"priority","title":lang.priority,"style":{"width":"80px"}},
         {"name":"message","title":lang.message},
       ],
@@ -316,7 +316,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -334,7 +334,7 @@ jQuery(function($){
   function draw_sogo_logs() {
     ft_sogo_logs = FooTable.init('#sogo_log', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"priority","title":lang.priority,"style":{"width":"80px"}},
         {"name":"message","title":lang.message},
       ],
@@ -351,7 +351,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -369,7 +369,7 @@ jQuery(function($){
   function draw_dovecot_logs() {
     ft_dovecot_logs = FooTable.init('#dovecot_log', {
       "columns": [
-        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name":"priority","title":lang.priority,"style":{"width":"80px"}},
         {"name":"message","title":lang.message},
       ],
@@ -386,7 +386,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -463,7 +463,7 @@ jQuery(function($){
   function draw_rspamd_history() {
     ft_rspamd_history = FooTable.init('#rspamd_history', {
       "columns": [
-        {"name":"unix_time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleString();},"title":lang.time,"style":{"width":"170px"}},
+        {"name":"unix_time","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.time,"style":{"width":"170px"}},
         {"name": "ip","title": "IP address","breakpoints": "all","style": {"minWidth": 88}},
         {"name": "sender_mime","title": "From","breakpoints": "xs sm md","style": {"minWidth": 100}},
         {"name": "rcpt","title": "To","breakpoints": "xs sm md","style": {"minWidth": 100}},
@@ -489,7 +489,7 @@ jQuery(function($){
       }),
       "empty": lang.empty,
       "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
-      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
       "sorting": {"enabled": true},
       "on": {
         "destroy.ft.table": function(e, ft){
@@ -514,10 +514,10 @@ jQuery(function($){
     if (table == 'rspamd_history') {
     $.each(data, function (i, item) {
       if (item.rcpt_mime != "") {
-        item.rcpt = item.rcpt_mime.join(", ");
+        item.rcpt = escapeHtml(item.rcpt_mime.join(", "));
       }
       else {
-        item.rcpt = item.rcpt_smtp.join(", ");
+        item.rcpt = escapeHtml(item.rcpt_smtp.join(", "));
       }
       item.symbols = Object.keys(item.symbols).sort(function (a, b) {
         if (item.symbols[a].score === 0) return 1

@@ -20,6 +20,9 @@ header_remove("X-Powered-By");
 // Yubi OTP API
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/Yubico.php';
 
+// WebAuthn
+require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/WebAuthn.php';
+
 // Autoload composer
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/vendor/autoload.php';
 
@@ -51,6 +54,19 @@ foreach ($css_dir as $css_file) {
 $u2f = new u2flib_server\U2F('https://' . $_SERVER['HTTP_HOST']);
 $qrprovider = new RobThree\Auth\Providers\Qr\QRServerProvider();
 $tfa = new RobThree\Auth\TwoFactorAuth($OTP_LABEL, 6, 30, 'sha1', $qrprovider);
+
+// FIDO2
+$formats = $GLOBALS['FIDO2_FORMATS'];
+$WebAuthn = new \WebAuthn\WebAuthn('WebAuthn Library', $_SERVER['HTTP_HOST'], $formats);
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/solo.pem');
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/apple.pem');
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/nitro.pem');
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/yubico.pem');
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/hypersecu.pem');
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/globalSign.pem');
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/googleHardware.pem');
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/microsoftTpmCollection.pem');
+$WebAuthn->addRootCertificates($_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/rootCertificates/huawei.pem');
 
 // Redis
 $redis = new Redis();

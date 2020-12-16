@@ -84,7 +84,7 @@ function app_passwd($_action, $_data = null) {
           $app_name = (!empty($_data['app_name'])) ? $_data['app_name'] : $is_now['name'];
           $password = (!empty($_data['password'])) ? $_data['password'] : null;
           $password2 = (!empty($_data['password2'])) ? $_data['password2'] : null;
-          $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active_int'];
+          $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active'];
         }
         else {
           $_SESSION['return'][] = array(
@@ -186,8 +186,7 @@ function app_passwd($_action, $_data = null) {
         `domain`,
         `created`,
         `modified`,
-        `active` AS `active_int`,
-        CASE `active` WHEN 1 THEN '".$lang['mailbox']['yes']."' ELSE '".$lang['mailbox']['no']."' END AS `active`
+        `active`
           FROM `app_passwd`
             WHERE `id` = :id");
       $stmt->execute(array(':id' => $_data['id']));

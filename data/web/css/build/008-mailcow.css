@@ -187,3 +187,13 @@ nav .glyphicon {
   border-bottom:1px solid #f5f5f5!important;
   opacity: 0.3;
 }
+.btn-input-missing,
+.btn-input-missing:hover,
+.btn-input-missing:active,
+.btn-input-missing:focus,
+.btn-input-missing:active:hover,
+.btn-input-missing:active:focus {
+  color: #000 !important;
+  background-color: #ff4136;
+  border-color: #ff291c;
+}

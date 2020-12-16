@@ -53,7 +53,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                 <?php if (getenv('SKIP_SOGO') != "y") { ?>
                 <hr>
                 <div class="checkbox">
-                  <label><input type="checkbox" value="1" name="sogo_visible" <?php if (isset($result['sogo_visible_int']) && $result['sogo_visible_int']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['sogo_visible'];?></label>
+                  <label><input type="checkbox" value="1" name="sogo_visible" <?php if (isset($result['sogo_visible']) && $result['sogo_visible']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['sogo_visible'];?></label>
                 </div>
                 <p class="help-block"><?=$lang['edit']['sogo_visible_info'];?></p>
                 <?php } ?>
@@ -76,7 +76,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active_int']) && $result['active_int']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active']) && $result['active']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -143,7 +143,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
             <div class="checkbox">
-            <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active_int']) && $result['active_int']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
+            <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active']) && $result['active']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
             </div>
           </div>
         </div>
@@ -222,7 +222,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">
             <div class="checkbox">
-            <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active_int']) && $result['active_int']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
+            <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active']) && $result['active']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
             </div>
           </div>
         </div>
@@ -321,11 +321,11 @@ if (isset($_SESSION['mailcow_cc_role'])) {
               <label class="control-label col-sm-2"><?=$lang['edit']['backup_mx_options'];?></label>
               <div class="col-sm-10">
                 <div class="checkbox">
-                  <label><input type="checkbox" value="1" name="backupmx" <?=(isset($result['backupmx_int']) && $result['backupmx_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_domain'];?></label>
+                  <label><input type="checkbox" value="1" name="backupmx" <?=(isset($result['backupmx']) && $result['backupmx']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_domain'];?></label>
                   <br>
-                  <label><input type="checkbox" value="1" name="relay_all_recipients" <?=(isset($result['relay_all_recipients_int']) && $result['relay_all_recipients_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_all'];?></label>
+                  <label><input type="checkbox" value="1" name="relay_all_recipients" <?=(isset($result['relay_all_recipients']) && $result['relay_all_recipients']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_all'];?></label>
                   <p><?=$lang['edit']['relay_all_info'];?></p>
-                  <label><input type="checkbox" value="1" name="relay_unknown_only" <?=(isset($result['relay_unknown_only_int']) && $result['relay_unknown_only_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_unknown_only'];?></label>
+                  <label><input type="checkbox" value="1" name="relay_unknown_only" <?=(isset($result['relay_unknown_only']) && $result['relay_unknown_only']=="1") ? "checked" : null;?>> <?=$lang['edit']['relay_unknown_only'];?></label>
                   <br>
                   <p><?=$lang['edit']['relay_transport_info'];?></p>
                   <hr style="margin:25px 0px 0px 0px">
@@ -338,7 +338,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                  <label><input type="checkbox" value="1" name="gal" <?=(isset($result['gal_int']) && $result['gal_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['gal'];?></label>
+                  <label><input type="checkbox" value="1" name="gal" <?=(isset($result['gal']) && $result['gal']=="1") ? "checked" : null;?>> <?=$lang['edit']['gal'];?></label>
                   <small class="help-block"><?=$lang['edit']['gal_info'];?></small>
                 </div>
               </div>
@@ -346,7 +346,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                  <label><input type="checkbox" value="1" name="active" <?=(isset($result['active_int']) && $result['active_int']=="1") ? "checked" : null;?> <?=($_SESSION['mailcow_cc_role'] == "admin") ? null : "disabled";?>> <?=$lang['edit']['active'];?></label>
+                  <label><input type="checkbox" value="1" name="active" <?=(isset($result['active']) && $result['active']=="1") ? "checked" : null;?> <?=($_SESSION['mailcow_cc_role'] == "admin") ? null : "disabled";?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -517,7 +517,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                  <label><input type="checkbox" value="1" name="active" <?=(isset($result['active_int']) && $result['active_int']=="1") ?  "checked" : null ?>> <?=$lang['edit']['active'];?></label>
+                  <label><input type="checkbox" value="1" name="active" <?=(isset($result['active']) && $result['active']=="1") ?  "checked" : null ?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -572,6 +572,8 @@ if (isset($_SESSION['mailcow_cc_role'])) {
       $rl = ratelimit('get', 'mailbox', $mailbox);
       $pushover_data = pushover('get', $mailbox);
       $quarantine_notification = mailbox('get', 'quarantine_notification', $mailbox);
+      $quarantine_category = mailbox('get', 'quarantine_category', $mailbox);
+      $get_tls_policy = mailbox('get', 'tls_policy', $mailbox);
       if (!empty($result)) {
         ?>
         <h4><?=$lang['edit']['mailbox'];?></h4>
@@ -579,6 +581,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
           <input type="hidden" value="default" name="sender_acl">
           <input type="hidden" value="0" name="force_pw_update">
           <input type="hidden" value="0" name="sogo_access">
+          <input type="hidden" value="0" name="protocol_access">
           <div class="form-group">
             <label class="control-label col-sm-2" for="name"><?=$lang['edit']['full_name'];?></label>
             <div class="col-sm-10">
@@ -658,7 +661,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             </div>
           </div>
           <div class="form-group">
-            <label class="control-label col-sm-2" for="sender_acl"><?=$lang['user']['quarantine_notification'];?></label>
+            <label class="control-label col-sm-2"><?=$lang['user']['quarantine_notification'];?></label>
             <div class="col-sm-10">
             <div class="btn-group" data-acl="<?=$_SESSION['acl']['quarantine_notification'];?>">
               <button type="button" class="btn btn-sm btn-default <?=($quarantine_notification == "never") ? "active" : null;?>"
@@ -686,8 +689,52 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                 data-api-url='edit/quarantine_notification'
                 data-api-attr='{"quarantine_notification":"weekly"}'><?=$lang['user']['weekly'];?></button>
             </div>
-            <div style="display:none" id="user_acl_q_notify_disabled"><?=$lang['edit']['user_acl_q_notify_disabled'];?></div>
             <p class="help-block"><small><?=$lang['user']['quarantine_notification_info'];?></small></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2"><?=$lang['user']['quarantine_category'];?></label>
+            <div class="col-sm-10">
+            <div class="btn-group" data-acl="<?=$_SESSION['acl']['quarantine_category'];?>">
+              <button type="button" class="btn btn-sm btn-default <?=($quarantine_category == "reject") ? "active" : null;?>"
+                data-action="edit_selected"
+                data-item="<?= htmlentities($mailbox); ?>"
+                data-id="quarantine_category"
+                data-api-url='edit/quarantine_category'
+                data-api-attr='{"quarantine_category":"reject"}'><?=$lang['user']['q_reject'];?></button>
+              <button type="button" class="btn btn-sm btn-default <?=($quarantine_category == "add_header") ? "active" : null;?>"
+                data-action="edit_selected"
+                data-item="<?= htmlentities($mailbox); ?>"
+                data-id="quarantine_category"
+                data-api-url='edit/quarantine_category'
+                data-api-attr='{"quarantine_category":"add_header"}'><?=$lang['user']['q_add_header'];?></button>
+              <button type="button" class="btn btn-sm btn-default <?=($quarantine_category == "all") ? "active" : null;?>"
+                data-action="edit_selected"
+                data-item="<?= htmlentities($mailbox); ?>"
+                data-id="quarantine_category"
+                data-api-url='edit/quarantine_category'
+                data-api-attr='{"quarantine_category":"all"}'><?=$lang['user']['q_all'];?></button>
+            </div>
+            <p class="help-block"><small><?=$lang['user']['quarantine_category_info'];?></small></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="sender_acl"><?=$lang['user']['tls_policy'];?></label>
+            <div class="col-sm-10">
+              <div class="btn-group" data-acl="<?=$_SESSION['acl']['tls_policy'];?>">
+                <button type="button" class="btn btn-sm btn-default <?=($get_tls_policy['tls_enforce_in'] == "1") ? "active" : null;?>"
+                  data-action="edit_selected"
+                  data-item="<?= htmlentities($mailbox); ?>"
+                  data-id="tls_policy"
+                  data-api-url='edit/tls_policy'
+                  data-api-attr='{"tls_enforce_in":<?=($get_tls_policy['tls_enforce_in'] == "1") ? "0" : "1";?>}'><?=$lang['user']['tls_enforce_in'];?></button>
+                <button type="button" class="btn btn-sm btn-default <?=($get_tls_policy['tls_enforce_out'] == "1") ? "active" : null;?>"
+                  data-action="edit_selected"
+                  data-item="<?= htmlentities($mailbox); ?>"
+                  data-id="tls_policy"
+                  data-api-url='edit/tls_policy'
+                  data-api-attr='{"tls_enforce_out":<?=($get_tls_policy['tls_enforce_out'] == "1") ? "0" : "1";?>}'><?=$lang['user']['tls_enforce_out'];?></button>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -710,11 +757,29 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             </div>
           </div>
           <div class="form-group">
+            <label class="control-label col-sm-2" for="protocol_access"><?=$lang['edit']['allowed_protocols'];?></label>
+            <div class="col-sm-10">
+            <select data-acl="<?=$_SESSION['acl']['protocol_access'];?>" name="protocol_access" multiple class="form-control">
+              <option value="imap" <?=($result['attributes']['imap_access']=="1") ? 'selected' : null;?>>IMAP</option>
+              <option value="pop3" <?=($result['attributes']['pop3_access']=="1") ? 'selected' : null;?>>POP3</option>
+              <option value="smtp" <?=($result['attributes']['smtp_access']=="1") ? 'selected' : null;?>>SMTP</option>
+            </select>
+            </div>
+          </div>
+          <div hidden data-acl="<?=$_SESSION['acl']['smtp_ip_access'];?>" class="form-group">
+            <label class="control-label col-sm-2" for="allow_from_smtp"><?=$lang['edit']['allow_from_smtp'];?></label>
+            <div class="col-sm-10">
+            <input type="text" class="form-control" name="allow_from_smtp" value="<?=empty($allow_from_smtp) ? '' : $allow_from_smtp; ?>" placeholder="1.1.1.1, 10.2.0.0/24, ...">
+            <small class="help-block"><?=$lang['edit']['allow_from_smtp_info'];?></small>
+            </div>
+          </div>
+          <hr>
+          <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
             <select name="active" class="form-control">
-              <option value="1" <?=($result['active_int']=="1") ? 'selected' : null;?>><?=$lang['edit']['active'];?></option>
-              <option value="2" <?=($result['active_int']=="2") ? 'selected' : null;?>><?=$lang['edit']['disable_login'];?></option>
-              <option value="0" <?=($result['active_int']=="0") ? 'selected' : null;?>><?=$lang['edit']['inactive'];?></option>
+              <option value="1" <?=($result['active']=="1") ? 'selected' : null;?>><?=$lang['edit']['active'];?></option>
+              <option value="2" <?=($result['active']=="2") ? 'selected' : null;?>><?=$lang['edit']['disable_login'];?></option>
+              <option value="0" <?=($result['active']=="0") ? 'selected' : null;?>><?=$lang['edit']['inactive'];?></option>
             </select>
             </div>
           </div>
@@ -902,7 +967,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?=($result['active_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?=($result['active']=="1") ? "checked" : null;?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -955,7 +1020,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?=($result['active_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?=($result['active']=="1") ? "checked" : null;?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -1015,7 +1080,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?=($result['active_int']=="1") ? "checked" : null;?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?=($result['active']=="1") ? "checked" : null;?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -1061,7 +1126,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active_int']) && $result['active_int']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active']) && $result['active']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -1110,7 +1175,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active_int']) && $result['active_int']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active']) && $result['active']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -1171,7 +1236,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active_int']) && $result['active_int']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?php if (isset($result['active']) && $result['active']=="1") { echo "checked"; }; ?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -1339,7 +1404,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?=($result['active_int']=="1") ? "checked" : "";?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?=($result['active']=="1") ? "checked" : "";?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -1390,7 +1455,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?=($result['active_int']=="1") ? "checked" : "";?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?=($result['active']=="1") ? "checked" : "";?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
@@ -1438,7 +1503,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
                 <div class="checkbox">
-                <label><input type="checkbox" value="1" name="active" <?=($result['active_int']=="1") ? "checked" : "";?>> <?=$lang['edit']['active'];?></label>
+                <label><input type="checkbox" value="1" name="active" <?=($result['active']=="1") ? "checked" : "";?>> <?=$lang['edit']['active'];?></label>
                 </div>
               </div>
             </div>
