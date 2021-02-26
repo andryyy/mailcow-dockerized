@@ -204,6 +204,21 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
             <?php } ?>
           </div>
         </div>
+        <?php if ($mailboxdata['attributes']['xmpp_access'] == 1 && $mailboxdata['domain_xmpp'] == 1) { ?>
+        <hr>
+        <div class="row">
+          <div class="col-md-3 col-xs-5 text-right">
+            <img class="img-responsive pull-right" alt="XMPP Logo" width="128px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAAlwSFlzAAAJcwAACXMB+Yg9ogAAAqNQTFRFR3BMEERaAAAAAAAAAAAAAAAAAAAAAAAAdIFfAAAABBEVAAAAAAAAAAAAAAAAFYSszZA8BxUkAAAAAAAAAAAAmsplAAAAn81nFYi7AAAAAAAAF3utAAAA52wfEpbK4mcg5WYgncxnD3OmAAAAnsxnAAAAAAAA5mwg520gEZbJAAAA0FYjoM5m6W0fEpfLAAAAR5VD3WkjEWGRE26fnctn6W0fE6ban85noc9o5mwhAAAAAAAAFHeq6m0fAAAAoM5nAAAAATtsATlqoc5mAjlrAjhqATdqATxt6W0eEp/SE6LXEmOUDmibE5DDzVokEmaXUZlIATVm6W0f52wgE5/T42simL5fulouAAAADnuvslw4FIm8m8loS45P6W0eAAAAAjxtE6/kD5zRADJiATJjD5zR52sgwFYprlMxDnCiK2SIEmCSD4C0nMpnTZZGnVxBEnaom8hnoc1nBFCDEq/kP4tQBk2AErLnFqrcATBhwlQoEHutkL9oSIddTZJHQZc7F3CiSpBHE7TpFLPouVMo4mUfgbVdQYxDoG05AAAAoM5n6W0fQ5Y52VQeCnirDYi8ATdpDpHGBUx+BEl7Az9xBEV3A0J0BVKFBU+BBlaIEqreR5k8BlyOBlmLEq3iEaDUEpzREqPXAjxtEZbKB1+SEqbbE7TpCGKVEZnNErDlCGaYCWmcC3OmCW+iTJtBDH+zCWyf5WcfC3yw6GsfDIO24WAe3lseDYzA21YeATFiVqJC1lYhm8tlFY3AGZPEd7VTicFcYqlIf7pWG3GdS5tNxV0vlshiOodqSJlYIYamJKLDa69NkMVfj2RQ0og0FoS1o8pkMZ+Qj3dnQaBtPXeTSG+CMaedmnBaZoKIY2RpHXeJKpCEzFsqn15DP4qmtqBLcmZPJnTRbgAAAIh0Uk5TAAbkZszdL0MDiAyNtvxsDwoUJjobFqj0/YFZ/vd0iDEUmUdOi/DWgvIle/2onK/s/tggL777edowW5Wb42R1XucvQkfDpGRUQFE60HNi7Kngi8/oncBXnIef/vHpgODF8Pnjd9XJH9tW9vuOymrtwI91N73t/m6v/ui6vNajOyvNsNXReP3jaggoHboAAAkwSURBVHja7Vr5XxVlFx/26QreyxIgIDsKgliAGEpaCiKbKO675b6m72tme71vy+cKRLYX2aItVkQRkQKK0tVUjKi0N+215U9pnmXm2WbunXuZe6vP535/uszMOec753yfc54ZRpKCCCKIIP4uCPmr483fvCk2cNFrqhbzx2r6+vqq5wYk/N2LH+zr28QfndsH8ODiEj9Ht83fDCPNF2g9j1FV40c5zK1Ww9QIzJ7XsLH6br9Ej920mQQRQ2w8RqFqvs3i6PLc6mPHXiIRRMVXvcTg/r3rLCzF9m2rWfcbxWuqX2FwW2trx6LlshXRM7YNtLUVMt5frhIvO/gyA4VAa+u5b8rm3Dqm4I4FKxb2tAGw7hfrCPRFBojAYQVl++/wMXpmxdT8lpYWRIB1f1C82v4CA0JAwYzced4WQ86Y3NyCgAiw7nXWmfzv12h0AAJfH9aQVORFMRwVU5e0aEAEGO+v6t3Prldp3MYRUJBlmsDEFhrdkADjvUm3S71OAxI4yxDINU3gTpHAAOP9oO6IevMohfMWEyiknR/VnzhNb1K4HxC4YkkJegGBC5Tvo/X6ZjXvUbgICPQzBIrGQmA17bxB38z+IQVIoMNHApMZAl8BAr/SzksN7Jo+JvgFEGg9TRMoM01gKkPgFCBwg/Jdb2SX/QnBx610J0LtyDcCsA2c2kn5bjDsXpWfE3QJyyDJNIFmsQ18QjzvsBsaNnxKcAkQGGJEYLoV5gsavEkcf77K2NC+o1ODjgr/ZXYI6WiQOO4sdWO67zkNSIXf0gTmmN0AMARgBW5ofjsfdmdaQAh80SGIwGwrrBAl4CKOs93arvpCgyiCMl8WAeqDxO1u97YFn2n4PxQB3QmSZB8WAewCI8RttgfjVV+q+KxVmMjmtkaO6UIFrmled3uyLkluR/iy/bxQgz2mCCwQKlDYriHbo3k6vvJku1iDIu8nAajAqREtfrFnc/uakxjt/LbMpAiahQpcVl2eLDBh33gE4+RVYSTPM2G/VVwDqscj6ab2s1vUyy8LvSjLy80A2o9eVx3eazdVw4LjCCeOn+e3RWYG4jI+AQOD2OHxWpONJP0Exg+CDD2Pg8zpfBP4WXVXbHaYhWx5B+GEMJOzvKoAkuAg9mayAAB1b2PAFHTR68DhzRqAg/Bn1VmtZB7l7yK83cWvxDmensiEBAxjX0u9erLb8j6CkIIyLwYRSgD25EUB4Eo48AaCoAL38yAzn38iGkZ+DtV5+XRb+xbC/2AKTpttx5P5BPyI/ZR7/XCf/hGC8IzmbmfoWMIn4BDy8oAPrxce+ABiGPaCb8zti+7ke8B15OS/dh8I2P+DjK9yUznJOAXyerYJDlxALg4USL6g4ADM3qEu7hEl10wC0BQYhh7uqfMpviTX3UN02G8iBY71rAJPIQV+1OjzO65atIQucTos8tyFoQJvHoLm5ZLvKIc9ZBjsTDq+9dQLqB7QAzdCv0HrpdJYgHoyX4QyT00QtQDUgcf2slMuh3PkKrcxWK73PKTN4R5YgAvvAMvisb5sldPhKD3ProS1og7lZrYAA8PArtiCl71ge3IcyoDqyFluFNgDCjBwHW5BLHnhna5spgZ/4NoRvz3dms/uw34EWzBr4itVGBwcPMLJYAa7M5GXsS1wtWIyWGzZC//GMwousXuTIoMpiAQIDJbKVsWX5do1Z84kAyF2nNPdGy2YzgrwsnJ5umQl6tYkJ4+CodClzcUk0o4yl7AC/C05ObnR0viSXFA5OnqZZUBksIzpQAPXRkfXZEtWo2Q3ZtCvLcYimReAGr+y1A//dQtZlZrKMcjlhjCM/1Nq6sN2yS9oFBjsYQQIJ4ASf58s+QmllakulsE8KSOfu//KbMl/sDd1usBq7FeVmLR8Pa3/wmudT/j5v88NO1ygI3Wpu4Pvv6Pi33S59vn9Q4TSJ1wX6Y6EGMD+s9rl1/Rrq2GX66IyGztwV/4eMOgG8UdcTXYpICit/wVIcei0mgM4f27UZ0sBgiw37ARC6FeF8J0yfnbusksBREkTXYbTv4/Ul0qBheO+n8B6HMLr8ZFbAxw/o7mlZ+SiooQO/Lywdl4gw8sTYfvtHoFKwAsyyxGw+FvR+O3pbSv8g6rDjDsCVP3J+Ti8svbuK3kUrMgriEJWIJRQsYQKHyvJUgikMASXZNJ+2c/hF9wOiw8Hzwot2Lq9QAtfg8a0drk/tVcBwnf3gr67bTtz6rFFoC0MAQ5r9/tJjZlK7bt7vwLRF64QY8jrIIf+s+cOJ/lBC46KZU/3wh2PEj3T4CIb5KAU48q5R/ZYymHi7U/DO29b+NB29yqTH3tyL3ybMHT2mVzrBFmoSG7hQ09lmPT4+LNPLgIfQlmXhIxMX7Zvjwf6K02hHFIQQQTxj0J8FESc7qG4KIwE2iRSPWojF2uIVC+N5U7ER+p/wR2V5gRIi9eOTIEHnBGKp3FOjGjKIiFNPRqp/BXq5DFtFuQQJZxwThqv1yNTYpCZmoMUJ/lbI+CMIgaznO4JKLaR+gSUG9FjEEbumGQkD/igCIRrl8fFeCTgnCQbEHBO0avCBBwDlDQyD1UE3TEh4MxRr452eiYAEqZPIFRXB+O0/CQgfzEpEk9gEk5evFOHwLQwjNmJMeqNIgLR6pkpG5BNgu74SkQnE2MnoR/jGWbonsPQoQ3UIY1ABPG1Ep6ZqRKYQJ7uI+CBeP09Fc7rXVyhEIE4KItQ+NV5Doo/3pAAumCWSEBK5NXMMAinMjuTq41tpUZLhimKiTQmkGJIINodAUlNPiiEzBOwwczkxaorZqZkSADncqVIIDJNs9F9/0LEPZtXpw3HHSeFwHB5CTyBmAgVuEmFqQTy1BOhePXaPMYnEiQEUObT4martRjvYRnGGS3DcIP4eBlMc9KCJwSwtBKnqWr0QCDaqBM6UyRTyzCMJ0C3H+DDPYHwWCMCK93GN2pENqYBh8sigbRwCtFhIWQY3UWd2DBLvwlIM8VWjBkQAmQEQSfGy5CMWX4ZGgLHj0DjOj6NYkARiM3DZZKsJoDjh6pNOgclOyaHJYC3CTFxVhO4xUmNX3o8p+WwBGyhqBdYTCDuFgRKHnIKOjTBJuXAH3gORoHfeFsVD0+ApE0BP2Ybeo4KbnqDCCIII/wJlFbTu+je//0AAAAASUVORK5CYII=">
+          </div>
+          <div class="col-md-9 col-xs-7">
+              <p><?=$mailboxdata['local_part'];?>@<b><?=$mailboxdata['domain_xmpp_prefix'];?>.<?=$mailboxdata['domain'];?></b>
+              <?php if ($mailboxdata['attributes']['xmpp_admin'] == 1) { ?>
+              <div class="label label-warning">Administrator</div>
+              <?php } ?>
+              </p>
+          </div>
+        </div>
+        <?php } ?>
         <hr>
         <?php // Get user information about aliases
         $user_get_alias_details = user_get_alias_details($username);
@@ -502,16 +517,6 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
 			<div class="col-sm-6">
 				<h4><?=$lang['user']['spamfilter_wl'];?></h4>
         <p><?=$lang['user']['spamfilter_wl_desc'];?></p>
-        <div class="table-responsive">
-          <table class="table table-striped table-condensed" id="wl_policy_mailbox_table"></table>
-        </div>
-
-        <div class="mass-actions-user">
-          <div class="btn-group" data-acl="<?=$_SESSION['acl']['spam_policy'];?>">
-            <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="policy_wl_mailbox" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
-            <a class="btn btn-sm btn-danger" data-action="delete_selected" data-id="policy_wl_mailbox" data-api-url='delete/mailbox-policy' href="#"><?=$lang['mailbox']['remove'];?></a></li>
-          </div>
-        </div>
         <form class="form-inline" data-id="add_wl_policy_mailbox">
           <div class="input-group" data-acl="<?=$_SESSION['acl']['spam_policy'];?>">
             <input type="text" class="form-control" name="object_from" placeholder="*@example.org" required>
@@ -520,20 +525,19 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
             </span>
           </div>
         </form>
+        <div class="mass-actions-user">
+          <div class="btn-group" data-acl="<?=$_SESSION['acl']['spam_policy'];?>">
+            <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="policy_wl_mailbox" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
+            <a class="btn btn-sm btn-danger" data-action="delete_selected" data-id="policy_wl_mailbox" data-api-url='delete/mailbox-policy' href="#"><?=$lang['mailbox']['remove'];?></a></li>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-condensed" id="wl_policy_mailbox_table"></table>
+        </div>
       </div>
 			<div class="col-sm-6">
 				<h4><?=$lang['user']['spamfilter_bl'];?></h4>
         <p><?=$lang['user']['spamfilter_bl_desc'];?></p>
-        <div class="table-responsive">
-          <table class="table table-striped table-condensed" id="bl_policy_mailbox_table"></table>
-        </div>
-
-        <div class="mass-actions-user">
-          <div class="btn-group" data-acl="<?=$_SESSION['acl']['spam_policy'];?>">
-            <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="policy_bl_mailbox" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
-            <a class="btn btn-sm btn-danger" data-action="delete_selected" data-id="policy_bl_mailbox" data-api-url='delete/mailbox-policy' href="#"><?=$lang['mailbox']['remove'];?></a></li>
-          </div>
-        </div>
         <form class="form-inline" data-id="add_bl_policy_mailbox">
           <div class="input-group" data-acl="<?=$_SESSION['acl']['spam_policy'];?>">
             <input type="text" class="form-control" name="object_from" placeholder="*@example.org" required>
@@ -542,7 +546,15 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
             </span>
           </div>
         </form>
-
+        <div class="mass-actions-user">
+          <div class="btn-group" data-acl="<?=$_SESSION['acl']['spam_policy'];?>">
+            <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="policy_bl_mailbox" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
+            <a class="btn btn-sm btn-danger" data-action="delete_selected" data-id="policy_bl_mailbox" data-api-url='delete/mailbox-policy' href="#"><?=$lang['mailbox']['remove'];?></a></li>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-condensed" id="bl_policy_mailbox_table"></table>
+        </div>
       </div>
     </div>
   </div>

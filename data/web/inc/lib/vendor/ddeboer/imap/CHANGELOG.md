@@ -1,5 +1,46 @@
 # Changelog
 
+## [1.11.0](https://github.com/ddeboer/imap/tree/1.11.0) (2020-11-30)
+
+[Full Changelog](https://github.com/ddeboer/imap/compare/1.10.1...1.11.0)
+
+**Implemented enhancements:**
+
+- PHP 8 Compatibility [\#481](https://github.com/ddeboer/imap/issues/481)
+- \[GA\] PHP 8 compatibility fix [\#483](https://github.com/ddeboer/imap/pull/483) ([Slamdunk](https://github.com/Slamdunk))
+- Support PHP 8.0, require PHP 7.3 [\#482](https://github.com/ddeboer/imap/pull/482) ([Slamdunk](https://github.com/Slamdunk))
+
+**Fixed bugs:**
+
+- Fix: Outlook date format [\#480](https://github.com/ddeboer/imap/pull/480) ([gajosadrian](https://github.com/gajosadrian))
+
+**Closed issues:**
+
+- Closing Connection [\#479](https://github.com/ddeboer/imap/issues/479)
+- Problem with charset of message part / DataPartInfo [\#475](https://github.com/ddeboer/imap/issues/475)
+- Unsupported charset "X-UNKNOWN" [\#425](https://github.com/ddeboer/imap/issues/425)
+
+## [1.10.1](https://github.com/ddeboer/imap/tree/1.10.1) (2020-08-26)
+
+[Full Changelog](https://github.com/ddeboer/imap/compare/1.10.0...1.10.1)
+
+**Fixed bugs:**
+
+- getThread and getMessageSequence not using with the same id [\#469](https://github.com/ddeboer/imap/issues/469)
+- imap\_thread: use absolude ids [\#474](https://github.com/ddeboer/imap/pull/474) ([Slamdunk](https://github.com/Slamdunk))
+
+**Closed issues:**
+
+- How to get a message by Message-ID [\#472](https://github.com/ddeboer/imap/issues/472)
+- Mail with e-sign [\#467](https://github.com/ddeboer/imap/issues/467)
+- Duplicate method definition in MessageInterface [\#455](https://github.com/ddeboer/imap/issues/455)
+- Missed errors in search method [\#444](https://github.com/ddeboer/imap/issues/444)
+
+**Merged pull requests:**
+
+- Subtype not always present [\#473](https://github.com/ddeboer/imap/pull/473) ([Piskvor](https://github.com/Piskvor))
+- Improved error handling for message search method [\#445](https://github.com/ddeboer/imap/pull/445) ([ikarol](https://github.com/ikarol))
+
 ## [1.10.0](https://github.com/ddeboer/imap/tree/1.10.0) (2020-01-24)
 
 [Full Changelog](https://github.com/ddeboer/imap/compare/1.9.0...1.10.0)

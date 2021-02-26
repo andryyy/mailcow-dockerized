@@ -272,7 +272,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
             <div class="panel-heading">
               <?=$lang['mailbox']['domain_aliases'];?> <span class="badge badge-info table-lines"></span>
               <div class="btn-group pull-right hidden-xs">
-                <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addAliasDomainModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_domain_alias'];?></button>
+                <button class="btn btn-xs btn-success" href="#" data-acl="<?=$_SESSION['acl']['alias_domains'];?>" data-toggle="modal" data-target="#addAliasDomainModal"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_domain_alias'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_aliasdomain_table" data-table="aliasdomain_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
                   <span class="caret"></span>
@@ -360,7 +360,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
             <div class="panel-heading">
               <?=$lang['mailbox']['sync_jobs'];?> <span class="badge badge-info table-lines"></span>
               <div class="btn-group pull-right hidden-xs">
-                <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addSyncJobModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['user']['create_syncjob'];?></button>
+                <button data-acl="<?=$_SESSION['acl']['syncjobs'];?>" class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addSyncJobModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['user']['create_syncjob'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_sync_job_table" data-table="sync_job_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
                   <span class="caret"></span>
@@ -402,7 +402,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
             <div class="panel-heading">
               <?=$lang['mailbox']['filters'];?> <span class="badge badge-info table-lines"></span>
               <div class="btn-group pull-right hidden-xs">
-                <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addFilterModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_filter'];?></button>
+                <button class="btn btn-xs btn-success" href="#" data-acl="<?=$_SESSION['acl']['filters'];?>" data-toggle="modal" data-target="#addFilterModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_filter'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_filter_table" data-table="filter_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
                   <span class="caret"></span>
@@ -491,7 +491,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
             <div class="panel-heading">
               <?=$lang['mailbox']['bcc_maps'];?> <span class="badge badge-info table-lines"></span>
               <div class="btn-group pull-right hidden-xs">
-                <button class="btn btn-xs btn-success" href="#" data-toggle="modal" data-target="#addBCCModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_bcc_entry'];?></button>
+                <button class="btn btn-xs btn-success" href="#" data-acl="<?=$_SESSION['acl']['bcc_maps'];?>" data-toggle="modal" data-target="#addBCCModalAdmin"><span class="glyphicon glyphicon-plus"></span> <?=$lang['mailbox']['add_bcc_entry'];?></button>
                 <button class="btn btn-xs btn-default refresh_table" data-draw="draw_bcc_table" data-table="bcc_table"><?=$lang['admin']['refresh'];?></button>
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><?=$lang['mailbox']['table_size'];?> 
                   <span class="caret"></span>

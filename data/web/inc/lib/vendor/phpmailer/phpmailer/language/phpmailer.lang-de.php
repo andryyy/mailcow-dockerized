@@ -1,4 +1,5 @@
 <?php
+
 /**
  * German PHPMailer language file: refer to English translation for definitive list
  * @package PHPMailer
@@ -15,6 +16,8 @@ $PHPMAILER_LANG['file_open']            = 'Dateifehler: Konnte folgende Datei ni
 $PHPMAILER_LANG['from_failed']          = 'Die folgende Absenderadresse ist nicht korrekt: ';
 $PHPMAILER_LANG['instantiate']          = 'Mail-Funktion konnte nicht initialisiert werden.';
 $PHPMAILER_LANG['invalid_address']      = 'Die Adresse ist ungültig: ';
+$PHPMAILER_LANG['invalid_hostentry']    = 'Ungültiger Hosteintrag: ';
+$PHPMAILER_LANG['invalid_host']         = 'Ungültiger Host: ';
 $PHPMAILER_LANG['mailer_not_supported'] = ' mailer wird nicht unterstützt.';
 $PHPMAILER_LANG['provide_address']      = 'Bitte geben Sie mindestens eine Empfängeradresse an.';
 $PHPMAILER_LANG['recipients_failed']    = 'SMTP-Fehler: Die folgenden Empfänger sind nicht korrekt: ';

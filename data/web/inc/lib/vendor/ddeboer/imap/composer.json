@@ -22,18 +22,23 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.3 || ^8.0",
         "ext-iconv": "*",
         "ext-imap": "*",
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-phpunit": "^0.12",
-        "phpstan/phpstan-strict-rules": "^0.12",
-        "phpunit/phpunit": "^8.5",
-        "zendframework/zend-mail": "^2.10"
+        "friendsofphp/php-cs-fixer": "^2.16.7",
+        "laminas/laminas-mail": "^2.12.3",
+        "phpstan/phpstan": "^0.12.57",
+        "phpstan/phpstan-phpunit": "^0.12.16",
+        "phpstan/phpstan-strict-rules": "^0.12.5",
+        "phpunit/phpunit": "^9.4.3"
+    },
+    "config": {
+        "platform": {
+            "php": "7.3"
+        }
     },
     "autoload": {
         "psr-4": {

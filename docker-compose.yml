@@ -2,7 +2,7 @@ version: '2.1'
 services:
 
     unbound-mailcow:
-      image: mailcow/unbound:1.12
+      image: mailcow/unbound:1.13
       environment:
         - TZ=${TZ}
       volumes:
@@ -71,7 +71,7 @@ services:
             - clamd
 
     rspamd-mailcow:
-      image: mailcow/rspamd:1.75
+      image: mailcow/rspamd:1.76
       stop_grace_period: 30s
       depends_on:
         - dovecot-mailcow
@@ -101,13 +101,13 @@ services:
             - rspamd
 
     php-fpm-mailcow:
-      image: mailcow/phpfpm:1.69
+      image: mailcow/phpfpm:1.73
       command: "php-fpm -d date.timezone=${TZ} -d expose_php=0"
       depends_on:
         - redis-mailcow
       volumes:
         - ./data/hooks/phpfpm:/hooks:Z
-        - ./data/web:/web:rw,z
+        - ./data/web:/web:z
         - ./data/conf/rspamd/dynmaps:/dynmaps:ro,z
         - ./data/conf/rspamd/custom/:/rspamd_custom_maps:z
         - rspamd-vol-1:/var/lib/rspamd:z
@@ -122,6 +122,8 @@ services:
         - ./data/conf/dovecot/global_sieve_before:/global_sieve/before:z
         - ./data/conf/dovecot/global_sieve_after:/global_sieve/after:z
         - ./data/assets/templates:/tpls:z
+        - ./data/conf/ejabberd/autogen:/ejabberd/:z
+        - ./data/conf/nginx/:/etc/nginx/conf.d/:z
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       environment:
@@ -144,6 +146,8 @@ services:
         - SUBMISSION_PORT=${SUBMISSION_PORT:-587}
         - SMTPS_PORT=${SMTPS_PORT:-465}
         - SMTP_PORT=${SMTP_PORT:-25}
+        - XMPP_C2S_PORT=${XMPP_C2S_PORT:-5222}
+        - XMPP_S2S_PORT=${XMPP_S2S_PORT:-5269}
         - API_KEY=${API_KEY:-invalid}
         - API_KEY_READ_ONLY=${API_KEY_READ_ONLY:-invalid}
         - API_ALLOW_FROM=${API_ALLOW_FROM:-invalid}
@@ -160,7 +164,7 @@ services:
             - phpfpm
 
     sogo-mailcow:
-      image: mailcow/sogo:1.93
+      image: mailcow/sogo:1.95
       environment:
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
@@ -182,6 +186,8 @@ services:
       volumes:
         - ./data/conf/sogo/:/etc/sogo/:z
         - ./data/web/inc/init_db.inc.php:/init_db.inc.php:Z
+        - ./data/conf/sogo/custom-favicon.ico:/usr/lib/GNUstep/SOGo/WebServerResources/img/sogo.ico:z
+        - ./data/conf/sogo/custom-theme.js:/usr/lib/GNUstep/SOGo/WebServerResources/js/theme.js:z
         - ./data/conf/sogo/custom-sogo.js:/usr/lib/GNUstep/SOGo/WebServerResources/js/custom-sogo.js:z
         - mysql-socket-vol-1:/var/run/mysqld/:z
         - sogo-web-vol-1:/sogo_web:z
@@ -194,7 +200,7 @@ services:
             - sogo
 
     dovecot-mailcow:
-      image: mailcow/dovecot:1.138
+      image: mailcow/dovecot:1.140
       depends_on:
         - mysql-mailcow
       dns:
@@ -255,7 +261,7 @@ services:
             - dovecot
 
     postfix-mailcow:
-      image: mailcow/postfix:1.58
+      image: mailcow/postfix:1.59
       depends_on:
         - mysql-mailcow
       volumes:
@@ -309,9 +315,9 @@ services:
         - ${IPV4_NETWORK:-172.22.1}.254
       command: /bin/sh -c "envsubst < /etc/nginx/conf.d/templates/listen_plain.template > /etc/nginx/conf.d/listen_plain.active &&
         envsubst < /etc/nginx/conf.d/templates/listen_ssl.template > /etc/nginx/conf.d/listen_ssl.active &&
-        envsubst < /etc/nginx/conf.d/templates/server_name.template > /etc/nginx/conf.d/server_name.active &&
         envsubst < /etc/nginx/conf.d/templates/sogo.template > /etc/nginx/conf.d/sogo.active &&
         . /etc/nginx/conf.d/templates/sogo.auth_request.template.sh > /etc/nginx/conf.d/sogo_proxy_auth.active &&
+        . /etc/nginx/conf.d/templates/server_name.template.sh > /etc/nginx/conf.d/server_name.active &&
         . /etc/nginx/conf.d/templates/sites.template.sh > /etc/nginx/conf.d/sites.active &&
         . /etc/nginx/conf.d/templates/sogo_eas.template.sh > /etc/nginx/conf.d/sogo_eas.active &&
         nginx -qt &&
@@ -319,6 +325,7 @@ services:
         until ping sogo -c1 > /dev/null; do sleep 1; done &&
         until ping redis -c1 > /dev/null; do sleep 1; done &&
         until ping rspamd -c1 > /dev/null; do sleep 1; done &&
+        until ping ejabberd -c1 > /dev/null; do sleep 1; done &&
         exec nginx -g 'daemon off;'"
       environment:
         - HTTPS_PORT=${HTTPS_PORT:-443}
@@ -328,16 +335,17 @@ services:
         - TZ=${TZ}
         - SKIP_SOGO=${SKIP_SOGO:-n}
         - ALLOW_ADMIN_EMAIL_LOGIN=${ALLOW_ADMIN_EMAIL_LOGIN:-n}
+        - ADDITIONAL_SERVER_NAMES=${ADDITIONAL_SERVER_NAMES:-}
       volumes:
         - ./data/web:/web:ro,z
         - ./data/conf/rspamd/dynmaps:/dynmaps:ro,z
         - ./data/assets/ssl/:/etc/ssl/mail/:ro,z
-        - ./data/conf/nginx/:/etc/nginx/conf.d/:rw,Z
+        - ./data/conf/nginx/:/etc/nginx/conf.d/:z
         - ./data/conf/rspamd/meta_exporter:/meta_exporter:ro,z
         - sogo-web-vol-1:/usr/lib/GNUstep/SOGo/:z
       ports:
-        - "${HTTPS_BIND:-0.0.0.0}:${HTTPS_PORT:-443}:${HTTPS_PORT:-443}"
-        - "${HTTP_BIND:-0.0.0.0}:${HTTP_PORT:-80}:${HTTP_PORT:-80}"
+        - "${HTTPS_BIND:-:}:${HTTPS_PORT:-443}:${HTTPS_PORT:-443}"
+        - "${HTTP_BIND:-:}:${HTTP_PORT:-80}:${HTTP_PORT:-80}"
       restart: always
       networks:
         mailcow-network:
@@ -347,7 +355,7 @@ services:
     acme-mailcow:
       depends_on:
         - nginx-mailcow
-      image: mailcow/acme:1.76
+      image: mailcow/acme:1.77
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       environment:
@@ -372,8 +380,8 @@ services:
         - SNAT_TO_SOURCE=${SNAT_TO_SOURCE:-n}
         - SNAT6_TO_SOURCE=${SNAT6_TO_SOURCE:-n}
       volumes:
-        - ./data/web/.well-known/acme-challenge:/var/www/acme:rw,z
-        - ./data/assets/ssl:/var/lib/acme/:rw,z
+        - ./data/web/.well-known/acme-challenge:/var/www/acme:z
+        - ./data/assets/ssl:/var/lib/acme/:z
         - ./data/assets/ssl-example:/var/lib/ssl-example/:ro,Z
         - mysql-socket-vol-1:/var/run/mysqld/:z
       restart: always
@@ -383,7 +391,7 @@ services:
             - acme
 
     netfilter-mailcow:
-      image: mailcow/netfilter:1.38
+      image: mailcow/netfilter:1.39
       stop_grace_period: 30s
       depends_on:
         - dovecot-mailcow
@@ -406,11 +414,13 @@ services:
         - /lib/modules:/lib/modules:ro
 
     watchdog-mailcow:
-      image: mailcow/watchdog:1.85
+      image: mailcow/watchdog:1.88
       # Debug
       #command: /watchdog.sh
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
+      tmpfs:
+        - /tmp
       volumes:
         - rspamd-vol-1:/var/lib/rspamd:z
         - mysql-socket-vol-1:/var/run/mysqld/:z
@@ -467,7 +477,7 @@ services:
             - watchdog
 
     dockerapi-mailcow:
-      image: mailcow/dockerapi:1.37
+      image: mailcow/dockerapi:1.38
       security_opt:
         - label=disable
       restart: always
@@ -501,7 +511,7 @@ services:
             - solr
 
     olefy-mailcow:
-      image: mailcow/olefy:1.5
+      image: mailcow/olefy:1.6
       restart: always
       environment:
         - TZ=${TZ}
@@ -517,6 +527,40 @@ services:
         mailcow-network:
           aliases:
             - olefy
+
+    ejabberd-mailcow:
+      image: mailcow/ejabberd:1.4
+      volumes:
+        - ./data/conf/ejabberd/ejabberd.yml:/home/ejabberd/conf/ejabberd.yml:z
+        - xmpp-vol-1:/home/ejabberd/database:z
+        - xmpp-upload-vol-1:/var/www/upload:z
+        - ./data/assets/ejabberd/sqlite:/sqlite:z
+        - ./data/conf/ejabberd/autogen:/ejabberd/:z
+        - mysql-socket-vol-1:/var/run/mysqld/:z
+        - ./data/assets/ssl:/ssl:ro,z
+      restart: always
+      dns:
+        - ${IPV4_NETWORK:-172.22.1}.254
+      hostname: ejabberd.mailcow.local
+      extra_hosts:
+        - "${MAILCOW_HOSTNAME}:127.0.0.1"
+      environment:
+        - TZ=${TZ}
+        - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
+        - MASTER=${MASTER:-y}
+        - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
+        - XMPP_HTTPS_PORT=${XMPP_HTTPS_PORT:-5443}
+        - DBNAME=${DBNAME}
+        - DBUSER=${DBUSER}
+        - DBPASS=${DBPASS}
+      ports:
+        - "${XMPP_C2S_PORT:-5222}:5222"
+        - "${XMPP_S2S_PORT:-5269}:5269"
+        - "${XMPP_HTTPS_PORT:-5443}:5443"
+      networks:
+        mailcow-network:
+          aliases:
+            - ejabberd
 
     ipv6nat-mailcow:
       depends_on:
@@ -572,3 +616,5 @@ volumes:
   crypt-vol-1:
   sogo-web-vol-1:
   sogo-userdata-backup-vol-1:
+  xmpp-vol-1:
+  xmpp-upload-vol-1:

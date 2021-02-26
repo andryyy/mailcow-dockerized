@@ -1,3 +1,42 @@
+$(document).ready(function() {
+  // Parse seconds ago to date
+  // Get "now" timestamp
+  var ts_now = Math.round((new Date()).getTime() / 1000);
+  $('.parse_s_ago').each(function(i, parse_s_ago) {
+    var started_s_ago = parseInt($(this).text(), 10);
+    if (typeof started_s_ago != 'NaN') {
+      var started_date = new Date((ts_now - started_s_ago) * 1000);
+      if (started_date instanceof Date && !isNaN(started_date)) {
+        var started_local_date = started_date.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+        $(this).text(started_local_date);
+      } else {
+        $(this).text('-');
+      }
+    }
+  });
+  // Parse general dates
+  $('.parse_date').each(function(i, parse_date) {
+    var started_date = new Date(Date.parse($(this).text()));
+    if (typeof started_date != 'NaN') {
+      var started_local_date = started_date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      $(this).text(started_local_date);
+    }
+  });
+});
 jQuery(function($){
   if (localStorage.getItem("current_page") === null) {
     var current_page = {};
@@ -631,7 +670,11 @@ jQuery(function($){
       $.each(data, function (i, item) {
         if (item === null) { return true; }
         if (item.message.match("^base64,")) {
-          item.message = atob(item.message.slice(7)).replace(/\\n/g, "<br />");
+          try {
+            item.message = atob(item.message.slice(7)).replace(/\\n/g, "<br />");
+          } catch(e) {
+            item.message = item.message.slice(7);
+          }
         } else {
           item.message = escapeHtml(item.message);
         }

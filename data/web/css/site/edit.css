@@ -41,3 +41,7 @@ table.footable>tbody>tr.footable-empty>td {
   -webkit-transform:rotateX(180deg);
   transform:rotateX(180deg);
 }
+.input-group-addon-xmpp {
+  background-color: #fff;
+  border: 0px solid #fff;
+}

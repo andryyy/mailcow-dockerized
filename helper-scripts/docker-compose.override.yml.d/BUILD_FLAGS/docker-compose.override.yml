@@ -43,3 +43,5 @@ services:
   olefy-mailcow:
     build: ./data/Dockerfiles/olefy
 
+  ejabberd-mailcow:
+    build: ./data/Dockerfiles/ejabberd

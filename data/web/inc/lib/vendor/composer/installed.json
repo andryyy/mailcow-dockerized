@@ -1,634 +1,694 @@
-[
-    {
-        "name": "bshaffer/oauth2-server-php",
-        "version": "v1.11.1",
-        "version_normalized": "1.11.1.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/bshaffer/oauth2-server-php.git",
-            "reference": "5a0c8000d4763b276919e2106f54eddda6bc50fa"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/5a0c8000d4763b276919e2106f54eddda6bc50fa",
-            "reference": "5a0c8000d4763b276919e2106f54eddda6bc50fa",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.9"
-        },
-        "require-dev": {
-            "aws/aws-sdk-php": "~2.8",
-            "firebase/php-jwt": "~2.2",
-            "mongodb/mongodb": "^1.1",
-            "phpunit/phpunit": "^4.0",
-            "predis/predis": "dev-master",
-            "thobbs/phpcassa": "dev-master"
-        },
-        "suggest": {
-            "aws/aws-sdk-php": "~2.8 is required to use DynamoDB storage",
-            "firebase/php-jwt": "~2.2 is required to use JWT features",
-            "mongodb/mongodb": "^1.1 is required to use MongoDB storage",
-            "predis/predis": "Required to use Redis storage",
-            "thobbs/phpcassa": "Required to use Cassandra storage"
-        },
-        "time": "2018-12-04T00:29:32+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "OAuth2": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Brent Shaffer",
-                "email": "bshafs@gmail.com",
-                "homepage": "http://brentertainment.com"
-            }
-        ],
-        "description": "OAuth2 Server for PHP",
-        "homepage": "http://github.com/bshaffer/oauth2-server-php",
-        "keywords": [
-            "auth",
-            "oauth",
-            "oauth2"
-        ]
-    },
-    {
-        "name": "ddeboer/imap",
-        "version": "1.10.0",
-        "version_normalized": "1.10.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/ddeboer/imap.git",
-            "reference": "fc09dbf6fb9ba7317a95c719e45893efc4fe6bde"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/ddeboer/imap/zipball/fc09dbf6fb9ba7317a95c719e45893efc4fe6bde",
-            "reference": "fc09dbf6fb9ba7317a95c719e45893efc4fe6bde",
-            "shasum": ""
-        },
-        "require": {
-            "ext-iconv": "*",
-            "ext-imap": "*",
-            "ext-mbstring": "*",
-            "php": "^7.2"
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "^2.16",
-            "phpstan/phpstan": "^0.12",
-            "phpstan/phpstan-phpunit": "^0.12",
-            "phpstan/phpstan-strict-rules": "^0.12",
-            "phpunit/phpunit": "^8.5",
-            "zendframework/zend-mail": "^2.10"
-        },
-        "time": "2020-01-24T08:15:24+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Ddeboer\\Imap\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "David de Boer",
-                "email": "david@ddeboer.nl"
+{
+    "packages": [
+        {
+            "name": "bshaffer/oauth2-server-php",
+            "version": "v1.11.1",
+            "version_normalized": "1.11.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bshaffer/oauth2-server-php.git",
+                "reference": "5a0c8000d4763b276919e2106f54eddda6bc50fa"
             },
-            {
-                "name": "Filippo Tessarotto",
-                "email": "zoeslam@gmail.com"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bshaffer/oauth2-server-php/zipball/5a0c8000d4763b276919e2106f54eddda6bc50fa",
+                "reference": "5a0c8000d4763b276919e2106f54eddda6bc50fa",
+                "shasum": ""
             },
-            {
-                "name": "Community contributors",
-                "homepage": "https://github.com/ddeboer/imap/graphs/contributors"
-            }
-        ],
-        "description": "Object-oriented IMAP for PHP",
-        "keywords": [
-            "email",
-            "imap",
-            "mail"
-        ]
-    },
-    {
-        "name": "matthiasmullie/minify",
-        "version": "1.3.63",
-        "version_normalized": "1.3.63.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/matthiasmullie/minify.git",
-            "reference": "9ba1b459828adc13430f4dd6c49dae4950dc4117"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/matthiasmullie/minify/zipball/9ba1b459828adc13430f4dd6c49dae4950dc4117",
-            "reference": "9ba1b459828adc13430f4dd6c49dae4950dc4117",
-            "shasum": ""
-        },
-        "require": {
-            "ext-pcre": "*",
-            "matthiasmullie/path-converter": "~1.1",
-            "php": ">=5.3.0"
-        },
-        "require-dev": {
-            "friendsofphp/php-cs-fixer": "~2.0",
-            "matthiasmullie/scrapbook": "~1.0",
-            "phpunit/phpunit": "~4.8"
-        },
-        "suggest": {
-            "psr/cache-implementation": "Cache implementation to use with Minify::cache"
-        },
-        "time": "2020-01-21T20:21:08+00:00",
-        "bin": [
-            "bin/minifycss",
-            "bin/minifyjs"
-        ],
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "MatthiasMullie\\Minify\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Matthias Mullie",
-                "email": "minify@mullie.eu",
-                "homepage": "http://www.mullie.eu",
-                "role": "Developer"
-            }
-        ],
-        "description": "CSS & JavaScript minifier, in PHP. Removes whitespace, strips comments, combines files (incl. @import statements and small assets in CSS files), and optimizes/shortens a few common programming patterns.",
-        "homepage": "http://www.minifier.org",
-        "keywords": [
-            "JS",
-            "css",
-            "javascript",
-            "minifier",
-            "minify"
-        ]
-    },
-    {
-        "name": "matthiasmullie/path-converter",
-        "version": "1.1.3",
-        "version_normalized": "1.1.3.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/matthiasmullie/path-converter.git",
-            "reference": "e7d13b2c7e2f2268e1424aaed02085518afa02d9"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/matthiasmullie/path-converter/zipball/e7d13b2c7e2f2268e1424aaed02085518afa02d9",
-            "reference": "e7d13b2c7e2f2268e1424aaed02085518afa02d9",
-            "shasum": ""
-        },
-        "require": {
-            "ext-pcre": "*",
-            "php": ">=5.3.0"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~4.8"
-        },
-        "time": "2019-02-05T23:41:09+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "MatthiasMullie\\PathConverter\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Matthias Mullie",
-                "email": "pathconverter@mullie.eu",
-                "homepage": "http://www.mullie.eu",
-                "role": "Developer"
-            }
-        ],
-        "description": "Relative path converter",
-        "homepage": "http://github.com/matthiasmullie/path-converter",
-        "keywords": [
-            "converter",
-            "path",
-            "paths",
-            "relative"
-        ]
-    },
-    {
-        "name": "mustangostang/spyc",
-        "version": "0.6.3",
-        "version_normalized": "0.6.3.0",
-        "source": {
-            "type": "git",
-            "url": "git@github.com:mustangostang/spyc.git",
-            "reference": "4627c838b16550b666d15aeae1e5289dd5b77da0"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/mustangostang/spyc/zipball/4627c838b16550b666d15aeae1e5289dd5b77da0",
-            "reference": "4627c838b16550b666d15aeae1e5289dd5b77da0",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.1"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "4.3.*@dev"
-        },
-        "time": "2019-09-10T13:16:29+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "0.5.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "files": [
-                "Spyc.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "mustangostang",
-                "email": "vlad.andersen@gmail.com"
-            }
-        ],
-        "description": "A simple YAML loader/dumper class for PHP",
-        "homepage": "https://github.com/mustangostang/spyc/",
-        "keywords": [
-            "spyc",
-            "yaml",
-            "yml"
-        ]
-    },
-    {
-        "name": "paragonie/random_compat",
-        "version": "v9.99.99",
-        "version_normalized": "9.99.99.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/paragonie/random_compat.git",
-            "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
-            "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
-            "shasum": ""
-        },
-        "require": {
-            "php": "^7"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "4.*|5.*",
-            "vimeo/psalm": "^1"
-        },
-        "suggest": {
-            "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
-        },
-        "time": "2018-07-02T15:55:56+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Paragon Initiative Enterprises",
-                "email": "security@paragonie.com",
-                "homepage": "https://paragonie.com"
-            }
-        ],
-        "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
-        "keywords": [
-            "csprng",
-            "polyfill",
-            "pseudorandom",
-            "random"
-        ]
-    },
-    {
-        "name": "php-mime-mail-parser/php-mime-mail-parser",
-        "version": "5.0.5",
-        "version_normalized": "5.0.5.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/php-mime-mail-parser/php-mime-mail-parser.git",
-            "reference": "27983433aabeccee832573c3c56e6a4855e57745"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/php-mime-mail-parser/php-mime-mail-parser/zipball/27983433aabeccee832573c3c56e6a4855e57745",
-            "reference": "27983433aabeccee832573c3c56e6a4855e57745",
-            "shasum": ""
-        },
-        "require": {
-            "ext-mailparse": "*",
-            "php": "^7.1"
-        },
-        "replace": {
-            "exorus/php-mime-mail-parser": "*",
-            "messaged/php-mime-mail-parser": "*"
-        },
-        "require-dev": {
-            "php-coveralls/php-coveralls": "^2.1",
-            "phpunit/php-token-stream": "^3.0",
-            "phpunit/phpunit": "^7.0",
-            "squizlabs/php_codesniffer": "^3.4"
-        },
-        "time": "2019-09-23T11:57:58+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "PhpMimeMailParser\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "eXorus",
-                "email": "exorus.spam@gmail.com",
-                "homepage": "https://github.com/eXorus/",
-                "role": "Developer"
+            "require": {
+                "php": ">=5.3.9"
             },
-            {
-                "name": "M.Valinskis",
-                "email": "M.Valins@gmail.com",
-                "homepage": "https://code.google.com/p/php-mime-mail-parser",
-                "role": "Developer"
+            "require-dev": {
+                "aws/aws-sdk-php": "~2.8",
+                "firebase/php-jwt": "~2.2",
+                "mongodb/mongodb": "^1.1",
+                "phpunit/phpunit": "^4.0",
+                "predis/predis": "dev-master",
+                "thobbs/phpcassa": "dev-master"
             },
-            {
-                "name": "eugene.emmett.wood",
-                "email": "gene_w@cementhorizon.com",
-                "homepage": "https://code.google.com/p/php-mime-mail-parser",
-                "role": "Developer"
+            "suggest": {
+                "aws/aws-sdk-php": "~2.8 is required to use DynamoDB storage",
+                "firebase/php-jwt": "~2.2 is required to use JWT features",
+                "mongodb/mongodb": "^1.1 is required to use MongoDB storage",
+                "predis/predis": "Required to use Redis storage",
+                "thobbs/phpcassa": "Required to use Cassandra storage"
             },
-            {
-                "name": "alknetso",
-                "email": "alkne@gmail.com",
-                "homepage": "https://code.google.com/p/php-mime-mail-parser",
-                "role": "Developer"
+            "time": "2018-12-04T00:29:32+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "OAuth2": "src/"
+                }
             },
-            {
-                "name": "bucabay",
-                "email": "gabe@fijiwebdesign.com",
-                "homepage": "http://www.fijiwebdesign.com",
-                "role": "Developer"
-            }
-        ],
-        "description": "A fully tested email parser for PHP 7.1+ (mailparse extension wrapper).",
-        "homepage": "https://github.com/php-mime-mail-parser/php-mime-mail-parser",
-        "keywords": [
-            "MimeMailParser",
-            "mail",
-            "mailparse",
-            "mime",
-            "parser",
-            "php"
-        ]
-    },
-    {
-        "name": "phpmailer/phpmailer",
-        "version": "v6.1.6",
-        "version_normalized": "6.1.6.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/PHPMailer/PHPMailer.git",
-            "reference": "c2796cb1cb99d7717290b48c4e6f32cb6c60b7b3"
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brent Shaffer",
+                    "email": "bshafs@gmail.com",
+                    "homepage": "http://brentertainment.com"
+                }
+            ],
+            "description": "OAuth2 Server for PHP",
+            "homepage": "http://github.com/bshaffer/oauth2-server-php",
+            "keywords": [
+                "auth",
+                "oauth",
+                "oauth2"
+            ],
+            "install-path": "../bshaffer/oauth2-server-php"
         },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/c2796cb1cb99d7717290b48c4e6f32cb6c60b7b3",
-            "reference": "c2796cb1cb99d7717290b48c4e6f32cb6c60b7b3",
-            "shasum": ""
-        },
-        "require": {
-            "ext-ctype": "*",
-            "ext-filter": "*",
-            "php": ">=5.5.0"
-        },
-        "require-dev": {
-            "doctrine/annotations": "^1.2",
-            "friendsofphp/php-cs-fixer": "^2.2",
-            "phpunit/phpunit": "^4.8 || ^5.7"
-        },
-        "suggest": {
-            "ext-mbstring": "Needed to send email in multibyte encoding charset",
-            "hayageek/oauth2-yahoo": "Needed for Yahoo XOAUTH2 authentication",
-            "league/oauth2-google": "Needed for Google XOAUTH2 authentication",
-            "psr/log": "For optional PSR-3 debug logging",
-            "stevenmaguire/oauth2-microsoft": "Needed for Microsoft XOAUTH2 authentication",
-            "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)"
-        },
-        "time": "2020-05-27T12:24:03+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "PHPMailer\\PHPMailer\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-2.1-only"
-        ],
-        "authors": [
-            {
-                "name": "Marcus Bointon",
-                "email": "phpmailer@synchromedia.co.uk"
+        {
+            "name": "ddeboer/imap",
+            "version": "1.11.0",
+            "version_normalized": "1.11.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ddeboer/imap.git",
+                "reference": "a089dfcb9d177f921eb5dadc8d4144a44dff22ee"
             },
-            {
-                "name": "Jim Jagielski",
-                "email": "jimjag@gmail.com"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ddeboer/imap/zipball/a089dfcb9d177f921eb5dadc8d4144a44dff22ee",
+                "reference": "a089dfcb9d177f921eb5dadc8d4144a44dff22ee",
+                "shasum": ""
             },
-            {
-                "name": "Andy Prevost",
-                "email": "codeworxtech@users.sourceforge.net"
+            "require": {
+                "ext-iconv": "*",
+                "ext-imap": "*",
+                "ext-mbstring": "*",
+                "php": "^7.3 || ^8.0"
             },
-            {
-                "name": "Brent R. Matzelle"
-            }
-        ],
-        "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-        "funding": [
-            {
-                "url": "https://github.com/synchro",
-                "type": "github"
-            }
-        ]
-    },
-    {
-        "name": "robthree/twofactorauth",
-        "version": "1.7.0",
-        "version_normalized": "1.7.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/RobThree/TwoFactorAuth.git",
-            "reference": "37983bf675c5baca09d19d6705170489d0df0002"
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16.7",
+                "laminas/laminas-mail": "^2.12.3",
+                "phpstan/phpstan": "^0.12.57",
+                "phpstan/phpstan-phpunit": "^0.12.16",
+                "phpstan/phpstan-strict-rules": "^0.12.5",
+                "phpunit/phpunit": "^9.4.3"
+            },
+            "time": "2020-11-30T14:52:49+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Ddeboer\\Imap\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David de Boer",
+                    "email": "david@ddeboer.nl"
+                },
+                {
+                    "name": "Filippo Tessarotto",
+                    "email": "zoeslam@gmail.com"
+                },
+                {
+                    "name": "Community contributors",
+                    "homepage": "https://github.com/ddeboer/imap/graphs/contributors"
+                }
+            ],
+            "description": "Object-oriented IMAP for PHP",
+            "keywords": [
+                "email",
+                "imap",
+                "mail"
+            ],
+            "support": {
+                "issues": "https://github.com/ddeboer/imap/issues",
+                "source": "https://github.com/ddeboer/imap/tree/1.11.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Slamdunk",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/ddeboer",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../ddeboer/imap"
         },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/RobThree/TwoFactorAuth/zipball/37983bf675c5baca09d19d6705170489d0df0002",
-            "reference": "37983bf675c5baca09d19d6705170489d0df0002",
-            "shasum": ""
+        {
+            "name": "matthiasmullie/minify",
+            "version": "1.3.65",
+            "version_normalized": "1.3.65.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matthiasmullie/minify.git",
+                "reference": "227f19062451c55a797e0cc667ef983834e6580c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matthiasmullie/minify/zipball/227f19062451c55a797e0cc667ef983834e6580c",
+                "reference": "227f19062451c55a797e0cc667ef983834e6580c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "matthiasmullie/path-converter": "~1.1",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~2.0",
+                "matthiasmullie/scrapbook": "~1.0",
+                "phpunit/phpunit": "~4.8"
+            },
+            "suggest": {
+                "psr/cache-implementation": "Cache implementation to use with Minify::cache"
+            },
+            "time": "2020-12-27T21:43:29+00:00",
+            "bin": [
+                "bin/minifycss",
+                "bin/minifyjs"
+            ],
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "MatthiasMullie\\Minify\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthias Mullie",
+                    "email": "minify@mullie.eu",
+                    "homepage": "http://www.mullie.eu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "CSS & JavaScript minifier, in PHP. Removes whitespace, strips comments, combines files (incl. @import statements and small assets in CSS files), and optimizes/shortens a few common programming patterns.",
+            "homepage": "http://www.minifier.org",
+            "keywords": [
+                "JS",
+                "css",
+                "javascript",
+                "minifier",
+                "minify"
+            ],
+            "support": {
+                "issues": "https://github.com/matthiasmullie/minify/issues",
+                "source": "https://github.com/matthiasmullie/minify/tree/1.3.65"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/[user1",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/matthiasmullie] # Replace with up to 4 GitHub Sponsors-enabled usernames e.g.",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/user2",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../matthiasmullie/minify"
         },
-        "require": {
-            "php": ">=5.6.0"
+        {
+            "name": "matthiasmullie/path-converter",
+            "version": "1.1.3",
+            "version_normalized": "1.1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matthiasmullie/path-converter.git",
+                "reference": "e7d13b2c7e2f2268e1424aaed02085518afa02d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matthiasmullie/path-converter/zipball/e7d13b2c7e2f2268e1424aaed02085518afa02d9",
+                "reference": "e7d13b2c7e2f2268e1424aaed02085518afa02d9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "time": "2019-02-05T23:41:09+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "MatthiasMullie\\PathConverter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthias Mullie",
+                    "email": "pathconverter@mullie.eu",
+                    "homepage": "http://www.mullie.eu",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Relative path converter",
+            "homepage": "http://github.com/matthiasmullie/path-converter",
+            "keywords": [
+                "converter",
+                "path",
+                "paths",
+                "relative"
+            ],
+            "install-path": "../matthiasmullie/path-converter"
         },
-        "require-dev": {
-            "phpunit/phpunit": "@stable"
+        {
+            "name": "mustangostang/spyc",
+            "version": "0.6.3",
+            "version_normalized": "0.6.3.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:mustangostang/spyc.git",
+                "reference": "4627c838b16550b666d15aeae1e5289dd5b77da0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mustangostang/spyc/zipball/4627c838b16550b666d15aeae1e5289dd5b77da0",
+                "reference": "4627c838b16550b666d15aeae1e5289dd5b77da0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.3.*@dev"
+            },
+            "time": "2019-09-10T13:16:29+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.5.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "Spyc.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "mustangostang",
+                    "email": "vlad.andersen@gmail.com"
+                }
+            ],
+            "description": "A simple YAML loader/dumper class for PHP",
+            "homepage": "https://github.com/mustangostang/spyc/",
+            "keywords": [
+                "spyc",
+                "yaml",
+                "yml"
+            ],
+            "install-path": "../mustangostang/spyc"
         },
-        "time": "2020-01-02T19:56:46+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "RobThree\\Auth\\": "lib"
-            }
+        {
+            "name": "paragonie/random_compat",
+            "version": "v9.99.100",
+            "version_normalized": "9.99.100.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/random_compat.git",
+                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/996434e5492cb4c3edcb9168db6fbb1359ef965a",
+                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*|5.*",
+                "vimeo/psalm": "^1"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+            },
+            "time": "2020-10-15T08:29:30+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com"
+                }
+            ],
+            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+            "keywords": [
+                "csprng",
+                "polyfill",
+                "pseudorandom",
+                "random"
+            ],
+            "support": {
+                "email": "info@paragonie.com",
+                "issues": "https://github.com/paragonie/random_compat/issues",
+                "source": "https://github.com/paragonie/random_compat"
+            },
+            "install-path": "../paragonie/random_compat"
         },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Rob Janssen",
-                "homepage": "http://robiii.me",
-                "role": "Developer"
-            }
-        ],
-        "description": "Two Factor Authentication",
-        "homepage": "https://github.com/RobThree/TwoFactorAuth",
-        "keywords": [
-            "Authentication",
-            "MFA",
-            "Multi Factor Authentication",
-            "Two Factor Authentication",
-            "authenticator",
-            "authy",
-            "php",
-            "tfa"
-        ]
-    },
-    {
-        "name": "soundasleep/html2text",
-        "version": "0.5.0",
-        "version_normalized": "0.5.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/soundasleep/html2text.git",
-            "reference": "cdb89f6ffa2c4cc78f8ed9ea6ee0594a9133ccad"
+        {
+            "name": "php-mime-mail-parser/php-mime-mail-parser",
+            "version": "5.0.5",
+            "version_normalized": "5.0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-mime-mail-parser/php-mime-mail-parser.git",
+                "reference": "27983433aabeccee832573c3c56e6a4855e57745"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-mime-mail-parser/php-mime-mail-parser/zipball/27983433aabeccee832573c3c56e6a4855e57745",
+                "reference": "27983433aabeccee832573c3c56e6a4855e57745",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mailparse": "*",
+                "php": "^7.1"
+            },
+            "replace": {
+                "exorus/php-mime-mail-parser": "*",
+                "messaged/php-mime-mail-parser": "*"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/php-token-stream": "^3.0",
+                "phpunit/phpunit": "^7.0",
+                "squizlabs/php_codesniffer": "^3.4"
+            },
+            "time": "2019-09-23T11:57:58+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "PhpMimeMailParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "eXorus",
+                    "email": "exorus.spam@gmail.com",
+                    "homepage": "https://github.com/eXorus/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "M.Valinskis",
+                    "email": "M.Valins@gmail.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
+                },
+                {
+                    "name": "eugene.emmett.wood",
+                    "email": "gene_w@cementhorizon.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
+                },
+                {
+                    "name": "alknetso",
+                    "email": "alkne@gmail.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
+                },
+                {
+                    "name": "bucabay",
+                    "email": "gabe@fijiwebdesign.com",
+                    "homepage": "http://www.fijiwebdesign.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A fully tested email parser for PHP 7.1+ (mailparse extension wrapper).",
+            "homepage": "https://github.com/php-mime-mail-parser/php-mime-mail-parser",
+            "keywords": [
+                "MimeMailParser",
+                "mail",
+                "mailparse",
+                "mime",
+                "parser",
+                "php"
+            ],
+            "install-path": "../php-mime-mail-parser/php-mime-mail-parser"
         },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/soundasleep/html2text/zipball/cdb89f6ffa2c4cc78f8ed9ea6ee0594a9133ccad",
-            "reference": "cdb89f6ffa2c4cc78f8ed9ea6ee0594a9133ccad",
-            "shasum": ""
+        {
+            "name": "phpmailer/phpmailer",
+            "version": "v6.2.0",
+            "version_normalized": "6.2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPMailer/PHPMailer.git",
+                "reference": "e38888a75c070304ca5514197d4847a59a5c853f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/e38888a75c070304ca5514197d4847a59a5c853f",
+                "reference": "e38888a75c070304ca5514197d4847a59a5c853f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-filter": "*",
+                "ext-hash": "*",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+                "doctrine/annotations": "^1.2",
+                "phpcompatibility/php-compatibility": "^9.3.5",
+                "roave/security-advisories": "dev-latest",
+                "squizlabs/php_codesniffer": "^3.5.6",
+                "yoast/phpunit-polyfills": "^0.2.0"
+            },
+            "suggest": {
+                "ext-mbstring": "Needed to send email in multibyte encoding charset",
+                "hayageek/oauth2-yahoo": "Needed for Yahoo XOAUTH2 authentication",
+                "league/oauth2-google": "Needed for Google XOAUTH2 authentication",
+                "psr/log": "For optional PSR-3 debug logging",
+                "stevenmaguire/oauth2-microsoft": "Needed for Microsoft XOAUTH2 authentication",
+                "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)"
+            },
+            "time": "2020-11-25T15:24:57+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "PHPMailer\\PHPMailer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-only"
+            ],
+            "authors": [
+                {
+                    "name": "Marcus Bointon",
+                    "email": "phpmailer@synchromedia.co.uk"
+                },
+                {
+                    "name": "Jim Jagielski",
+                    "email": "jimjag@gmail.com"
+                },
+                {
+                    "name": "Andy Prevost",
+                    "email": "codeworxtech@users.sourceforge.net"
+                },
+                {
+                    "name": "Brent R. Matzelle"
+                }
+            ],
+            "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
+            "support": {
+                "issues": "https://github.com/PHPMailer/PHPMailer/issues",
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v6.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Synchro",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../phpmailer/phpmailer"
         },
-        "require": {
-            "ext-dom": "*",
-            "ext-libxml": "*",
-            "php": ">=5.3.2"
+        {
+            "name": "robthree/twofactorauth",
+            "version": "1.7.0",
+            "version_normalized": "1.7.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RobThree/TwoFactorAuth.git",
+                "reference": "37983bf675c5baca09d19d6705170489d0df0002"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RobThree/TwoFactorAuth/zipball/37983bf675c5baca09d19d6705170489d0df0002",
+                "reference": "37983bf675c5baca09d19d6705170489d0df0002",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "@stable"
+            },
+            "time": "2020-01-02T19:56:46+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "RobThree\\Auth\\": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Janssen",
+                    "homepage": "http://robiii.me",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Two Factor Authentication",
+            "homepage": "https://github.com/RobThree/TwoFactorAuth",
+            "keywords": [
+                "Authentication",
+                "MFA",
+                "Multi Factor Authentication",
+                "Two Factor Authentication",
+                "authenticator",
+                "authy",
+                "php",
+                "tfa"
+            ],
+            "install-path": "../robthree/twofactorauth"
         },
-        "require-dev": {
-            "phpunit/phpunit": ">=4.0",
-            "soundasleep/component-tests": "dev-master"
+        {
+            "name": "soundasleep/html2text",
+            "version": "0.5.0",
+            "version_normalized": "0.5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/soundasleep/html2text.git",
+                "reference": "cdb89f6ffa2c4cc78f8ed9ea6ee0594a9133ccad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/soundasleep/html2text/zipball/cdb89f6ffa2c4cc78f8ed9ea6ee0594a9133ccad",
+                "reference": "cdb89f6ffa2c4cc78f8ed9ea6ee0594a9133ccad",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=4.0",
+                "soundasleep/component-tests": "dev-master"
+            },
+            "time": "2017-04-19T22:01:50+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Html2Text\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "EPL-1.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jevon Wright",
+                    "homepage": "https://jevon.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP script to convert HTML into a plain text format",
+            "homepage": "https://github.com/soundasleep/html2text",
+            "keywords": [
+                "email",
+                "html",
+                "php",
+                "text"
+            ],
+            "install-path": "../soundasleep/html2text"
         },
-        "time": "2017-04-19T22:01:50+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Html2Text\\": "src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "EPL-1.0"
-        ],
-        "authors": [
-            {
-                "name": "Jevon Wright",
-                "homepage": "https://jevon.org",
-                "role": "Developer"
-            }
-        ],
-        "description": "A PHP script to convert HTML into a plain text format",
-        "homepage": "https://github.com/soundasleep/html2text",
-        "keywords": [
-            "email",
-            "html",
-            "php",
-            "text"
-        ]
-    },
-    {
-        "name": "yubico/u2flib-server",
-        "version": "1.0.2",
-        "version_normalized": "1.0.2.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/Yubico/php-u2flib-server.git",
-            "reference": "55d813acf68212ad2cadecde07551600d6971939"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/Yubico/php-u2flib-server/zipball/55d813acf68212ad2cadecde07551600d6971939",
-            "reference": "55d813acf68212ad2cadecde07551600d6971939",
-            "shasum": ""
-        },
-        "require": {
-            "ext-openssl": "*",
-            "paragonie/random_compat": ">= 1",
-            "php": ">=5.6"
-        },
-        "require-dev": {
-            "phpunit/phpunit": "~5.7",
-            "vimeo/psalm": "^0|^1|^2"
-        },
-        "time": "2018-09-07T08:16:44+00:00",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "classmap": [
-                "src/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "BSD-2-Clause"
-        ],
-        "description": "Library for U2F implementation",
-        "homepage": "https://developers.yubico.com/php-u2flib-server"
-    }
-]
+        {
+            "name": "yubico/u2flib-server",
+            "version": "1.0.2",
+            "version_normalized": "1.0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Yubico/php-u2flib-server.git",
+                "reference": "55d813acf68212ad2cadecde07551600d6971939"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Yubico/php-u2flib-server/zipball/55d813acf68212ad2cadecde07551600d6971939",
+                "reference": "55d813acf68212ad2cadecde07551600d6971939",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "paragonie/random_compat": ">= 1",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.7",
+                "vimeo/psalm": "^0|^1|^2"
+            },
+            "time": "2018-09-07T08:16:44+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "description": "Library for U2F implementation",
+            "homepage": "https://developers.yubico.com/php-u2flib-server",
+            "install-path": "../yubico/u2flib-server"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

@@ -459,7 +459,7 @@ function generate_tlsa_digest($hostname, $port, $starttls = null, $ciphers = 'DE
     return 'Error: Cannot read peer certificate';
   }
 }
-function alertbox_log_parser($_data){
+function alertbox_log_parser($_data) {
   global $lang;
   if (isset($_data['return'])) {
     foreach ($_data['return'] as $return) {
@@ -489,75 +489,91 @@ function alertbox_log_parser($_data){
   }
   return false;
 }
+function verify_salted_hash($hash, $password, $algo, $salt_length) {
+  // Decode hash
+  $dhash = base64_decode($hash);
+  // Get first n bytes of binary which equals a SSHA hash
+  $ohash = substr($dhash, 0, $salt_length);
+  // Remove SSHA hash from decoded hash to get original salt string
+  $osalt = str_replace($ohash, '', $dhash);
+  // Check single salted SSHA hash against extracted hash
+  if (hash_equals(hash($algo, $password . $osalt, true), $ohash)) {
+    return true;
+  }
+  return false;
+}
 function verify_hash($hash, $password) {
-  if (preg_match('/^{SSHA256}/i', $hash)) {
-    // Remove tag if any
-    $hash = preg_replace('/^{SSHA256}/i', '', $hash);
-    // Decode hash
-    $dhash = base64_decode($hash);
-    // Get first 32 bytes of binary which equals a SHA256 hash
-    $ohash = substr($dhash, 0, 32);
-    // Remove SHA256 hash from decoded hash to get original salt string
-    $osalt = str_replace($ohash, '', $dhash);
-    // Check single salted SHA256 hash against extracted hash
-    if (hash_equals(hash('sha256', $password . $osalt, true), $ohash)) {
-      return true;
-    }
-  }
-  elseif (preg_match('/^{SSHA}/i', $hash)) {
-    // Remove tag if any
-    $hash = preg_replace('/^{SSHA}/i', '', $hash);
-    // Decode hash
-    $dhash = base64_decode($hash);
-    // Get first 20 bytes of binary which equals a SSHA hash
-    $ohash = substr($dhash, 0, 20);
-    // Remove SSHA hash from decoded hash to get original salt string
-    $osalt = str_replace($ohash, '', $dhash);
-    // Check single salted SSHA hash against extracted hash
-    if (hash_equals(hash('sha1', $password . $osalt, true), $ohash)) {
-      return true;
-    }
-  }
-  elseif (preg_match('/^{PLAIN-MD5}/i', $hash)) {
-    $hash = preg_replace('/^{PLAIN-MD5}/i', '', $hash);
-    if (md5($password) == $hash) {
-      return true;
-    }
-  }
-  elseif (preg_match('/^{SHA512-CRYPT}/i', $hash)) {
-    // Remove tag if any
-    $hash = preg_replace('/^{SHA512-CRYPT}/i', '', $hash);
-    // Decode hash
-    preg_match('/\\$6\\$(.*)\\$(.*)/i', $hash, $hash_array);
-    $osalt = $hash_array[1];
-    $ohash = $hash_array[2];
-    if (hash_equals(crypt($password, '$6$' . $osalt . '$'), $hash)) {
-      return true;
-    }
-  }
-  elseif (preg_match('/^{SSHA512}/i', $hash)) {
-    $hash = preg_replace('/^{SSHA512}/i', '', $hash);
-    // Decode hash
-    $dhash = base64_decode($hash);
-    // Get first 64 bytes of binary which equals a SHA512 hash
-    $ohash = substr($dhash, 0, 64);
-    // Remove SHA512 hash from decoded hash to get original salt string
-    $osalt = str_replace($ohash, '', $dhash);
-    // Check single salted SHA512 hash against extracted hash
-    if (hash_equals(hash('sha512', $password . $osalt, true), $ohash)) {
-      return true;
-    }
-  }
-  elseif (preg_match('/^{MD5-CRYPT}/i', $hash)) {
-    $hash = preg_replace('/^{MD5-CRYPT}/i', '', $hash);
-    if (password_verify($password, $hash)) {
-      return true;
-    }
-  } 
-  elseif (preg_match('/^{BLF-CRYPT}/i', $hash)) {
-    $hash = preg_replace('/^{BLF-CRYPT}/i', '', $hash);
-    if (password_verify($password, $hash)) {
-      return true;
+  if (preg_match('/^{(.+)}(.+)/i', $hash, $hash_array)) {
+    $scheme = strtoupper($hash_array[1]);
+    $hash = $hash_array[2];
+    switch ($scheme) {
+      case "ARGON2I":
+      case "ARGON2ID":
+      case "BLF-CRYPT":
+      case "CRYPT":
+      case "DES-CRYPT":
+      case "MD5-CRYPT":
+      case "MD5":
+      case "SHA256-CRYPT":
+      case "SHA512-CRYPT":
+        return password_verify($password, $hash);
+
+      case "CLEAR":
+      case "CLEARTEXT":
+      case "PLAIN":
+        return $password == $hash;
+
+      case "LDAP-MD5":
+        $hash = base64_decode($hash);
+        return hash_equals(hash('md5', $password, true), $hash);
+
+      case "PBKDF2":
+        $components = explode('$', $hash);
+        $salt = $components[2];
+        $rounds = $components[3];
+        $hash = $components[4];
+        return hash_equals(hash_pbkdf2('sha1', $password, $salt, $rounds), $hash);
+
+      case "PLAIN-MD4":
+        return hash_equals(hash('md4', $password), $hash);
+
+      case "PLAIN-MD5":
+        return md5($password) == $hash;
+
+      case "PLAIN-TRUNC":
+        $components = explode('-', $hash);
+        if (count($components) > 1) {
+          $trunc_len = $components[0];
+          $trunc_password = $components[1];
+
+          return substr($password, 0, $trunc_len) == $trunc_password;
+        } else {
+          return $password == $hash;
+        }
+
+      case "SHA":
+      case "SHA1":
+      case "SHA256":
+      case "SHA512":
+        // SHA is an alias for SHA1
+        $scheme = $scheme == "SHA" ? "sha1" : strtolower($scheme);
+        $hash = base64_decode($hash);
+        return hash_equals(hash($scheme, $password, true), $hash);
+
+      case "SMD5":
+        return verify_salted_hash($hash, $password, 'md5', 16);
+
+      case "SSHA":
+        return verify_salted_hash($hash, $password, 'sha1', 20);
+
+      case "SSHA256":
+        return verify_salted_hash($hash, $password, 'sha256', 32);
+
+      case "SSHA512":
+        return verify_salted_hash($hash, $password, 'sha512', 64);
+
+      default:
+        return false;
     }
   }
   return false;

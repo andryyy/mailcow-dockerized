@@ -28,34 +28,42 @@ $(document).ready(function() {
     $('#mailbox-passwd-hidden-info').addClass('hidden');
     $('#mailbox-passwd-form-groups').removeClass('hidden');
   });
-});
-if ($("#editSelectMultipleBookings").val() == "custom") {
-  $("#multiple_bookings_custom_div").show();
-  $('input[name=multiple_bookings]').val($("#multiple_bookings_custom").val());
-}
-$("#editSelectMultipleBookings").change(function() {
-  $('input[name=multiple_bookings]').val($("#editSelectMultipleBookings").val());
-  if ($('input[name=multiple_bookings]').val() == "custom") {
-    $("#multiple_bookings_custom_div").show();
-  }
-  else {
-    $("#multiple_bookings_custom_div").hide();
-  }
-});
-if ($("#editSelectSenderACL option[value='\*']:selected").length > 0){
-  $("#sender_acl_disabled").show();
-}
-$('#editSelectSenderACL').change(function() {
+  // Preview XMPP JID
+  $('.xmpp-prefix-preview').text($("#xmpp-prefix").val());
+  $("#xmpp-prefix").bind("change keypress keyup blur", function() {
+    $('.xmpp-prefix-preview').text($(this).val());
+  });
+  // Sender ACL
   if ($("#editSelectSenderACL option[value='\*']:selected").length > 0){
     $("#sender_acl_disabled").show();
   }
-  else {
-    $("#sender_acl_disabled").hide();
+  $('#editSelectSenderACL').change(function() {
+    if ($("#editSelectSenderACL option[value='\*']:selected").length > 0){
+      $("#sender_acl_disabled").show();
+    }
+    else {
+      $("#sender_acl_disabled").hide();
+    }
+  });
+  // Resources
+  if ($("#editSelectMultipleBookings").val() == "custom") {
+    $("#multiple_bookings_custom_div").show();
+    $('input[name=multiple_bookings]').val($("#multiple_bookings_custom").val());
   }
+  $("#editSelectMultipleBookings").change(function() {
+    $('input[name=multiple_bookings]').val($("#editSelectMultipleBookings").val());
+    if ($('input[name=multiple_bookings]').val() == "custom") {
+      $("#multiple_bookings_custom_div").show();
+    }
+    else {
+      $("#multiple_bookings_custom_div").hide();
+    }
+  });
+  $("#multiple_bookings_custom").bind("change keypress keyup blur", function() {
+    $('input[name=multiple_bookings]').val($("#multiple_bookings_custom").val());
+  });
 });
-$("#multiple_bookings_custom").bind("change keypress keyup blur", function() {
-  $('input[name=multiple_bookings]').val($("#multiple_bookings_custom").val());
-});
+
 jQuery(function($){
   // http://stackoverflow.com/questions/46155/validate-email-address-in-javascript
   function validateEmail(email) {

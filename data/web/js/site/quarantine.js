@@ -53,12 +53,12 @@ jQuery(function($){
         {"name":"sender","title":lang.sender},
         {"name":"subject","title":lang.subj, "type": "text"},
         {"name":"rspamdaction","title":lang.rspamd_result, "type": "html"},
-        {"name":"rcpt","title":lang.rcpt, "breakpoints":"xs sm md", "type": "text"},
+        {"name":"rcpt","title":lang.rcpt, "type": "text"},
         {"name":"virus","title":lang.danger, "type": "text"},
         {"name":"score","title": lang.spam_score, "type": "text"},
         {"name":"notified","title":lang.notified, "type": "text"},
         {"name":"created","formatter":function unix_time_format(tm) { var date = new Date(tm ? tm * 1000 : 0); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.received,"style":{"width":"170px"}},
-        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right"},"style":{"min-width":"200px"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
+        {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right"},"style":{"min-width":"200px"},"type":"html","title":lang.action}
       ],
       "rows": $.ajax({
         dataType: 'json',

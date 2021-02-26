@@ -1,12 +1,11 @@
 # IMAP library
 
-[![Build Status](https://travis-ci.org/ddeboer/imap.svg?branch=master)](https://travis-ci.org/ddeboer/imap)
-[![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/imap/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ddeboer/imap/?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ddeboer/imap/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ddeboer/imap/?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/ddeboer/imap/v/stable.svg)](https://packagist.org/packages/ddeboer/imap)
-[![Total Downloads](https://poser.pugx.org/ddeboer/imap/downloads.png)](https://packagist.org/packages/ddeboer/imap)
+[![Latest Stable Version](https://img.shields.io/packagist/v/ddeboer/imap.svg)](https://packagist.org/packages/ddeboer/imap)
+[![Downloads](https://img.shields.io/packagist/dt/ddeboer/imap.svg)](https://packagist.org/packages/ddeboer/imap)
+[![Integrate](https://github.com/ddeboer/imap/workflows/Integrate/badge.svg?branch=master)](https://github.com/ddeboer/imap/actions)
+[![Code Coverage](https://codecov.io/gh/ddeboer/imap/coverage.svg?branch=master)](https://codecov.io/gh/ddeboer/imap?branch=master)
 
-A PHP 7.2+ library to read and process e-mails over IMAP.
+A PHP 7.3+ library to read and process e-mails over IMAP.
 
 This library requires [IMAP](https://secure.php.net/manual/en/book.imap.php),
 [iconv](https://secure.php.net/manual/en/book.iconv.php) and

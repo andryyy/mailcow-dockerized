@@ -1,0 +1,239 @@
+loglevel: info
+
+auth_method: [external]
+auth_use_cache: false
+extauth_program: /var/www/authentication/authenticator
+
+include_config_file:
+  /ejabberd/ejabberd_api.yml
+
+include_config_file:
+  /ejabberd/ejabberd_acl.yml
+
+include_config_file:
+  /ejabberd/ejabberd_hosts.yml:
+    allow_only:
+      - hosts
+
+include_config_file:
+  /ejabberd/ejabberd_macros.yml:
+    allow_only:
+      - define_macro
+
+define_macro:
+  'TLS_CIPHERS': "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256"
+  'TLS_OPTIONS':
+    - "no_sslv3"
+    - "no_tlsv1"
+    - "no_tlsv1_1"
+    - "cipher_server_preference"
+    - "no_compression"
+
+c2s_ciphers: 'TLS_CIPHERS'
+s2s_ciphers: 'TLS_CIPHERS'
+c2s_protocol_options: 'TLS_OPTIONS'
+s2s_protocol_options: 'TLS_OPTIONS'
+s2s_use_starttls: required
+
+new_sql_schema: true
+sql_type: sqlite
+sql_database: /sqlite/sqlite.db
+default_db: sql
+
+certfiles:
+  - /ejabberd_ssl/cert.pem
+  - /ejabberd_ssl/key.pem
+
+listen:
+  -
+    port: 5222
+    ip: "::"
+    module: ejabberd_c2s
+    max_stanza_size: 262144
+    shaper: c2s_shaper
+    access: c2s
+    starttls_required: true
+  -
+    port: 5269
+    ip: "::"
+    module: ejabberd_s2s_in
+    max_stanza_size: 524288
+  -
+    port: EJABBERD_HTTPS
+    ip: "::"
+    module: ejabberd_http
+    tls: true
+    request_handlers:
+      /captcha: ejabberd_captcha
+      /upload: mod_http_upload
+      /ws: ejabberd_http_ws
+  -
+    port: 5280
+    ip: "::"
+    module: ejabberd_http
+    request_handlers:
+      /api: mod_http_api
+  -
+    port: 5282
+    ip: "::"
+    module: ejabberd_http
+    request_handlers:
+      /xmpp: ejabberd_web_admin
+  -
+    module: ejabberd_http
+    port: 5281
+    ip: "::"
+    request_handlers:
+      /.well-known/acme-challenge: ejabberd_acme
+  -
+    port: 1883
+    ip: "::"
+    module: mod_mqtt
+    backlog: 1000
+
+acme:
+  auto: true
+
+acl:
+  admin:
+    user:
+      - "admin": "localhost"
+  local:
+    user_regexp: ""
+  loopback:
+    ip:
+      - 127.0.0.0/8
+      - ::1/128
+
+access_rules:
+  local:
+    allow: local
+  c2s:
+    deny: blocked
+    allow: all
+  announce:
+    allow: admin
+  configure:
+    allow: admin
+  muc_create:
+    allow: local
+  pubsub_createnode:
+    allow: local
+  trusted_network:
+    allow: loopback
+
+api_permissions:
+  "console commands":
+    from:
+      - ejabberd_ctl
+    who: all
+    what: "*"
+  "admin access":
+    who:
+      access:
+        allow:
+          - acl: loopback
+          - acl: admin
+    what:
+      - "*"
+      - "!stop"
+      - "!start"
+
+shaper:
+  normal:
+    rate: 3000
+    burst_size: 20000
+  fast: 100000
+
+shaper_rules:
+  max_user_sessions: 10
+  max_user_offline_messages:
+    1000: admin
+    1000: all
+  c2s_shaper:
+    none: admin
+    normal: all
+  s2s_shaper: fast
+
+modules:
+  mod_adhoc: {}
+  mod_admin_extra: {}
+  mod_announce:
+    access: announce
+  mod_avatar: {}
+  mod_blocking: {}
+  mod_caps: {}
+  mod_carboncopy: {}
+  mod_client_state: {}
+  mod_configure: {}
+  mod_disco: {}
+  mod_fail2ban: {}
+  mod_http_api: {}
+  mod_http_upload_quota:
+    max_days: 30
+  mod_http_upload:
+    docroot: /var/www/upload
+    custom_headers:
+      "Access-Control-Allow-Origin": "https://@HOST@"
+      "Access-Control-Allow-Methods": "GET,HEAD,PUT,OPTIONS"
+      "Access-Control-Allow-Headers": "Content-Type"
+    thumbnail: true
+    jid_in_url: node
+    file_mode: "0600"
+    dir_mode: "0700"
+  mod_last: {}
+  mod_mam:
+    clear_archive_on_room_destroy: true
+    default: never
+    compress_xml: true
+    request_activates_archiving: true
+  mod_mqtt: {}
+  mod_muc:
+    access:
+      - allow
+    access_admin:
+      - allow: admin
+    access_create: muc_create
+    access_persistent: muc_create
+    access_mam:
+      - allow
+    default_room_options:
+      mam: false
+      persistent: false
+  mod_muc_admin: {}
+  mod_offline:
+    access_max_user_messages: max_user_offline_messages
+  mod_ping: {}
+  mod_privacy: {}
+  mod_private: {}
+  mod_proxy65:
+    access: local
+    max_connections: 5
+  mod_pubsub:
+    access_createnode: pubsub_createnode
+    plugins:
+      - flat
+      - pep
+    force_node_config:
+      ## Avoid buggy clients to make their bookmarks public
+      storage:bookmarks:
+        access_model: whitelist
+  mod_push: {}
+  mod_push_keepalive: {}
+  mod_register:
+    ## Only accept registration requests from the "trusted"
+    ## network (see access_rules section above).
+    ## Think twice before enabling registration from any
+    ## address. See the Jabber SPAM Manifesto for details:
+    ## https://github.com/ge0rg/jabber-spam-fighting-manifesto
+    ip_access: trusted_network
+  mod_roster:
+    versioning: true
+  mod_s2s_dialback: {}
+  mod_stream_mgmt:
+    resend_on_timeout: if_offline
+  mod_stun_disco: {}
+  mod_vcard: {}
+  mod_vcard_xupdate: {}
+  mod_version:
+    show_os: false

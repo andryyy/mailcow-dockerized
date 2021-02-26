@@ -189,6 +189,8 @@ $(document).ready(function() {
       $(this).attr("disabled", true);
     } else if ($(this).attr('data-provide') == 'slider') {
       $(this).slider("disable");
+    } else if ($(this).is(':checkbox')) {
+      $(this).attr("disabled", true);
     }
     $(this).data("toggle", "tooltip");
     $(this).attr("title", lang_acl.prohibited);

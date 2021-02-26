@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM alpine:3.13
 
 LABEL maintainer "Andre Peters <andre.peters@servercow.de>"
 
@@ -14,8 +14,9 @@ RUN apk upgrade --no-cache \
   tini \
   tzdata \
   python3 \
-  && python3 -m pip install --upgrade pip \
-  && python3 -m pip install acme-tiny
+  py3-pip \
+  && pip3 install --upgrade pip \
+  && pip3 install acme-tiny
 
 COPY acme.sh /srv/acme.sh
 COPY functions.sh /srv/functions.sh

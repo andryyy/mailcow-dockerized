@@ -824,6 +824,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
       <div class="modal-body">
         <p><?=$lang['diagnostics']['dns_records_24hours'];?></p>
         <div class="dns-modal-body"></div>
+        <p><?=$lang['diagnostics']['dns_records_docs'];?></p>
       </div>
     </div>
   </div>

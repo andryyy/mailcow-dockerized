@@ -185,6 +185,7 @@ elseif (!empty($_GET['id']) && ctype_alnum($_GET['id'])) {
       $dl_filename = filter_var($data['attachments'][$dl_id][0], FILTER_SANITIZE_STRING);
       $dl_filename_short = strlen($dl_filename) > 20 ? substr($dl_filename, 0, 20) : $dl_filename;
       $dl_filename_extension = pathinfo($tmpdir . $dl_filename)['extension'];
+      $dl_filename_short = preg_replace('/\.' . $dl_filename_extension . '$/', '', $dl_filename_short);
       if (!is_dir($tmpdir . $dl_filename) && file_exists($tmpdir . $dl_filename)) {
         header('Pragma: public');
         header('Expires: 0');

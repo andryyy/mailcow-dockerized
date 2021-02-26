@@ -79,7 +79,9 @@ $DETECT_LANGUAGE = true;
 $DEFAULT_LANG = 'en';
 
 // Available languages
-$AVAILABLE_LANGUAGES = array('ca', 'cs', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ko', 'lv', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sv', 'zh');
+// Use (ISO 639-1) Code standard 
+// See https://www.loc.gov/standards/iso639-2/php/code_list.php
+$AVAILABLE_LANGUAGES = array('ca', 'cs', 'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ko', 'lv', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sv', 'zh');
 
 // Change theme (default: lumen)
 // Needs to be one of those: cerulean, cosmo, cyborg, darkly, flatly, journal, lumen, paper, readable, sandstone,
@@ -166,6 +168,12 @@ $MAILBOX_DEFAULT_ATTRIBUTES['pop3_access'] = true;
 
 // Mailbox has SMTP access by default
 $MAILBOX_DEFAULT_ATTRIBUTES['smtp_access'] = true;
+
+// Mailbox has XMPP access by default (if domain has XMPP enabled)
+$MAILBOX_DEFAULT_ATTRIBUTES['xmpp_access'] = true;
+
+// Mailbox is XMPP admin by default (bad)
+$MAILBOX_DEFAULT_ATTRIBUTES['xmpp_admin'] = false;
 
 // Mailbox receives notifications about...
 // "add_header" - mail that was put into the Junk folder

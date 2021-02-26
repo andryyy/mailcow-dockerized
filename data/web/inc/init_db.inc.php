@@ -3,7 +3,7 @@ function init_db_schema() {
   try {
     global $pdo;
 
-    $db_version = "28112020_1210";
+    $db_version = "08022021_1000";
 
     $stmt = $pdo->query("SHOW TABLES LIKE 'versions'");
     $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -240,6 +240,8 @@ function init_db_schema() {
           "gal" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "relay_all_recipients" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "relay_unknown_only" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "xmpp" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "xmpp_prefix" => "VARCHAR(255) DEFAULT 'im'",
           "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
           "modified" => "DATETIME ON UPDATE CURRENT_TIMESTAMP",
           "active" => "TINYINT(1) NOT NULL DEFAULT '1'"
@@ -567,6 +569,10 @@ function init_db_schema() {
           "protocol_access" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "smtp_ip_access" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "alias_domains" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "xmpp_prefix" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "xmpp_domain_access" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "xmpp_mailbox_access" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "xmpp_admin" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "domain_desc" => "TINYINT(1) NOT NULL DEFAULT '0'"
           ),
         "keys" => array(
@@ -1179,6 +1185,8 @@ function init_db_schema() {
     $pdo->query("UPDATE `pushover` SET `attributes` =  JSON_SET(`attributes`, '$.only_x_prio', \"0\") WHERE JSON_VALUE(`attributes`, '$.only_x_prio') IS NULL;");
     // mailbox
     $pdo->query("UPDATE `mailbox` SET `attributes` = '{}' WHERE `attributes` = '' OR `attributes` IS NULL;");
+    $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.xmpp_access', \"1\") WHERE JSON_VALUE(`attributes`, '$.xmpp_access') IS NULL;");
+    $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.xmpp_admin', \"0\") WHERE JSON_VALUE(`attributes`, '$.xmpp_admin') IS NULL;");
     $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.force_pw_update', \"0\") WHERE JSON_VALUE(`attributes`, '$.force_pw_update') IS NULL;");
     $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.sogo_access', \"1\") WHERE JSON_VALUE(`attributes`, '$.sogo_access') IS NULL;");
     $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.imap_access', \"1\") WHERE JSON_VALUE(`attributes`, '$.imap_access') IS NULL;");
@@ -1226,6 +1234,8 @@ function init_db_schema() {
 }
 if (php_sapi_name() == "cli") {
   include '/web/inc/vars.inc.php';
+  include '/web/inc/functions.docker.inc.php';
+  include '/web/inc/functions.xmpp.inc.php';
   // $now = new DateTime();
   // $mins = $now->getOffset() / 60;
   // $sgn = ($mins < 0 ? -1 : 1);
@@ -1264,5 +1274,7 @@ if (php_sapi_name() == "cli") {
   catch ( Exception $e ) {
     // Dunno
   }
+  xmpp_rebuild_configs();
+  echo "Rebuilt XMPP configuration". PHP_EOL;
   init_db_schema();
 }

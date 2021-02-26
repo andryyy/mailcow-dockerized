@@ -228,6 +228,7 @@ final class Connection implements ConnectionInterface
 
         foreach ($mailboxesInfo as $mailboxInfo) {
             $name                      = \mb_convert_encoding(\str_replace($this->server, '', $mailboxInfo->name), 'UTF-8', 'UTF7-IMAP');
+            \assert(\is_string($name));
             $this->mailboxNames[$name] = $mailboxInfo;
         }
     }

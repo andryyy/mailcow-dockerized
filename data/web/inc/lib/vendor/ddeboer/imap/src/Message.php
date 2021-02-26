@@ -109,7 +109,15 @@ final class Message extends Message\AbstractMessage implements MessageInterface
         }
         $this->messageNumberVerified = true;
 
+        $msgno = null;
+        \set_error_handler(static function (): bool {
+            return true;
+        });
+
         $msgno = \imap_msgno($this->resource->getStream(), $messageNumber);
+
+        \restore_error_handler();
+
         if (\is_numeric($msgno) && $msgno > 0) {
             $this->imapMsgNo = $msgno;
 
@@ -306,7 +314,7 @@ final class Message extends Message\AbstractMessage implements MessageInterface
         // 'deleted' header changed, force to reload headers, would be better to set deleted flag to true on header
         $this->clearHeaders();
 
-        if (!\imap_delete($this->resource->getStream(), $this->getNumber(), \FT_UID)) {
+        if (!\imap_delete($this->resource->getStream(), (string) $this->getNumber(), \FT_UID)) {
             throw new MessageDeleteException(\sprintf('Message "%s" cannot be deleted', $this->getNumber()));
         }
     }
@@ -320,7 +328,7 @@ final class Message extends Message\AbstractMessage implements MessageInterface
     {
         // 'deleted' header changed, force to reload headers, would be better to set deleted flag to false on header
         $this->clearHeaders();
-        if (!\imap_undelete($this->resource->getStream(), $this->getNumber(), \FT_UID)) {
+        if (!\imap_undelete($this->resource->getStream(), (string) $this->getNumber(), \FT_UID)) {
             throw new MessageUndeleteException(\sprintf('Message "%s" cannot be undeleted', $this->getNumber()));
         }
     }

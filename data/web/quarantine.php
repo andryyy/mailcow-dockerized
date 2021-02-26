@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
 if (isset($_SESSION['mailcow_cc_role'])) {
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
 $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
-
+$quarantine_settings = quarantine('settings');
 ?>
 <div class="container">
 	<div class="row">
@@ -30,11 +30,16 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
         <p style="margin:10px" class="help-block"><?=$lang['quarantine']['qinfo'];?></p>
         <p style="margin:10px">
         <?php
-        if (empty(quarantine('settings')['retention_size']) || empty(quarantine('settings')['max_size'])):
+        if (empty($quarantine_settings['retention_size'] || $quarantine_settings['max_size'])) {
         ?>
         <div class="panel-body"><div class="alert alert-info"><?=$lang['quarantine']['disabled_by_config'];?></div></div>
         <?php
-        endif;
+        }
+        else {
+        ?>
+        <p style="margin:10px" class="help-block"><?=sprintf($lang['quarantine']['settings_info'], $quarantine_settings['retention_size'], $quarantine_settings['max_size']);?></p>
+        <?php
+        }
         ?>
         </p>
         <div class="table-responsive">

@@ -113,6 +113,7 @@ abstract class AbstractMessage extends AbstractPart
         $alteredValue = \str_replace(',', '', $alteredValue);
         $alteredValue = (string) \preg_replace('/^[a-zA-Z]+ ?/', '', $alteredValue);
         $alteredValue = (string) \preg_replace('/\(.*\)/', '', $alteredValue);
+        $alteredValue = (string) \preg_replace('/\<.*\>/', '', $alteredValue);
         $alteredValue = (string) \preg_replace('/\bUT\b/', 'UTC', $alteredValue);
         if (0 === \preg_match('/\d\d:\d\d:\d\d.* [\+\-]\d\d:?\d\d/', $alteredValue)) {
             $alteredValue .= ' +0000';

@@ -845,7 +845,7 @@ if (isset($_GET['query'])) {
                   $domains = mailbox('get', 'domains');
                 }
                 else {
-                  $domains = array($extra);
+                  $domains = explode(',', $extra);
                 }
                 if (!empty($domains)) {
                   foreach ($domains as $domain) {
@@ -1189,7 +1189,7 @@ if (isset($_GET['query'])) {
                   $domains = array_merge(mailbox('get', 'domains'), mailbox('get', 'alias_domains'));
                 }
                 else {
-                  $domains = array($extra);
+                  $domains = explode(',', $extra);
                 }
                 if (!empty($domains)) {
                   foreach ($domains as $domain) {

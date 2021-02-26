@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+require_once __DIR__."/vendor/autoload.php";
+
+use Monolog\Logger;
+use LeeSherwood\Ejabberd\AuthenticationService;
+use LeeSherwood\Ejabberd\CommandExecutors\mailcowCommandExecutor;
+
+$logger = new Logger('ejabberdAuth');
+
+$stdoutHandler = new Monolog\Handler\StreamHandler('/var/www/authentication/auth.log', Logger::DEBUG);
+
+$logger->pushHandler($stdoutHandler);
+
+$executor = new mailcowCommandExecutor();
+
+$application = new AuthenticationService($logger, $executor);
+
+$application->run();

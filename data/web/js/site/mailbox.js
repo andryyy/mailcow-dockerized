@@ -125,18 +125,6 @@ $(document).ready(function() {
       }
     });
   });
-  // Add Mailbox Modal
-  var addMailboxModalShown = false;
-  $('#addMailboxModal').on('show.bs.modal', function(e) {
-    if (addMailboxModalShown) {
-      return;
-    }
-    addMailboxModalShown = true;
-    var $domainSelect = $("#mailbox_table select");
-    if ($domainSelect[0].selectedIndex > 0) { // not "All Domains"
-      $("#addSelectDomain").val($domainSelect.val()).change().selectpicker("render");
-    }
-  });
   // Log modal
   $('#dnsInfoModal').on('show.bs.modal', function(e) {
     var domain = $(e.relatedTarget).data('domain');
@@ -268,6 +256,7 @@ jQuery(function($){
         {"name":"rl","title":"RL","breakpoints":"xs sm md lg","style":{"maxWidth":"100px","width":"100px"}},
         {"name":"backupmx","filterable": false,"style":{"maxWidth":"120px","width":"120px"},"title":lang.backup_mx,"breakpoints":"xs sm md lg","formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"domain_admins","title":lang.domain_admins,"style":{"word-break":"break-all","min-width":"200px"},"breakpoints":"xs sm md lg","filterable":(role == "admin"),"visible":(role == "admin")},
+        {"name":"xmpp","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":"XMPP","formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"active","filterable": false,"style":{"maxWidth":"80px","width":"80px"},"title":lang.active,"formatter": function(value){return 1==value?'&#10003;':0==value&&'&#10005;';}},
         {"name":"action","filterable": false,"sortable": false,"style":{"text-align":"right","maxWidth":"240px","width":"240px"},"type":"html","title":lang.action,"breakpoints":"xs sm md"}
       ],

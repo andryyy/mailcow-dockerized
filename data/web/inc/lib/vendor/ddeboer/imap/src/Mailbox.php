@@ -154,6 +154,10 @@ final class Mailbox implements MailboxInterface
         }
         $query = $search->toString();
 
+        if (\PHP_VERSION_ID < 80000) {
+            $descending = (int) $descending;
+        }
+
         // We need to clear the stack to know whether imap_last_error()
         // is related to this imap_search
         \imap_errors();
@@ -162,7 +166,7 @@ final class Mailbox implements MailboxInterface
             $params = [
                 $this->resource->getStream(),
                 $sortCriteria,
-                $descending ? 1 : 0,
+                $descending,
                 \SE_UID,
                 $query,
             ];
@@ -181,11 +185,13 @@ final class Mailbox implements MailboxInterface
             }
             $messageNumbers = \imap_search(...$params);
         }
+        if (false !== \imap_last_error()) {
+            // this way all errors occurred during search will be reported
+            throw new InvalidSearchCriteriaException(
+                \sprintf('Invalid search criteria [%s]', $query)
+            );
+        }
         if (false === $messageNumbers) {
-            if (false !== \imap_last_error()) {
-                throw new InvalidSearchCriteriaException(\sprintf('Invalid search criteria [%s]', $query));
-            }
-
             // imap_search can also return false
             $messageNumbers = [];
         }
@@ -203,13 +209,14 @@ final class Mailbox implements MailboxInterface
         \imap_errors();
 
         $overview = \imap_fetch_overview($this->resource->getStream(), $sequence, \FT_UID);
+        if (false !== \imap_last_error()) {
+            throw new InvalidSearchCriteriaException(
+                \sprintf('Invalid sequence [%s]', $sequence)
+            );
+        }
         if (\is_array($overview) && [] !== $overview) {
             $messageNumbers = \array_column($overview, 'uid');
         } else {
-            if (false !== \imap_last_error()) {
-                throw new InvalidSearchCriteriaException(\sprintf('Invalid sequence [%s]', $sequence));
-            }
-
             $messageNumbers = [];
         }
 
@@ -264,7 +271,7 @@ final class Mailbox implements MailboxInterface
         });
 
         /** @var array|false $tree */
-        $tree = \imap_thread($this->resource->getStream());
+        $tree = \imap_thread($this->resource->getStream(), \SE_UID);
 
         \restore_error_handler();
 

@@ -80,7 +80,7 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
                   <input type="hidden" name="unset_tfa_key" value="<?=$key_info['id'];?>" />
                   <div style="padding:4px;margin:4px" class="label label-keys label-<?=($_SESSION['tfa_id'] == $key_info['id']) ? 'success' : 'default'; ?>">
                   <?=$key_info['key_id'];?>
-                  <a href="#" style="font-weight:bold;color:white" onClick="$(this).closest('form').submit()">[<?=strtolower($lang['admin']['remove']);?>]</a>
+                  <a href="#" style="font-weight:bold;color:white" onClick="$(this).closest('form').submit()">[<?=$lang['admin']['remove'];?>]</a>
                   </div>
                 </form>
                 <?php
@@ -130,8 +130,8 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
                     <form style="display:inline;" method="post">
                     <input type="hidden" name="unset_fido2_key" value="<?=$key_info['cid'];?>" />
                     <div class="btn-group">
-                    <a href="#" class="btn btn-xs btn-default" data-cid="<?=$key_info['cid'];?>" data-subject="<?=base64_encode($key_info['subject']);?>" data-toggle="modal" data-target="#fido2ChangeFn"><span class="glyphicon glyphicon-pencil"></span> <?=strtolower($lang['fido2']['rename']);?></a>
-                    <a href="#" onClick='return confirm("<?=$lang['admin']['ays'];?>")?$(this).closest("form").submit():"";' class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> <?=strtolower($lang['admin']['remove']);?></a>
+                    <a href="#" class="btn btn-xs btn-default" data-cid="<?=$key_info['cid'];?>" data-subject="<?=base64_encode($key_info['subject']);?>" data-toggle="modal" data-target="#fido2ChangeFn"><span class="glyphicon glyphicon-pencil"></span> <?=$lang['fido2']['rename'];?></a>
+                    <a href="#" onClick='return confirm("<?=$lang['admin']['ays'];?>")?$(this).closest("form").submit():"";' class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> <?=$lang['admin']['remove'];?></a>
                     </form>
                     </div>
                   </td>

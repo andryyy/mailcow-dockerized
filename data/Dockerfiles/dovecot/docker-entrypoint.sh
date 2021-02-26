@@ -199,6 +199,8 @@ if [[ $(stat -c %U /var/vmail_index) != "vmail" ]] ; then chown -R vmail:vmail /
 
 # Cleanup random user maildirs
 rm -rf /var/vmail/mailcow.local/*
+# Cleanup PIDs
+[[ -f /tmp/quarantine_notify.pid ]] && rm /tmp/quarantine_notify.pid
 
 # create sni configuration
 echo "" > /etc/dovecot/sni.conf
