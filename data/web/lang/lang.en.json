@@ -35,6 +35,7 @@
     "add": {
         "activate_filter_warn": "All other filters will be deactivated, when active is checked.",
         "active": "Active",
+        "is_regex": "Aliases are regular expressions",
         "add": "Add",
         "add_domain_only": "Add domain only",
         "add_domain_restart": "Add domain and restart SOGo",
@@ -491,6 +492,7 @@
     },
     "edit": {
         "active": "Active",
+        "is_regex": "Alias is regular expression",
         "advanced_settings": "Advanced settings",
         "alias": "Edit alias",
         "allow_from_smtp": "Only allow these IPs to use <b>SMTP</b>",

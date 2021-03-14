@@ -157,6 +157,7 @@ services:
         - SKIP_SOGO=${SKIP_SOGO:-n}
         - ALLOW_ADMIN_EMAIL_LOGIN=${ALLOW_ADMIN_EMAIL_LOGIN:-n}
         - MASTER=${MASTER:-y}
+        - ENABLE_REGEX_ALIAS=${ENABLE_REGEX_ALIAS:-n}
       restart: always
       networks:
         mailcow-network:
@@ -261,7 +262,7 @@ services:
             - dovecot
 
     postfix-mailcow:
-      image: mailcow/postfix:1.59
+      image: mailcow/postfix:latest
       depends_on:
         - mysql-mailcow
       volumes:

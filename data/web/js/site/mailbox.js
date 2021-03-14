@@ -807,6 +807,9 @@ jQuery(function($){
             if (item.is_catch_all == 1) {
               item.address = '<div class="label label-default">Catch-All</div> ' + escapeHtml(item.address);
             }
+            if (item.is_regex == 1) {
+              item.address = '<div class="label label-default">Regex</div> ' + escapeHtml(item.address);
+            }
             else {
               item.address = escapeHtml(item.address);
             }

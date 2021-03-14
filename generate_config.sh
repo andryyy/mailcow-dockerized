@@ -336,6 +336,9 @@ DOVECOT_MASTER_USER=
 # LEAVE EMPTY IF UNSURE
 DOVECOT_MASTER_PASS=
 
+
+# Enables the regex alias feature which allows the usage of regular expressions in mail address aliases
+ENABLE_REGEX_ALIAS=n
 EOF
 
 mkdir -p data/assets/ssl

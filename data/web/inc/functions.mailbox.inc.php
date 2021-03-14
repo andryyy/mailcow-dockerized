@@ -607,6 +607,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
           $gotos      = array_map('trim', preg_split( "/( |,|;|\n)/", $_data['goto']));
           $active = intval($_data['active']);
           $sogo_visible = intval($_data['sogo_visible']);
+          $is_regex = intval($_data['is_regex']);
           $goto_null = intval($_data['goto_null']);
           $goto_spam = intval($_data['goto_spam']);
           $goto_ham = intval($_data['goto_ham']);
@@ -744,7 +745,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
               );
               continue;
             }
-            if ((!filter_var($address, FILTER_VALIDATE_EMAIL) === true) && !empty($local_part)) {
+            if ($is_regex == false && (!filter_var($address, FILTER_VALIDATE_EMAIL) === true) && !empty($local_part)) {
               $_SESSION['return'][] = array(
                 'type' => 'danger',
                 'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
@@ -760,9 +761,9 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
               );
               continue;
             }
-            $stmt = $pdo->prepare("INSERT INTO `alias` (`address`, `public_comment`, `private_comment`, `goto`, `domain`, `sogo_visible`, `active`)
-              VALUES (:address, :public_comment, :private_comment, :goto, :domain, :sogo_visible, :active)");
-            if (!filter_var($address, FILTER_VALIDATE_EMAIL) === true) {
+            $stmt = $pdo->prepare("INSERT INTO `alias` (`address`, `public_comment`, `private_comment`, `goto`, `domain`, `sogo_visible`, `is_regex`, `active`)
+              VALUES (:address, :public_comment, :private_comment, :goto, :domain, :sogo_visible, :is_regex, :active)");
+            if (!$is_regex && !filter_var($address, FILTER_VALIDATE_EMAIL) === true) {
               $stmt->execute(array(
                 ':address' => '@'.$domain,
                 ':public_comment' => $public_comment,
@@ -771,6 +772,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
                 ':goto' => $goto,
                 ':domain' => $domain,
                 ':sogo_visible' => $sogo_visible,
+                ':is_regex' => $is_regex,
                 ':active' => $active
               ));
             }
@@ -782,6 +784,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
                 ':goto' => $goto,
                 ':domain' => $domain,
                 ':sogo_visible' => $sogo_visible,
+                ':is_regex' => $is_regex,
                 ':active' => $active
               ));
             }
@@ -1918,6 +1921,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
             if (!empty($is_now)) {
               $active = (isset($_data['active'])) ? intval($_data['active']) : $is_now['active'];
               $sogo_visible = (isset($_data['sogo_visible'])) ? intval($_data['sogo_visible']) : $is_now['sogo_visible'];
+              $is_regex = (isset($_data['is_regex'])) ? intval($_data['is_regex']) : 0;
               $goto_null = (isset($_data['goto_null'])) ? intval($_data['goto_null']) : 0;
               $goto_spam = (isset($_data['goto_spam'])) ? intval($_data['goto_spam']) : 0;
               $goto_ham = (isset($_data['goto_ham'])) ? intval($_data['goto_ham']) : 0;
@@ -1934,10 +1938,12 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
               );
               continue;
             }
+         
             $domain = idn_to_ascii(substr(strstr($address, '@'), 1), 0, INTL_IDNA_VARIANT_UTS46);
             if ($is_now['address'] != $address) {
               $local_part = strstr($address, '@', true);
               $address      = $local_part.'@'.$domain;
+              
               if (!hasDomainAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $domain)) {
                 $_SESSION['return'][] = array(
                   'type' => 'danger',
@@ -1946,14 +1952,18 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
                 );
                 continue;
               }
-              if ((!filter_var($address, FILTER_VALIDATE_EMAIL) === true) && !empty($local_part)) {
-                $_SESSION['return'][] = array(
-                  'type' => 'danger',
-                  'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
-                  'msg' => array('alias_invalid', $address)
-                );
-                continue;
+             
+              if ($is_regex == false) { // Skip validation for regex
+                if ((!filter_var($address, FILTER_VALIDATE_EMAIL) === true) && !empty($local_part)) {
+                  $_SESSION['return'][] = array(
+                    'type' => 'danger',
+                    'log' => array(__FUNCTION__, $_action, $_type, $_data_log, $_attr),
+                    'msg' => array('alias_invalid', $address)
+                  );
+                  continue;
+                }
               }
+              // check if alias is already in use
               if (strtolower($is_now['address']) != strtolower($address)) {
                 $stmt = $pdo->prepare("SELECT `address` FROM `alias`
                   WHERE `address`= :address OR `address` IN (
@@ -1975,7 +1985,8 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
                   );
                   continue;
                 }
-              }
+              }              
+          
               $stmt = $pdo->prepare("SELECT `domain` FROM `domain`
                 WHERE `domain`= :domain1 OR `domain` = (SELECT `target_domain` FROM `alias_domain` WHERE `alias_domain` = :domain2)");
               $stmt->execute(array(':domain1' => $domain, ':domain2' => $domain));
@@ -1988,6 +1999,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
                 );
                 continue;
               }
+             
               $stmt = $pdo->prepare("SELECT `address` FROM `spamalias`
                 WHERE `address`= :address");
               $stmt->execute(array(':address' => $address));
@@ -2054,6 +2066,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
                 `domain` = :domain,
                 `goto` = :goto,
                 `sogo_visible`= :sogo_visible,
+                `is_regex`= :is_regex,
                 `active`= :active
                   WHERE `id` = :id");
               $stmt->execute(array(
@@ -2063,6 +2076,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
                 ':domain' => $domain,
                 ':goto' => $goto,
                 ':sogo_visible' => $sogo_visible,
+                ':is_regex' => $is_regex,
                 ':active' => $active,
                 ':id' => $is_now['id']
               ));
@@ -3255,6 +3269,7 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
             `private_comment`,
             `active`,
             `sogo_visible`,
+            `is_regex`,
             `created`,
             `modified`
               FROM `alias`
@@ -3282,13 +3297,21 @@ function mailbox($_action, $_type, $_data = null, $_extra = null) {
           $aliasdata['domain'] = $row['domain'];
           $aliasdata['goto'] = $row['goto'];
           $aliasdata['address'] = $row['address'];
-          (!filter_var($aliasdata['address'], FILTER_VALIDATE_EMAIL)) ? $aliasdata['is_catch_all'] = 1 : $aliasdata['is_catch_all'] = 0;
           $aliasdata['active'] = $row['active'];
           $aliasdata['active_int'] = $row['active'];
           $aliasdata['sogo_visible'] = $row['sogo_visible'];
           $aliasdata['sogo_visible_int'] = $row['sogo_visible'];
+          $aliasdata['is_regex'] = $row['is_regex'];
+          $aliasdata['is_regex_int'] = $row['is_regex'];
           $aliasdata['created'] = $row['created'];
           $aliasdata['modified'] = $row['modified'];
+
+          if (!$aliasdata['is_regex'] && !filter_var($aliasdata['address'], FILTER_VALIDATE_EMAIL)) {
+            $aliasdata['is_catch_all'] = 1;
+          } else {
+            $aliasdata['is_catch_all'] = 0;
+          }
+
           if (!hasDomainAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $aliasdata['domain'])) {
             return false;
           }
