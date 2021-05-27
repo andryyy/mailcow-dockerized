@@ -1,12 +1,12 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == 'domainadmin') {
 
   /*
   / DOMAIN ADMIN
   */
 
-	require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+	require_once __DIR__ . '/inc/header.inc.php';
 	$_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
   $tfa_data = get_tfa();
   $fido2_data = fido2(array("action" => "get_friendly_names"));
@@ -35,7 +35,7 @@ if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == 'doma
       </div>
     </div>
     <hr>
-    
+
     <? // TFA ?>
     <div class="row">
       <div class="col-sm-3 col-xs-5 text-right"><?=$lang['tfa']['tfa'];?></div>
@@ -133,7 +133,7 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
   / USER
   */
 
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+  require_once __DIR__ . '/inc/header.inc.php';
   $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
   $username = $_SESSION['mailcow_cc_username'];
   $mailboxdata = mailbox('get', 'mailbox_details', $username);
@@ -677,13 +677,13 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
 		</div>
 
 	</div>
-  
+
 </div><!-- /container -->
 <div style="margin-bottom:200px;"></div>
 <?php
 }
 if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] != 'admin') {
-require_once $_SERVER['DOCUMENT_ROOT'] . '/modals/user.php';
+require_once __DIR__ . '/modals/user.php';
 ?>
 <script type='text/javascript'>
 <?php
@@ -699,7 +699,7 @@ echo "var pagination_size = '" . $PAGINATION_SIZE . "';\n";
 <?php
 $js_minifier->add('/web/js/site/user.js');
 $js_minifier->add('/web/js/site/pwgen.js');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/inc/footer.inc.php';
 }
 else {
 	header('Location: /');

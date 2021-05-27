@@ -1,8 +1,8 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/vars.inc.php';
+require_once __DIR__ . '/inc/vars.inc.php';
 $default_autodiscover_config = $autodiscover_config;
-if(file_exists('inc/vars.local.inc.php')) {
-  include_once 'inc/vars.local.inc.php';
+if(file_exists(__DIR__ . '/inc/vars.local.inc.php')) {
+  include_once __DIR__ . '/inc/vars.local.inc.php';
 }
 $autodiscover_config = array_merge($default_autodiscover_config, $autodiscover_config);
 

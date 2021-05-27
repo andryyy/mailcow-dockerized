@@ -6,11 +6,11 @@
   exit;
 }*/
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/vars.inc.php';
+require_once __DIR__ . '/vars.inc.php';
 $default_autodiscover_config = $autodiscover_config;
 
-if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/inc/vars.local.inc.php')) {
-  include_once $_SERVER['DOCUMENT_ROOT'] . '/inc/vars.local.inc.php';
+if (file_exists(__DIR__ . '/vars.local.inc.php')) {
+  include_once __DIR__ . '/vars.local.inc.php';
 }
 unset($https_port);
 $autodiscover_config = array_merge($default_autodiscover_config, $autodiscover_config);
@@ -18,22 +18,22 @@ $autodiscover_config = array_merge($default_autodiscover_config, $autodiscover_c
 header_remove("X-Powered-By");
 
 // Yubi OTP API
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/Yubico.php';
+require_once __DIR__ . '/lib/Yubico.php';
 
 // WebAuthn
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/WebAuthn/WebAuthn.php';
+require_once __DIR__ . '/lib/WebAuthn/WebAuthn.php';
 
 // Autoload composer
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/vendor/autoload.php';
+require_once __DIR__ . '/lib/vendor/autoload.php';
 
 // Load Sieve
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/sieve/SieveParser.php';
+require_once __DIR__ . '/lib/sieve/SieveParser.php';
 
 // minifierExtended
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/JSminifierExtended.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/CSSminifierExtended.php';
+require_once __DIR__ . '/lib/JSminifierExtended.php';
+require_once __DIR__ . '/lib/CSSminifierExtended.php';
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/lib/array_merge_real.php';
+require_once __DIR__ . '/lib/array_merge_real.php';
 
 // Minify JS
 use MatthiasMullie\Minify;
@@ -198,8 +198,8 @@ function get_remote_ip($anonymize = null) {
 }
 
 // Load core functions first
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/sessions.inc.php';
+require_once __DIR__ . '/functions.inc.php';
+require_once __DIR__ . '/sessions.inc.php';
 
 // IMAP lib
 // use Ddeboer\Imap\Server;
@@ -228,38 +228,38 @@ if (isset($_GET['lang']) && in_array($_GET['lang'], $AVAILABLE_LANGUAGES)) {
 /*
  * load language
  */
-$lang = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/lang/lang.en.json'), true);
+$lang = json_decode(file_get_contents(__DIR__ . '/../lang/lang.en.json'), true);
 
-$langFile = $_SERVER['DOCUMENT_ROOT'] . '/lang/lang.'.$_SESSION['mailcow_locale'].'.json';
+$langFile = __DIR__ . '/../lang/lang.'.$_SESSION['mailcow_locale'].'.json';
 if(file_exists($langFile)) {
   $lang = array_merge_real($lang, json_decode(file_get_contents($langFile), true));
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.acl.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.address_rewriting.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.admin.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.app_passwd.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.customize.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.dkim.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.docker.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.domain_admin.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.fail2ban.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.fwdhost.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.mailbox.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.mailq.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.oauth2.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.policy.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.presets.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.pushover.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.quarantine.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.quota_notification.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.ratelimit.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.rspamd.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.tls_policy_maps.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.transports.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/functions.xmpp.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/init_db.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/triggers.inc.php';
+require_once __DIR__ . '/functions.acl.inc.php';
+require_once __DIR__ . '/functions.address_rewriting.inc.php';
+require_once __DIR__ . '/functions.admin.inc.php';
+require_once __DIR__ . '/functions.app_passwd.inc.php';
+require_once __DIR__ . '/functions.customize.inc.php';
+require_once __DIR__ . '/functions.dkim.inc.php';
+require_once __DIR__ . '/functions.docker.inc.php';
+require_once __DIR__ . '/functions.domain_admin.inc.php';
+require_once __DIR__ . '/functions.fail2ban.inc.php';
+require_once __DIR__ . '/functions.fwdhost.inc.php';
+require_once __DIR__ . '/functions.mailbox.inc.php';
+require_once __DIR__ . '/functions.mailq.inc.php';
+require_once __DIR__ . '/functions.oauth2.inc.php';
+require_once __DIR__ . '/functions.policy.inc.php';
+require_once __DIR__ . '/functions.presets.inc.php';
+require_once __DIR__ . '/functions.pushover.inc.php';
+require_once __DIR__ . '/functions.quarantine.inc.php';
+require_once __DIR__ . '/functions.quota_notification.inc.php';
+require_once __DIR__ . '/functions.ratelimit.inc.php';
+require_once __DIR__ . '/functions.rspamd.inc.php';
+require_once __DIR__ . '/functions.tls_policy_maps.inc.php';
+require_once __DIR__ . '/functions.transports.inc.php';
+require_once __DIR__ . '/functions.xmpp.inc.php';
+require_once __DIR__ . '/init_db.inc.php';
+require_once __DIR__ . '/triggers.inc.php';
 init_db_schema();
 if (isset($_SESSION['mailcow_cc_role'])) {
   // if ($_SESSION['mailcow_cc_role'] == 'user') {

@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 
 if (isset($_SESSION['mailcow_cc_role']) && isset($_SESSION['oauth2_request'])) {
   $oauth2_request = $_SESSION['oauth2_request'];
@@ -20,7 +20,7 @@ elseif (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == '
   exit();
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+require_once __DIR__ . '/inc/header.inc.php';
 $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 $_SESSION['index_query_string'] = $_SERVER['QUERY_STRING'];
 
@@ -142,4 +142,4 @@ $_SESSION['index_query_string'] = $_SERVER['QUERY_STRING'];
 </div><!-- /.container -->
 <?php
 $js_minifier->add('/web/js/site/index.js');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/inc/footer.inc.php';

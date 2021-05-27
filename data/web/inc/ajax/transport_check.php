@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/vars.inc.php';
+require_once __DIR__ . '/../prerequisites.inc.php';
+require_once __DIR__ . '/../vars.inc.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;

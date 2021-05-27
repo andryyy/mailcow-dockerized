@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/modals/footer.php';
+require_once __DIR__ . '/../modals/footer.php';
 logger();
 
 $hash = $js_minifier->getDataHash();

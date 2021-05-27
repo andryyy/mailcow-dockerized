@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json");
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/../prerequisites.inc.php';
 
 function rrmdir($src) {
   $dir = opendir($src);

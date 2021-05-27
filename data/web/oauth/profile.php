@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/../inc/prerequisites.inc.php';
 
 if (!$oauth2_server->verifyResourceRequest(OAuth2\Request::createFromGlobals())) {
   $oauth2_server->getResponse()->send();

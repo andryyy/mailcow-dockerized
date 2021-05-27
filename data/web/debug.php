@@ -1,8 +1,8 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 
 if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == "admin") {
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+require_once __DIR__ . '/inc/header.inc.php';
 $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 $solr_status = (preg_match("/^([yY][eE][sS]|[yY])+$/", $_ENV["SKIP_SOLR"])) ? false : solr_status();
 $clamd_status = (preg_match("/^([yY][eE][sS]|[yY])+$/", $_ENV["SKIP_CLAMD"])) ? false : true;
@@ -381,7 +381,7 @@ $xmpp_status = xmpp_control('status');
   </div> <!-- /row -->
 </div> <!-- /container -->
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/modals/debug.php';
+require_once __DIR__ . '/modals/debug.php';
 ?>
 <script type='text/javascript'>
 <?php
@@ -394,7 +394,7 @@ echo "var log_pagination_size = '". $LOG_PAGINATION_SIZE . "';\n";
 </script>
 <?php
 $js_minifier->add('/web/js/site/debug.js');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/inc/footer.inc.php';
 }
 else {
 	header('Location: /');

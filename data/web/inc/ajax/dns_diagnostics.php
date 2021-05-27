@@ -1,6 +1,6 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/spf.inc.php';
+require_once __DIR__ . '/../prerequisites.inc.php';
+require_once __DIR__ . '/../spf.inc.php';
 
 define('state_good', '<i class="bi bi-check-lg text-success"></i>');
 define('state_missing', '<i class="bi bi-x-lg text-danger"></i>');

@@ -1,11 +1,11 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 if (quarantine('hash_details', $_GET['hash']) === false && !isset($_POST)) {
   header('Location: /admin');
   exit();
 }
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+require_once __DIR__ . '/inc/header.inc.php';
 if (preg_match("/^([a-f0-9]{64})$/", $_POST['quick_release']) || preg_match("/^([a-f0-9]{64})$/", $_POST['quick_delete'])) {
 ?>
 <div class="container">
@@ -105,5 +105,5 @@ echo "var lang = ". $lang_quarantine . ";\n";
 </script>
 <?php
 $js_minifier->add('/web/js/site/qhandler.js');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/inc/footer.inc.php';
 ?>

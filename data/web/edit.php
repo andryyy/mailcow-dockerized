@@ -1,11 +1,11 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 $AuthUsers = array("admin", "domainadmin", "user");
 if (!isset($_SESSION['mailcow_cc_role']) OR !in_array($_SESSION['mailcow_cc_role'], $AuthUsers)) {
 	header('Location: /');
 	exit();
 }
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+require_once __DIR__ . '/inc/header.inc.php';
 ?>
 <div class="container">
 	<div class="row">
@@ -1649,5 +1649,5 @@ echo "var pagination_size = '". $PAGINATION_SIZE . "';\n";
 <?php
 $js_minifier->add('/web/js/site/edit.js');
 $js_minifier->add('/web/js/site/pwgen.js');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/inc/footer.inc.php';
 ?>

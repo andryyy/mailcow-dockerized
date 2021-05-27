@@ -1,6 +1,6 @@
 <?php
 function fwdhost($_action, $_data = null) {
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/spf.inc.php';
+  require_once __DIR__ . '/../inc/spf.inc.php';
 	global $redis;
 	global $lang;
   $_data_log = $_data;

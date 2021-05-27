@@ -1,8 +1,8 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 
 if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['mailcow_cc_role'] == "admin") {
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+require_once __DIR__ . '/inc/header.inc.php';
 $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 $tfa_data = get_tfa();
 $fido2_data = fido2(array("action" => "get_friendly_names"));
@@ -1471,7 +1471,7 @@ if (!isset($_SESSION['gal']) && $license_cache = $redis->Get('LICENSE_STATUS_CAC
   </div> <!-- /row -->
 </div> <!-- /container -->
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/modals/admin.php';
+require_once __DIR__ . '/modals/admin.php';
 ?>
 <script type='text/javascript'>
 <?php
@@ -1487,7 +1487,7 @@ echo "var log_pagination_size = '". $LOG_PAGINATION_SIZE . "';\n";
 $js_minifier->add('/web/js/site/admin.js');
 $js_minifier->add('/web/js/presets/rspamd.js');
 $js_minifier->add('/web/js/site/pwgen.js');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/inc/footer.inc.php';
 } else {
 	header('Location: /');
 	exit();

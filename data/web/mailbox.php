@@ -1,8 +1,8 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 
 if (isset($_SESSION['mailcow_cc_role']) && ($_SESSION['mailcow_cc_role'] == "admin" || $_SESSION['mailcow_cc_role'] == "domainadmin")) {
-require_once $_SERVER['DOCUMENT_ROOT'] .  '/inc/header.inc.php';
+require_once __DIR__ .  '/inc/header.inc.php';
 $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 ?>
 <div class="container">
@@ -609,7 +609,7 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
   </div> <!-- /row -->
 </div> <!-- /container -->
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/modals/mailbox.php';
+require_once __DIR__ . '/modals/mailbox.php';
 ?>
 <script type='text/javascript'>
 <?php
@@ -633,7 +633,7 @@ echo "var ALLOW_ADMIN_EMAIL_LOGIN = " . $ALLOW_ADMIN_EMAIL_LOGIN . ";\n";
 $js_minifier->add('/web/js/site/mailbox.js');
 $js_minifier->add('/web/js/presets/sieveMailbox.js');
 $js_minifier->add('/web/js/site/pwgen.js');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/inc/footer.inc.php';
 }
 else {
 	header('Location: /');

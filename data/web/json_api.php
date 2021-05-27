@@ -4,7 +4,7 @@
 */
 
 header('Content-Type: application/json');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 error_reporting(0);
 
 function api_log($_data) {
@@ -512,7 +512,7 @@ if (isset($_GET['query'])) {
               break;
             }
           break;
-          
+
           case "postcat":
             switch ($object) {
               default:

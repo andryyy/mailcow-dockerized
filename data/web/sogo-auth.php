@@ -17,7 +17,7 @@ if (!$ALLOW_ADMIN_EMAIL_LOGIN) {
 // validate credentials for basic auth requests
 elseif (isset($_SERVER['PHP_AUTH_USER'])) {
   // load prerequisites only when required
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+  require_once __DIR__ . '/inc/prerequisites.inc.php';
   $username = $_SERVER['PHP_AUTH_USER'];
   $password = $_SERVER['PHP_AUTH_PW'];
   $login_check = check_login($username, $password);
@@ -35,7 +35,7 @@ elseif (isset($_SERVER['PHP_AUTH_USER'])) {
 // check permissions and redirect for direct GET ?login=xy requests
 elseif (isset($_GET['login'])) {
   // load prerequisites only when required
-  require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+  require_once __DIR__ . '/inc/prerequisites.inc.php';
   // check permissions
   if (isset($_SESSION['mailcow_cc_role']) && $_SESSION['acl']['login_as'] == "1") {
     $login = html_entity_decode(rawurldecode($_GET["login"]));

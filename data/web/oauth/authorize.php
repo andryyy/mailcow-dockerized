@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/../inc/prerequisites.inc.php';
 
 if (!isset($_SESSION['mailcow_cc_role'])) {
   $_SESSION['oauth2_request'] = $_SERVER['REQUEST_URI'];
@@ -15,7 +15,7 @@ if (!$oauth2_server->validateAuthorizeRequest($request, $response)) {
 }
 
 if (!isset($_POST['authorized'])):
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+require_once __DIR__ . '/../inc/header.inc.php';
 
 ?>
 <div class="container">
@@ -51,7 +51,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
   </div>
 </div> <!-- /container -->
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/../inc/footer.inc.php';
 exit();
 endif;
 

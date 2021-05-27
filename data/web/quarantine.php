@@ -1,8 +1,8 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
+require_once __DIR__ . '/inc/prerequisites.inc.php';
 
 if (isset($_SESSION['mailcow_cc_role'])) {
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/header.inc.php';
+require_once __DIR__ . '/inc/header.inc.php';
 $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 $quarantine_settings = quarantine('settings');
 ?>
@@ -63,7 +63,7 @@ $quarantine_settings = quarantine('settings');
   </div> <!-- /row -->
 </div> <!-- /container -->
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/modals/quarantine.php';
+require_once __DIR__ . '/modals/quarantine.php';
 ?>
 <script type='text/javascript'>
 <?php
@@ -78,7 +78,7 @@ echo "var pagination_size = '". $PAGINATION_SIZE . "';\n";
 </script>
 <?php
 $js_minifier->add('/web/js/site/quarantine.js');
-require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/footer.inc.php';
+require_once __DIR__ . '/inc/footer.inc.php';
 } else {
 	header('Location: /');
 	exit();
