@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Ddeboer\Imap;
 
+use Ddeboer\Imap\Message\PartInterface;
+
+/**
+ * @extends \ArrayIterator<int, MessageInterface>
+ */
 final class MessageIterator extends \ArrayIterator implements MessageIteratorInterface
 {
-    /**
-     * @var ImapResourceInterface
-     */
-    private $resource;
+    private ImapResourceInterface $resource;
 
     /**
      * Constructor.
      *
      * @param ImapResourceInterface $resource       IMAP resource
-     * @param array                 $messageNumbers Array of message numbers
+     * @param int[]                 $messageNumbers Array of message numbers
      */
     public function __construct(ImapResourceInterface $resource, array $messageNumbers)
     {
@@ -26,6 +28,8 @@ final class MessageIterator extends \ArrayIterator implements MessageIteratorInt
 
     /**
      * Get current message.
+     *
+     * @return MessageInterface<PartInterface>
      */
     public function current(): MessageInterface
     {

@@ -1,5 +1,5 @@
 /X-EMV-Platform; .*/i
-/.*nur-1-click*/i
+/.*nur-1-click.*/i
 /.*episerver.*/i
 /.*supergewinne.*/i
 /List-Unsubscribe.*nbps\.eu/i

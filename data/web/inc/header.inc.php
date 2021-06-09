@@ -62,12 +62,12 @@
           if (isset($_SESSION['mailcow_locale'])) {
           ?>
           <li class="dropdown<?=(isset($_SESSION['mailcow_locale']) && count($AVAILABLE_LANGUAGES) === 1) ? ' lang-link-disabled"' : '' ?>">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="lang-sm lang-lbl" lang="<?= $_SESSION['mailcow_locale']; ?>"></span><span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="flag-icon flag-icon-<?= $_SESSION['mailcow_locale']; ?>"></span><span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <?php
-              foreach ($AVAILABLE_LANGUAGES as $language) {
+              foreach ($AVAILABLE_LANGUAGES as $c => $v) {
               ?>
-              <li<?= ($_SESSION['mailcow_locale'] == $language) ? ' class="active"' : ''; ?>><a href="?<?= http_build_query(array_merge($_GET, array('lang' => $language))); ?>"><span class="lang-xs lang-lbl-full" lang="<?= $language; ?>"></span></a></li>
+              <li<?= ($_SESSION['mailcow_locale'] == $c) ? ' class="active"' : ''; ?>><a href="?<?= http_build_query(array_merge($_GET, array('lang' => $c))); ?>"><span class="flag-icon flag-icon-<?=$c;?>"></span> <?=$v;?></a></li>
               <?php
               }
               ?>
@@ -100,12 +100,12 @@
             </ul>
           </li>
           <?php if (isset($_SESSION['mailcow_cc_role'])) { ?>
-          <li<?= (preg_match("/quarantine/i", $_SERVER['REQUEST_URI'])) ? ' class="active"' : ''; ?>><a href="/quarantine"><span class="glyphicon glyphicon-briefcase"></span> <?= $lang['header']['quarantine']; ?></a></li>
+          <li<?= (preg_match("/quarantine/i", $_SERVER['REQUEST_URI'])) ? ' class="active"' : ''; ?>><a href="/quarantine"><i class="bi bi-inbox-fill"></i> <?= $lang['header']['quarantine']; ?></a></li>
           <?php } if ($_SESSION['mailcow_cc_role'] == 'admin' && getenv('SKIP_SOGO') != "y") { ?>
-          <li><a href data-toggle="modal" data-container="sogo-mailcow" data-target="#RestartContainer"><span class="glyphicon glyphicon-refresh"></span> <?= $lang['header']['restart_sogo']; ?></a></li>
+          <li><a href data-toggle="modal" data-container="sogo-mailcow" data-target="#RestartContainer"><i class="bi bi-arrow-repeat"></i> <?= $lang['header']['restart_sogo']; ?></a></li>
           <?php } ?>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-link"></span> <?= $lang['header']['apps']; ?> <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="bi bi-link-45deg"></i> <?= $lang['header']['apps']; ?> <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
             <?php foreach ($MAILCOW_APPS as $app) {
               if (getenv('SKIP_SOGO') == "y" && preg_match('/^\/SOGo/i', $app['link'])) { continue; }
@@ -127,9 +127,9 @@
             </ul>
           </li>
           <?php } if (!isset($_SESSION['dual-login']) && isset($_SESSION['mailcow_cc_username'])) { ?>
-            <li class="logged-in-as"><a href="#" onclick="logout.submit()"><b class="username-lia"><?= htmlspecialchars($_SESSION['mailcow_cc_username']); ?></b> <span class="glyphicon glyphicon-log-out"></span></a></li>
+            <li class="logged-in-as"><a href="#" onclick="logout.submit()"><b class="username-lia"><?= htmlspecialchars($_SESSION['mailcow_cc_username']); ?></b> <i class="bi bi-power"></i></a></li>
           <?php } elseif (isset($_SESSION['dual-login'])) { ?>
-            <li class="logged-in-as"><a href="#" onclick="logout.submit()"><b class="username-lia"><?= htmlspecialchars($_SESSION['mailcow_cc_username']); ?> <span class="text-info">(<?= htmlspecialchars($_SESSION['dual-login']['username']); ?>)</span> </b><span class="glyphicon glyphicon-log-out"></span></a></li>
+            <li class="logged-in-as"><a href="#" onclick="logout.submit()"><b class="username-lia"><?= htmlspecialchars($_SESSION['mailcow_cc_username']); ?> <span class="text-info">(<?= htmlspecialchars($_SESSION['dual-login']['username']); ?>)</span> </b><i class="bi bi-power"></i></a></li>
           <?php } if (!preg_match('/y|yes/i', getenv('MASTER'))) { ?>
             <li class="text-warning slave-info">[ slave ]</li>
           <?php } ?>

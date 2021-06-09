@@ -1,26 +1,37 @@
 @font-face {
-  font-family: 'PT Sans';
+  font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 400;
-  src: local('PT Sans'), local('PTSans-Regular'),
-    url('/fonts/pt-sans-v11-latin-ext_cyrillic_latin-regular.woff2') format('woff2'),
-    url('/fonts/pt-sans-v11-latin-ext_cyrillic_latin-regular.woff') format('woff');
+  src: local(''),
+       url('/fonts/noto-sans-v12-latin_greek_cyrillic-regular.woff2') format('woff2'),
+       url('/fonts/noto-sans-v12-latin_greek_cyrillic-regular.woff') format('woff');
 }
+
 @font-face {
-  font-family: 'PT Sans';
+  font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local('PT Sans Bold'), local('PTSans-Bold'),
-    url('/fonts/pt-sans-v11-latin-ext_cyrillic_latin-700.woff2') format('woff2'),
-    url('/fonts/pt-sans-v11-latin-ext_cyrillic_latin-700.woff') format('woff');
+  src: local(''),
+       url('/fonts/noto-sans-v12-latin_greek_cyrillic-700.woff2') format('woff2'),
+       url('/fonts/noto-sans-v12-latin_greek_cyrillic-700.woff') format('woff');
 }
+
 @font-face {
-  font-family: 'PT Sans';
+  font-family: 'Noto Sans';
   font-style: italic;
   font-weight: 400;
-  src: local('PT Sans Italic'), local('PTSans-Italic'),
-    url('/fonts/pt-sans-v11-latin-ext_cyrillic_latin-italic.woff2') format('woff2'),
-    url('/fonts/pt-sans-v11-latin-ext_cyrillic_latin-italic.woff') format('woff');
+  src: local(''),
+       url('/fonts/noto-sans-v12-latin_greek_cyrillic-italic.woff2') format('woff2'),
+       url('/fonts/noto-sans-v12-latin_greek_cyrillic-italic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  font-style: italic;
+  font-weight: 700;
+  src: local(''),
+       url('/fonts/noto-sans-v12-latin_greek_cyrillic-700italic.woff2') format('woff2'),
+       url('/fonts/noto-sans-v12-latin_greek_cyrillic-700italic.woff') format('woff');
 }
 #maxmsgsize { min-width: 80px; }
 #slider1 .slider-selection {
@@ -56,10 +67,23 @@
 .navbar-fixed-top .navbar-collapse {
   max-height: 1000px
 }
-.glyphicon-spin {
-  font-size:12px;
+.bi {
+  display: inline-block;
+  font-size: 12pt;
+}
+.btn .bi {
+  display: inline-block;
+  font-size: inherit;
+}
+.icon-spin {
+  animation-name: spin;
+  animation-duration: 2000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
   -webkit-animation: spin 2000ms infinite linear;
-  animation: spin 2000ms infinite linear;
+}
+.dropdown-menu {
+  font-size: 0.9rem;
 }
 @-webkit-keyframes spin {
   0% {
@@ -94,7 +118,14 @@ body.modal-open {
   padding-right: inherit !important;
 }
 body {
-  font-family: "PT Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: "Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+html {
+  font-family: "Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
 }
 #mailcow-alert {
   position: fixed;
@@ -111,7 +142,7 @@ legend {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-  font-size: 12pt;
+  font-size: 1.2rem;
 }
 .navbar .navbar-brand {
   padding-top: 5px;
@@ -128,18 +159,12 @@ legend {
 .lang-link-disabled  {
   cursor: not-allowed;
 }
-.dkim-label {
-  margin: 0 0 2px !important;
-}
 .overlay {
   background: #fff;
   position: absolute;
   z-index: 10000;
   top: 0; right: 0; bottom: 0; left: 0;
   opacity: 0.7;
-}
-nav .glyphicon {
-  font-size: 12px !important;
 }
 #top {
   padding-top: 70px;
@@ -167,10 +192,10 @@ nav .glyphicon {
 }
 .tooltip {
   font-family: inherit;
-  font-size: 12px;
+  font-size: 0.8rem;
 }
 .progress-bar {
-  font-size: 12px;
+  font-size: 0.8rem;
   line-height: 14px;
 }
 .footer {
@@ -196,4 +221,26 @@ nav .glyphicon {
   color: #000 !important;
   background-color: #ff4136;
   border-color: #ff291c;
+}
+table.footable>tbody>tr.footable-empty>td {
+  font-style:italic;
+  font-size: 1rem;
+}
+.navbar-nav > li {
+  font-size: 1rem !important;
+}
+.dropdown-menu > li > a {
+  font-size: 1rem !important;
+}
+.label {
+  font-size:inherit;
+}
+[class^="bi-"]::before, [class*=" bi-"]::before {
+  vertical-align: -0.2em !important;
+}
+legend > [class^="bi-"]::before, legend > [class*=" bi-"]::before {
+  vertical-align: 0em !important;
+}
+code {
+  font-size: inherit;
 }

@@ -4,14 +4,8 @@ declare(strict_types=1);
 
 namespace Ddeboer\Imap\Message;
 
-/**
- * Collection of message headers.
- */
 final class Headers extends Parameters
 {
-    /**
-     * Constructor.
-     */
     public function __construct(\stdClass $headers)
     {
         parent::__construct();
@@ -27,7 +21,7 @@ final class Headers extends Parameters
     /**
      * Get header.
      *
-     * @return mixed
+     * @return null|int|\stdClass[]|string
      */
     public function get(string $key)
     {
@@ -37,14 +31,16 @@ final class Headers extends Parameters
     /**
      * Parse header.
      *
-     * @param mixed $value
+     * @param int|\stdClass[]|string $value
      *
-     * @return mixed
+     * @return int|\stdClass[]|string
      */
     private function parseHeader(string $key, $value)
     {
         switch ($key) {
             case 'msgno':
+                \assert(\is_string($value));
+
                 return (int) $value;
             case 'from':
             case 'to':
@@ -53,6 +49,7 @@ final class Headers extends Parameters
             case 'reply_to':
             case 'sender':
             case 'return_path':
+                \assert(\is_array($value));
                 /** @var \stdClass $address */
                 foreach ($value as $address) {
                     if (isset($address->mailbox)) {
@@ -64,6 +61,8 @@ final class Headers extends Parameters
                 return $value;
             case 'date':
             case 'subject':
+                \assert(\is_string($value));
+
                 return $this->decode($value);
         }
 

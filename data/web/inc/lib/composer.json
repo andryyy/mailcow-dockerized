@@ -8,6 +8,7 @@
         "ddeboer/imap": "^1.5",
         "matthiasmullie/minify": "^1.3",
         "bshaffer/oauth2-server-php": "^1.11",
-        "mustangostang/spyc": "^0.6.3"
+        "mustangostang/spyc": "^0.6.3",
+        "directorytree/ldaprecord": "^2.4"
     }
 }

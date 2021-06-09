@@ -1,0 +1,38 @@
+name: Run tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [Ubuntu, macOS]
+        php: [7.2, 7.3, 7.4, 8.0]
+
+        include:
+          - os: Ubuntu
+            os-version: ubuntu-latest
+
+          - os: macOS
+            os-version: macos-latest
+
+    name: ${{ matrix.os }} - PHP ${{ matrix.php }}
+
+    runs-on: ${{ matrix.os-version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: posix, dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: none
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction
+
+      - name: Run tests
+        run: bash upgrade.sh

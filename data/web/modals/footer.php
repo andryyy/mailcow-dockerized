@@ -177,7 +177,7 @@ if (isset($_SESSION['pending_tfa_method'])):
         <form role="form" method="post">
           <div class="form-group">
             <div class="input-group">
-              <span class="input-group-addon" id="tfa-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+              <span class="input-group-addon" id="tfa-addon"><i class="bi bi-shield-lock-fill"></i></span>
               <input type="number" min="000000" max="999999" name="token" class="form-control" placeholder="123456" autocomplete="one-time-code" aria-describedby="tfa-addon">
               <input type="hidden" name="tfa_method" value="totp">
             </div>

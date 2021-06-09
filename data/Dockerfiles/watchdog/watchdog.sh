@@ -44,8 +44,8 @@ get_ipv6(){
   local IPV6=
   local IPV6_SRCS=
   local TRY=
-  IPV6_SRCS[0]="ip6.korves.net"
-  IPV6_SRCS[1]="ip6.mailcow.email"
+  IPV6_SRCS[0]="ip6.mailcow.email"
+  IPV6_SRCS[1]="ip6.nevondo.com"
   until [[ ! -z ${IPV6} ]] || [[ ${TRY} -ge 10 ]]; do
     IPV6=$(curl --connect-timeout 3 -m 10 -L6s ${IPV6_SRCS[$RANDOM % ${#IPV6_SRCS[@]} ]} | grep "^\([0-9a-fA-F]\{0,4\}:\)\{1,7\}[0-9a-fA-F]\{0,4\}$")
     [[ ! -z ${TRY} ]] && sleep 1
@@ -109,7 +109,7 @@ function mail_error() {
     SUBJECT="${BODY}"
     BODY="Please see netfilter-mailcow for more details and triggered rules."
   else
-    SUBJECT="Watchdog ALERT: ${1}"
+    SUBJECT="${WATCHDOG_SUBJECT}: ${1}"
   fi
   IFS=',' read -r -a MAIL_RCPTS <<< "${WATCHDOG_NOTIFY_EMAIL}"
   for rcpt in "${MAIL_RCPTS[@]}"; do
@@ -210,7 +210,7 @@ external_checks() {
       sleep 60
     else
       diff_c=0
-      sleep $(( ( RANDOM % 20 ) + 120 ))
+      sleep $(( ( RANDOM % 20 ) + 1800 ))
     fi
   done
   return 1

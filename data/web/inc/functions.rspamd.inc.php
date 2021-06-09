@@ -137,7 +137,7 @@ function rspamd_maps($_action, $_data = null) {
       if ($_SESSION['mailcow_cc_role'] != "admin") {
         $_SESSION['return'][] = array(
           'type' => 'danger',
-          'log' => array(__FUNCTION__, $_action, $_data_log),
+          'log' => array(__FUNCTION__, $_action, '-'),
           'msg' => 'access_denied'
         );
         return false;
@@ -148,7 +148,7 @@ function rspamd_maps($_action, $_data = null) {
           if (!in_array($map, $rspamd_map_type)) {
             $_SESSION['return'][] = array(
               'type' => 'danger',
-              'log' => array(__FUNCTION__, $_action, $_data_log),
+              'log' => array(__FUNCTION__, $_action, '-'),
               'msg' => array('global_map_invalid', $map)
             );
             continue;
@@ -170,14 +170,14 @@ function rspamd_maps($_action, $_data = null) {
         catch (Exception $e) {
           $_SESSION['return'][] = array(
             'type' => 'danger',
-            'log' => array(__FUNCTION__, $_action, $_data_log),
+            'log' => array(__FUNCTION__, $_action, '-'),
             'msg' => array('global_map_write_error', htmlspecialchars($map), htmlspecialchars($e->getMessage()))
           );
           continue;
         }
         $_SESSION['return'][] = array(
           'type' => 'success',
-          'log' => array(__FUNCTION__, $_action, $_data_log),
+          'log' => array(__FUNCTION__, $_action, '-'),
           'msg' => array('object_modified', htmlspecialchars($map))
         );
       }

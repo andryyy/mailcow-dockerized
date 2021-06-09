@@ -193,7 +193,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
           </div>
           <?php // TODO: Separate SOGo-related text
           if (getenv('SKIP_SOGO') != "y") { ?>
-          <p><span class="glyphicon glyphicon-exclamation-sign text-danger"></span> <?=$lang['add']['post_domain_add'];?></p>
+          <p><i class="bi bi-shield-fill-exclamation text-danger"></i> <?=$lang['add']['post_domain_add'];?></p>
           <?php } ?>
         </form>
       </div>
@@ -650,25 +650,38 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
           <div class="form-group">
             <label class="control-label col-sm-2" for="local_dest"><?=$lang['mailbox']['bcc_local_dest'];?></label>
             <div class="col-sm-10">
-              <select data-live-search="true" name="local_dest" required>
+              <select data-live-search="true" data-size="20" name="local_dest" required>
               <?php
               $domains = mailbox('get', 'domains');
               $alias_domains = mailbox('get', 'alias_domains');
               if (!empty($domains)) {
+                echo "<optgroup label=\"Domains\">";
                 foreach ($domains as $domain) {
                   echo "<option>".htmlspecialchars($domain)."</option>";
                 }
+                echo "</optgroup>";
               }
               if (!empty($alias_domains)) {
+                echo "<optgroup label=\"Alias Domains\">";
                 foreach ($alias_domains as $alias_domain) {
                   echo "<option>".htmlspecialchars($alias_domain)."</option>";
                 }
+                echo "</optgroup>";
               }
               if (!empty($domains)) {
                 foreach ($domains as $domain) {
                   $mailboxes = mailbox('get', 'mailboxes', $domain);
                   foreach ($mailboxes as $mailbox) {
-                    echo "<option>".htmlspecialchars($mailbox)."</option>";
+                    echo "<optgroup label=\"" . htmlspecialchars($mailbox) . "\">";
+                    echo "<option> " . htmlspecialchars($mailbox) . "</option>";
+                    $user_alias_details = user_get_alias_details($mailbox);
+                    foreach ($user_alias_details['direct_aliases'] as $k => $v) {
+                      echo "<option>" . htmlspecialchars($k) . "</option>";
+                    }
+                    foreach ($user_alias_details['shared_aliases'] as $k => $v) {
+                      echo "<option>" . htmlspecialchars($k) . "</option>";
+                    }
+                    echo "</optgroup>";
                   }
                 }
               }

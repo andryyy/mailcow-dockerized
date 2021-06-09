@@ -48,40 +48,23 @@ function admin($_action, $_data = null) {
           return false;
         }
       }
-      if (!empty($password) && !empty($password2)) {
-        if (!preg_match('/' . $GLOBALS['PASSWD_REGEP'] . '/', $password)) {
-          $_SESSION['return'][] = array(
-            'type' => 'danger',
-            'log' => array(__FUNCTION__, $_action, $_data_log),
-            'msg' => 'password_complexity'
-          );
-          return false;
-        }
-        if ($password != $password2) {
-          $_SESSION['return'][] = array(
-            'type' => 'danger',
-            'log' => array(__FUNCTION__, $_action, $_data_log),
-            'msg' => 'password_mismatch'
-          );
-          return false;
-        }
-        $password_hashed = hash_password($password);
-        $stmt = $pdo->prepare("INSERT INTO `admin` (`username`, `password`, `superadmin`, `active`)
-          VALUES (:username, :password_hashed, '1', :active)");
-        $stmt->execute(array(
-          ':username' => $username,
-          ':password_hashed' => $password_hashed,
-          ':active' => $active
-        ));
-      }
-      else {
-        $_SESSION['return'][] = array(
-          'type' => 'danger',
-          'log' => array(__FUNCTION__, $_action, $_data_log),
-          'msg' => 'password_empty'
-        );
+      if (password_check($password, $password2) !== true) {
         return false;
       }
+      // support pre hashed passwords
+      if (preg_match('/^{(ARGON2I|ARGON2ID|BLF-CRYPT|CLEAR|CLEARTEXT|CRYPT|DES-CRYPT|LDAP-MD5|MD5|MD5-CRYPT|PBKDF2|PLAIN|PLAIN-MD4|PLAIN-MD5|PLAIN-TRUNC|PLAIN-TRUNC|SHA|SHA1|SHA256|SHA256-CRYPT|SHA512|SHA512-CRYPT|SMD5|SSHA|SSHA256|SSHA512)}/i', $password)) {
+        $password_hashed = $password_new;
+      }
+      else {
+        $password_hashed = hash_password($password_new);
+      }
+      $stmt = $pdo->prepare("INSERT INTO `admin` (`username`, `password`, `superadmin`, `active`)
+        VALUES (:username, :password_hashed, '1', :active)");
+      $stmt->execute(array(
+        ':username' => $username,
+        ':password_hashed' => $password_hashed,
+        ':active' => $active
+      ));
       $_SESSION['return'][] = array(
         'type' => 'success',
         'log' => array(__FUNCTION__, $_action, $_data_log),
@@ -144,24 +127,17 @@ function admin($_action, $_data = null) {
             continue;
           }
         }
-        if (!empty($password) && !empty($password2)) {
-          if (!preg_match('/' . $GLOBALS['PASSWD_REGEP'] . '/', $password)) {
-            $_SESSION['return'][] = array(
-              'type' => 'danger',
-              'log' => array(__FUNCTION__, $_action, $_data_log),
-              'msg' => 'password_complexity'
-            );
-            continue;
+        if (!empty($password)) {
+          if (password_check($password, $password2) !== true) {
+            return false;
           }
-          if ($password != $password2) {
-            $_SESSION['return'][] = array(
-              'type' => 'danger',
-              'log' => array(__FUNCTION__, $_action, $_data_log),
-              'msg' => 'password_mismatch'
-            );
-            continue;
+          // support pre hashed passwords
+          if (preg_match('/^{(ARGON2I|ARGON2ID|BLF-CRYPT|CLEAR|CLEARTEXT|CRYPT|DES-CRYPT|LDAP-MD5|MD5|MD5-CRYPT|PBKDF2|PLAIN|PLAIN-MD4|PLAIN-MD5|PLAIN-TRUNC|PLAIN-TRUNC|SHA|SHA1|SHA256|SHA256-CRYPT|SHA512|SHA512-CRYPT|SMD5|SSHA|SSHA256|SSHA512)}/i', $password)) {
+            $password_hashed = $password;
           }
-          $password_hashed = hash_password($password);
+          else {
+            $password_hashed = hash_password($password);
+          }
           $stmt = $pdo->prepare("UPDATE `admin` SET `username` = :username_new, `active` = :active, `password` = :password_hashed WHERE `username` = :username");
           $stmt->execute(array(
             ':password_hashed' => $password_hashed,

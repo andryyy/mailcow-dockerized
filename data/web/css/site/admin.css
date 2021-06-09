@@ -1,7 +1,3 @@
-table.footable>tbody>tr.footable-empty>td {
-  font-size:15px !important;
-  font-style:italic;
-}
 .pagination a {
   text-decoration: none !important;
 }
@@ -75,7 +71,7 @@ table tbody tr td input[type="checkbox"] {
 }
 .regex-input {
   font-family: Consolas,monaco,monospace;
-  font-size: 14px;
+  font-size: 1rem;
 }
 .label-keys {
   font-size:100%;
@@ -85,4 +81,7 @@ table tbody tr td input[type="checkbox"] {
 .key-action {
   font-weight:bold;
   color:white !important;
+}
+.dkim-label {
+  margin: 0 0 8px !important;
 }

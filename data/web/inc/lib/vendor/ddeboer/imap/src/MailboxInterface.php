@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Ddeboer\Imap;
 
 use DateTimeInterface;
+use Ddeboer\Imap\Message\PartInterface;
 use Ddeboer\Imap\Search\ConditionInterface;
 
 /**
  * An IMAP mailbox (commonly referred to as a 'folder').
+ *
+ * @extends \IteratorAggregate<int, MessageInterface>
  */
 interface MailboxInterface extends \Countable, \IteratorAggregate
 {
@@ -45,16 +48,16 @@ interface MailboxInterface extends \Countable, \IteratorAggregate
     /**
      * Bulk Set Flag for Messages.
      *
-     * @param string                       $flag    \Seen, \Answered, \Flagged, \Deleted, and \Draft
-     * @param array|MessageIterator|string $numbers Message numbers
+     * @param string                                        $flag    \Seen, \Answered, \Flagged, \Deleted, and \Draft
+     * @param array<int, int|string>|MessageIterator|string $numbers Message numbers
      */
     public function setFlag(string $flag, $numbers): bool;
 
     /**
      * Bulk Clear Flag for Messages.
      *
-     * @param string                       $flag    \Seen, \Answered, \Flagged, \Deleted, and \Draft
-     * @param array|MessageIterator|string $numbers Message numbers
+     * @param string                                        $flag    \Seen, \Answered, \Flagged, \Deleted, and \Draft
+     * @param array<int, int|string>|MessageIterator|string $numbers Message numbers
      */
     public function clearFlag(string $flag, $numbers): bool;
 
@@ -76,6 +79,8 @@ interface MailboxInterface extends \Countable, \IteratorAggregate
      * Get a message by message number.
      *
      * @param int $number Message number
+     *
+     * @return MessageInterface<PartInterface>
      */
     public function getMessage(int $number): MessageInterface;
 
@@ -91,14 +96,16 @@ interface MailboxInterface extends \Countable, \IteratorAggregate
 
     /**
      * Returns a tree of threaded message for the current Mailbox.
+     *
+     * @return array<string, int>
      */
     public function getThread(): array;
 
     /**
      * Bulk move messages.
      *
-     * @param array|MessageIterator|string $numbers Message numbers
-     * @param MailboxInterface             $mailbox Destination Mailbox to move the messages to
+     * @param array<int, int|string>|MessageIterator|string $numbers Message numbers
+     * @param MailboxInterface                              $mailbox Destination Mailbox to move the messages to
      *
      * @throws \Ddeboer\Imap\Exception\MessageMoveException
      */
@@ -107,8 +114,8 @@ interface MailboxInterface extends \Countable, \IteratorAggregate
     /**
      * Bulk copy messages.
      *
-     * @param array|MessageIterator|string $numbers Message numbers
-     * @param MailboxInterface             $mailbox Destination Mailbox to copy the messages to
+     * @param array<int, int|string>|MessageIterator|string $numbers Message numbers
+     * @param MailboxInterface                              $mailbox Destination Mailbox to copy the messages to
      *
      * @throws \Ddeboer\Imap\Exception\MessageCopyException
      */

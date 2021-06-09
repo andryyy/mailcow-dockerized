@@ -2,7 +2,7 @@ FROM debian:buster-slim
 
 LABEL maintainer "André Peters <andre.peters@servercow.de>"
 
-ARG CLAMAV=0.103.0
+ARG CLAMAV=0.103.2
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   ca-certificates \

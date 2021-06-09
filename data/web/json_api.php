@@ -306,7 +306,6 @@ if (isset($_GET['query'])) {
             $_SESSION["mailcow_cc_role"] = "domainadmin";
           }
           $_SESSION["mailcow_cc_username"] = $process_fido2['username'];
-          $_SESSION['mailcow_cc_last_login'] = last_login($process_fido2['username']);
           $_SESSION["fido2_cid"] = $process_fido2['cid'];
           unset($_SESSION["challenge"]);
           $_SESSION['return'][] =  array(
@@ -319,8 +318,14 @@ if (isset($_GET['query'])) {
       }
     break;
     case "get":
-      function process_get_return($data) {
-        echo (!isset($data) || empty($data)) ? '{}' : json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+      function process_get_return($data, $object = true) {
+        if ($object === true) {
+          $ret_str = '{}';
+        }
+        else {
+          $ret_str = '[]';
+        }
+        echo (!isset($data) || empty($data)) ? $ret_str : json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
       }
       // only allow GET requests to GET API endpoints
       if ($_SERVER['REQUEST_METHOD'] != 'GET') {
@@ -442,6 +447,20 @@ if (isset($_GET['query'])) {
               default:
                 $data = mailbox('get', 'domain_details', $object);
                 process_get_return($data);
+              break;
+            }
+          break;
+
+          case "passwordpolicy":
+            switch ($object) {
+              case "html":
+                $password_complexity_rules = password_complexity('html');
+                if ($password_complexity_rules !== false) {
+                  process_get_return($password_complexity_rules);
+                }
+                else {
+                  echo '{}';
+                }
               break;
             }
           break;
@@ -620,6 +639,27 @@ if (isset($_GET['query'])) {
             }
           break;
 
+          case "last-login":
+            if ($object) {
+              // extra == days
+              if (isset($extra) && intval($extra) >= 1) {
+                $data = last_login('get', $object, intval($extra));
+              }
+              else {
+                $data = last_login('get', $object);
+              }
+              process_get_return($data);
+            }
+          break;
+
+          // Todo: move to delete
+          case "reset-last-login":
+            if ($object) {
+              $data = last_login('reset', $object);
+              process_get_return($data);
+            }
+          break;
+
           case "transport":
             switch ($object) {
               case "all":
@@ -780,6 +820,17 @@ if (isset($_GET['query'])) {
                 }
                 echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
               break;
+              case "sasl":
+                // 0 is first record, so empty is fine
+                if (isset($extra)) {
+                  $extra = preg_replace('/[^\d\-]/i', '', $extra);
+                  $logs = get_logs('sasl', $extra);
+                }
+                else {
+                  $logs = get_logs('sasl');
+                }
+                echo (isset($logs) && !empty($logs)) ? json_encode($logs, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '{}';
+              break;
               case "watchdog":
                 // 0 is first record, so empty is fine
                 if (isset($extra)) {
@@ -841,6 +892,7 @@ if (isset($_GET['query'])) {
           case "mailbox":
             switch ($object) {
               case "all":
+              case "reduced":
                 if (empty($extra)) {
                   $domains = mailbox('get', 'domains');
                 }
@@ -852,7 +904,7 @@ if (isset($_GET['query'])) {
                     $mailboxes = mailbox('get', 'mailboxes', $domain);
                     if (!empty($mailboxes)) {
                       foreach ($mailboxes as $mailbox) {
-                        if ($details = mailbox('get', 'mailbox_details', $mailbox)) {
+                        if ($details = mailbox('get', 'mailbox_details', $mailbox, $object)) {
                           $data[] = $details;
                         }
                         else {
@@ -1154,10 +1206,10 @@ if (isset($_GET['query'])) {
             // "all" will not print details
             switch ($object) {
               case "all":
-                process_get_return(quarantine('get'));
+                process_get_return(quarantine('get'), false);
               break;
               default:
-                process_get_return(quarantine('details', $object));
+                process_get_return(quarantine('details', $object), false);
               break;
             }
           break;
@@ -1437,7 +1489,6 @@ if (isset($_GET['query'])) {
           process_delete_return(dkim('delete', array('domains' => $items)));
         break;
         case "domain":
-          file_put_contents('/tmp/dssaa', $items);
           process_delete_return(mailbox('delete', 'domain', array('domain' => $items)));
         break;
         case "alias-domain":
@@ -1560,6 +1611,9 @@ if (isset($_GET['query'])) {
         case "app_links":
           process_edit_return(customize('edit', 'app_links', $attr));
         break;
+        case "passwordpolicy":
+          process_edit_return(password_complexity('edit', $attr));
+        break;
         case "relayhost":
           process_edit_return(relayhost('edit', array_merge(array('id' => $items), $attr)));
         break;
@@ -1589,6 +1643,9 @@ if (isset($_GET['query'])) {
         break;
         case "quota_notification":
           process_edit_return(quota_notification('edit', $attr));
+        break;
+        case "quota_notification_bcc":
+          process_edit_return(quota_notification_bcc('edit', $attr));
         break;
         case "mailq":
           process_edit_return(mailq('edit', array_merge(array('qid' => $items), $attr)));

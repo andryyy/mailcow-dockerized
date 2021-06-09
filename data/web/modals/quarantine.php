@@ -9,7 +9,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
-        <h3 class="modal-title"><span class="glyphicon glyphicon-info"></span> <?=$lang['quarantine']['qitem'];?></h3>
+        <h3 class="modal-title"><i class="bi bi-info-circle-fill"></i> <?=$lang['quarantine']['qitem'];?></h3>
       </div>
       <div class="modal-body">
         <div id="qid_error" style="display:none" class="alert alert-danger"></div>

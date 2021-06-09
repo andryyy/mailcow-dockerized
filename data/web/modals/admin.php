@@ -35,7 +35,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
           </div>
           <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-              <button class="btn btn-default" data-action="add_item" data-id="rsetting" data-api-url='add/rsetting' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <?=$lang['admin']['add'];?></button>
+              <button class="btn btn-default" data-action="add_item" data-id="rsetting" data-api-url='add/rsetting' data-api-attr='{}' href="#"><i class="bi bi-plus-lg"></i> <?=$lang['admin']['add'];?></button>
             </div>
           </div>
         </form>
@@ -59,8 +59,8 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <label class="control-label col-sm-2" for="username"><?=$lang['admin']['username'];?>:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="username" required>
-                &rdsh; <kbd>a-z A-Z - _ .</kbd>
+                <input type="text" class="form-control" name="username" onkeyup="this.value = this.value.toLowerCase();" required>
+                &rdsh; <kbd>a-z - _ .</kbd>
               </div>
             </div>
             <div class="form-group">
@@ -96,7 +96,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             </div>
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
-                <button class="btn btn-default" data-action="add_item" data-id="add_domain_admin" data-api-url='add/domain-admin' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <?=$lang['admin']['add'];?></button>
+                <button class="btn btn-default" data-action="add_item" data-id="add_domain_admin" data-api-url='add/domain-admin' data-api-attr='{}' href="#"><i class="bi bi-plus-lg"></i> <?=$lang['admin']['add'];?></button>
               </div>
             </div>
           </form>
@@ -150,7 +150,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             </div>
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
-                <button class="btn btn-default" data-action="add_item" data-id="add_oauth2_client" data-api-url='add/oauth2-client' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <?=$lang['admin']['add'];?></button>
+                <button class="btn btn-default" data-action="add_item" data-id="add_oauth2_client" data-api-url='add/oauth2-client' data-api-attr='{}' href="#"><i class="bi bi-plus-lg"></i> <?=$lang['admin']['add'];?></button>
               </div>
             </div>
           </form>
@@ -171,8 +171,8 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             <div class="form-group">
               <label class="control-label col-sm-2" for="username"><?=$lang['admin']['username'];?>:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="username" required>
-                &rdsh; <kbd>a-z A-Z - _ .</kbd>
+                <input type="text" class="form-control" name="username" onkeyup="this.value = this.value.toLowerCase();" required>
+                &rdsh; <kbd>a-z - _ .</kbd>
               </div>
             </div>
             <div class="form-group">
@@ -196,7 +196,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
             </div>
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
-                <button class="btn btn-default" data-action="add_item" data-id="add_admin" data-api-url='add/admin' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> <?=$lang['admin']['add'];?></button>
+                <button class="btn btn-default" data-action="add_item" data-id="add_admin" data-api-url='add/admin' data-api-attr='{}' href="#"><i class="bi bi-plus-lg"></i> <?=$lang['admin']['add'];?></button>
               </div>
             </div>
           </form>
@@ -210,7 +210,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
-        <h3 class="modal-title"><span class="glyphicon glyphicon-stats"></span> Transport</h3>
+        <h3 class="modal-title"><i class="bi bi-info-circle-fill"></i> Transport</h3>
       </div>
       <div class="modal-body">
           <form class="form-horizontal" data-cached-form="true" id="test_transport_form" role="form" method="post">
@@ -220,6 +220,13 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
               <label class="control-label col-sm-2" for="mail_from"><?=$lang['admin']['relay_from'];?></label>
               <div class="col-sm-10">
                 <input type="text" class="form-control" name="mail_from" placeholder="relay@example.org">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="mail_rcpt"><?=$lang['admin']['relay_rcpt'];?></label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="mail_rcpt" placeholder="null@hosted.mailcow.de" value="null@hosted.mailcow.de">
+                <p class="help-block"><?=$lang['admin']['transport_test_rcpt_info'];?></p>
               </div>
             </div>
             <div class="form-group">
@@ -240,7 +247,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
-        <h3 class="modal-title"><span class="glyphicon glyphicon-hourglass" style="font-size:18px"></span> ID <span id="queue_id"></span></h3>
+        <h3 class="modal-title"><i class="bi bi-card-checklist" style="font-size:18px"></i> ID <span id="queue_id"></span></h3>
       </div>
       <div class="modal-body">
         <textarea class="form-control" id="queue_msg_content" name="content" rows="40"></textarea>
@@ -254,7 +261,7 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
-        <h3 class="modal-title"><span class="glyphicon glyphicon-lock"></span> Private key</h3>
+        <h3 class="modal-title"><i class="bi bi-key-fill"></i> Private key</h3>
       </div>
       <div class="modal-body">
       <pre id="priv_key_pre"></pre>

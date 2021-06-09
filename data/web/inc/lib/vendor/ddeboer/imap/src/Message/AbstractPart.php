@@ -14,95 +14,7 @@ use Ddeboer\Imap\Message;
  */
 abstract class AbstractPart implements PartInterface
 {
-    /**
-     * @var ImapResourceInterface
-     */
-    protected $resource;
-
-    /**
-     * @var bool
-     */
-    private $structureParsed = false;
-
-    /**
-     * @var array
-     */
-    private $parts = [];
-
-    /**
-     * @var string
-     */
-    private $partNumber;
-
-    /**
-     * @var int
-     */
-    private $messageNumber;
-
-    /**
-     * @var \stdClass
-     */
-    private $structure;
-
-    /**
-     * @var Parameters
-     */
-    private $parameters;
-
-    /**
-     * @var null|string
-     */
-    private $type;
-
-    /**
-     * @var null|string
-     */
-    private $subtype;
-
-    /**
-     * @var null|string
-     */
-    private $encoding;
-
-    /**
-     * @var null|string
-     */
-    private $disposition;
-
-    /**
-     * @var null|string
-     */
-    private $description;
-
-    /**
-     * @var null|string
-     */
-    private $bytes;
-
-    /**
-     * @var null|string
-     */
-    private $lines;
-
-    /**
-     * @var null|string
-     */
-    private $content;
-
-    /**
-     * @var null|string
-     */
-    private $decodedContent;
-
-    /**
-     * @var int
-     */
-    private $key = 0;
-
-    /**
-     * @var array
-     */
-    private static $typesMap = [
+    private const TYPES_MAP = [
         \TYPETEXT        => self::TYPE_TEXT,
         \TYPEMULTIPART   => self::TYPE_MULTIPART,
         \TYPEMESSAGE     => self::TYPE_MESSAGE,
@@ -114,10 +26,7 @@ abstract class AbstractPart implements PartInterface
         \TYPEOTHER       => self::TYPE_OTHER,
     ];
 
-    /**
-     * @var array
-     */
-    private static $encodingsMap = [
+    private const ENCODINGS_MAP = [
         \ENC7BIT            => self::ENCODING_7BIT,
         \ENC8BIT            => self::ENCODING_8BIT,
         \ENCBINARY          => self::ENCODING_BINARY,
@@ -125,15 +34,34 @@ abstract class AbstractPart implements PartInterface
         \ENCQUOTEDPRINTABLE => self::ENCODING_QUOTED_PRINTABLE,
     ];
 
-    /**
-     * @var array
-     */
-    private static $attachmentKeys = [
+    private const ATTACHMENT_KEYS = [
         'name'      => true,
         'filename'  => true,
         'name*'     => true,
         'filename*' => true,
     ];
+
+    protected ImapResourceInterface $resource;
+    private bool $structureParsed = false;
+    /**
+     * @var AbstractPart[]
+     */
+    private array $parts = [];
+    private string $partNumber;
+    private int $messageNumber;
+    private \stdClass $structure;
+    private Parameters $parameters;
+    private ?string $type        = null;
+    private ?string $subtype     = null;
+    private ?string $encoding    = null;
+    private ?string $disposition = null;
+    private ?string $description = null;
+    /** @var null|int|string */
+    private $bytes;
+    private ?string $lines          = null;
+    private ?string $content        = null;
+    private ?string $decodedContent = null;
+    private int $key                = 0;
 
     /**
      * Constructor.
@@ -155,9 +83,6 @@ abstract class AbstractPart implements PartInterface
         $this->setStructure($structure);
     }
 
-    /**
-     * Get message number (from headers).
-     */
     final public function getNumber(): int
     {
         $this->assertMessageExists($this->messageNumber);
@@ -180,9 +105,6 @@ abstract class AbstractPart implements PartInterface
         $this->structure = $structure;
     }
 
-    /**
-     * Part structure.
-     */
     final public function getStructure(): \stdClass
     {
         $this->lazyLoadStructure();
@@ -197,9 +119,6 @@ abstract class AbstractPart implements PartInterface
     {
     }
 
-    /**
-     * Part parameters.
-     */
     final public function getParameters(): Parameters
     {
         $this->lazyParseStructure();
@@ -207,19 +126,16 @@ abstract class AbstractPart implements PartInterface
         return $this->parameters;
     }
 
-    /**
-     * Part charset.
-     */
     final public function getCharset(): ?string
     {
         $this->lazyParseStructure();
 
-        return $this->parameters->get('charset') ?: null;
+        $charset = $this->parameters->get('charset');
+        \assert(null === $charset || \is_string($charset));
+
+        return '' !== $charset ? $charset : null;
     }
 
-    /**
-     * Part type.
-     */
     final public function getType(): ?string
     {
         $this->lazyParseStructure();
@@ -227,9 +143,6 @@ abstract class AbstractPart implements PartInterface
         return $this->type;
     }
 
-    /**
-     * Part subtype.
-     */
     final public function getSubtype(): ?string
     {
         $this->lazyParseStructure();
@@ -237,9 +150,6 @@ abstract class AbstractPart implements PartInterface
         return $this->subtype;
     }
 
-    /**
-     * Part encoding.
-     */
     final public function getEncoding(): ?string
     {
         $this->lazyParseStructure();
@@ -247,9 +157,6 @@ abstract class AbstractPart implements PartInterface
         return $this->encoding;
     }
 
-    /**
-     * Part disposition.
-     */
     final public function getDisposition(): ?string
     {
         $this->lazyParseStructure();
@@ -257,9 +164,6 @@ abstract class AbstractPart implements PartInterface
         return $this->disposition;
     }
 
-    /**
-     * Part description.
-     */
     final public function getDescription(): ?string
     {
         $this->lazyParseStructure();
@@ -267,11 +171,6 @@ abstract class AbstractPart implements PartInterface
         return $this->description;
     }
 
-    /**
-     * Part bytes.
-     *
-     * @return null|int|string
-     */
     final public function getBytes()
     {
         $this->lazyParseStructure();
@@ -279,9 +178,6 @@ abstract class AbstractPart implements PartInterface
         return $this->bytes;
     }
 
-    /**
-     * Part lines.
-     */
     final public function getLines(): ?string
     {
         $this->lazyParseStructure();
@@ -289,9 +185,6 @@ abstract class AbstractPart implements PartInterface
         return $this->lines;
     }
 
-    /**
-     * Get raw part content.
-     */
     final public function getContent(): string
     {
         if (null === $this->content) {
@@ -309,17 +202,11 @@ abstract class AbstractPart implements PartInterface
         return $this->partNumber;
     }
 
-    /**
-     * Get part number.
-     */
     final public function getPartNumber(): string
     {
         return $this->partNumber;
     }
 
-    /**
-     * Get decoded part content.
-     */
     final public function getDecodedContent(): string
     {
         if (null === $this->decodedContent) {
@@ -369,11 +256,6 @@ abstract class AbstractPart implements PartInterface
         return $return;
     }
 
-    /**
-     * Get an array of all parts for this message.
-     *
-     * @return PartInterface[]
-     */
     final public function getParts(): array
     {
         $this->lazyParseStructure();
@@ -393,21 +275,11 @@ abstract class AbstractPart implements PartInterface
         return $this->parts[$this->key];
     }
 
-    /**
-     * Get current child part.
-     *
-     * @return \RecursiveIterator
-     */
     final public function getChildren()
     {
         return $this->current();
     }
 
-    /**
-     * Get current child part.
-     *
-     * @return bool
-     */
     final public function hasChildren()
     {
         $this->lazyParseStructure();
@@ -416,8 +288,6 @@ abstract class AbstractPart implements PartInterface
     }
 
     /**
-     * Get current part key.
-     *
      * @return int
      */
     final public function key()
@@ -425,31 +295,16 @@ abstract class AbstractPart implements PartInterface
         return $this->key;
     }
 
-    /**
-     * Move to next part.
-     *
-     * @return void
-     */
     final public function next()
     {
         ++$this->key;
     }
 
-    /**
-     * Reset part key.
-     *
-     * @return void
-     */
     final public function rewind()
     {
         $this->key = 0;
     }
 
-    /**
-     * Check if current part is a valid one.
-     *
-     * @return bool
-     */
     final public function valid()
     {
         $this->lazyParseStructure();
@@ -469,10 +324,10 @@ abstract class AbstractPart implements PartInterface
 
         $this->lazyLoadStructure();
 
-        $this->type = self::$typesMap[$this->structure->type] ?? self::TYPE_UNKNOWN;
+        $this->type = self::TYPES_MAP[$this->structure->type] ?? self::TYPE_UNKNOWN;
 
         // In our context, \ENCOTHER is as useful as an unknown encoding
-        $this->encoding = self::$encodingsMap[$this->structure->encoding] ?? self::ENCODING_UNKNOWN;
+        $this->encoding = self::ENCODINGS_MAP[$this->structure->encoding] ?? self::ENCODING_UNKNOWN;
         if (isset($this->structure->subtype)) {
             $this->subtype = $this->structure->subtype;
         }
@@ -527,7 +382,7 @@ abstract class AbstractPart implements PartInterface
      */
     private static function isAttachment(\stdClass $part): bool
     {
-        if (isset(self::$typesMap[$part->type]) && self::TYPE_MULTIPART === self::$typesMap[$part->type]) {
+        if (isset(self::TYPES_MAP[$part->type]) && self::TYPE_MULTIPART === self::TYPES_MAP[$part->type]) {
             return false;
         }
 
@@ -549,7 +404,7 @@ abstract class AbstractPart implements PartInterface
         // Attachment without Content-Disposition header
         if ($part->ifparameters) {
             foreach ($part->parameters as $parameter) {
-                if (isset(self::$attachmentKeys[\strtolower($parameter->attribute)])) {
+                if (isset(self::ATTACHMENT_KEYS[\strtolower($parameter->attribute)])) {
                     return true;
                 }
             }

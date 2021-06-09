@@ -423,11 +423,11 @@ paths:
                         - domain
                         - active: "1"
                           aliases: "400"
+                          restart_sogo: "1"
                           backupmx: "0"
                           defquota: "3072"
                           description: some decsription
                           domain: domain.tld
-                          lang: cs
                           mailboxes: "10"
                           maxquota: "10240"
                           quota: "10240"
@@ -474,13 +474,13 @@ paths:
                 defquota: "3072"
                 description: some decsription
                 domain: domain.tld
-                lang: cs
                 mailboxes: "10"
                 maxquota: "10240"
                 quota: "10240"
                 relay_all_recipients: "0"
                 rl_frame: s
                 rl_value: "10"
+                restart_sogo: "10"
               properties:
                 active:
                   description: is domain active or not
@@ -500,23 +500,6 @@ paths:
                 domain:
                   description: Fully qualified domain name
                   type: string
-                lang:
-                  description: language code
-                  enum:
-                    - sk
-                    - cs
-                    - de
-                    - en
-                    - es
-                    - fr
-                    - lv
-                    - nl
-                    - pl
-                    - pt
-                    - ru
-                    - it
-                    - ca
-                  type: string
                 mailboxes:
                   description: limit count of mailboxes associated with this domain
                   type: number
@@ -525,6 +508,9 @@ paths:
                   type: number
                 quota:
                   description: maximum quota for this domain (for all mailboxes in sum)
+                  type: number
+                restart_sogo:
+                  description: restart SOGo to activate the domain in SOGo
                   type: number
                 relay_all_recipients:
                   description: >-
@@ -1021,7 +1007,7 @@ paths:
                 password2:
                   description: mailbox password for confirmation
                   type: string
-                pasword:
+                password:
                   description: mailbox password
                   type: string
                 quota:
@@ -2811,7 +2797,6 @@ paths:
                   defquota: "3072"
                   description: domain description
                   gal: "1"
-                  lang: cs
                   mailboxes: "10"
                   maxquota: "10240"
                   quota: "10240"
@@ -2841,23 +2826,6 @@ paths:
                         is domain global address list active or not, it enables
                         shared contacts accross domain in SOGo webmail
                       type: boolean
-                    lang:
-                      description: language code
-                      enum:
-                        - sk
-                        - cs
-                        - de
-                        - en
-                        - es
-                        - fr
-                        - lv
-                        - nl
-                        - pl
-                        - pt
-                        - ru
-                        - it
-                        - ca
-                      type: string
                     mailboxes:
                       description: limit count of mailboxes associated with this domain
                       type: number
@@ -3052,7 +3020,7 @@ paths:
                     password2:
                       description: new mailbox password for confirmation
                       type: string
-                    pasword:
+                    password:
                       description: new mailbox password
                       type: string
                     quota:
@@ -3750,7 +3718,6 @@ paths:
                       description: Some description
                       domain_name: domain.tld
                       gal: "0"
-                      lang: en
                       max_new_mailbox_quota: 10737418240
                       max_num_aliases_for_domain: 400
                       max_num_mboxes_for_domain: 10
@@ -3773,7 +3740,6 @@ paths:
                       description: domain description
                       domain_name: domain2.tld
                       gal: "0"
-                      lang: cs
                       max_new_mailbox_quota: 10737418240
                       max_num_aliases_for_domain: 400
                       max_num_mboxes_for_domain: 10

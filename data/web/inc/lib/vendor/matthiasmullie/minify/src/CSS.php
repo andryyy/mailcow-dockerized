@@ -685,7 +685,7 @@ class CSS extends Minify
     protected function extractMath()
     {
         $functions = array('calc', 'clamp', 'min', 'max');
-        $pattern = '/('. implode('|', $functions) .')(\(.+?)(?=$|;|})/m';
+        $pattern = '/\b('. implode('|', $functions) .')(\(.+?)(?=$|;|})/m';
 
         // PHP only supports $this inside anonymous functions since 5.4
         $minifier = $this;

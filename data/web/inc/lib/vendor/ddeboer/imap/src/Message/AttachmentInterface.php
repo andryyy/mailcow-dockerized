@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ddeboer\Imap\Message;
 
+use Ddeboer\Imap\Exception\NotEmbeddedMessageException;
+
 /**
  * An e-mail attachment.
  */
@@ -28,6 +30,10 @@ interface AttachmentInterface extends PartInterface
 
     /**
      * Return embedded message.
+     *
+     * @throws NotEmbeddedMessageException
+     *
+     * @return EmbeddedMessageInterface<PartInterface>
      */
     public function getEmbeddedMessage(): EmbeddedMessageInterface;
 }

@@ -283,6 +283,42 @@ if (!isset($_SESSION['mailcow_cc_role'])) {
     </div>
   </div>
 </div><!-- pw change modal -->
+<!-- pw change modal -->
+<div class="modal fade" id="tempAliasModal" tabindex="-1" role="dialog" aria-labelledby="tempAliasModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form class="form-horizontal" data-cached-form="false" data-id="pwchange" role="form" method="post" autocomplete="off">
+          <div class="form-group">
+            <label class="control-label col-sm-3" for="user_new_pass"><?=$lang['user']['new_password'];?> (<a href="#" class="generate_password"><?=$lang['user']['generate'];?></a>)</label>
+            <div class="col-sm-5">
+            <input type="password" data-pwgen-field="true" data-hibp="true" class="form-control" name="user_new_pass" autocomplete="new-password" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-3" for="user_new_pass2"><?=$lang['user']['new_password_repeat'];?></label>
+            <div class="col-sm-5">
+            <input type="password" data-pwgen-field="true" class="form-control" name="user_new_pass2" autocomplete="new-password" required>
+            <p class="help-block"><?=$lang['user']['new_password_description'];?></p>
+            </div>
+          </div>
+          <hr>
+          <div class="form-group">
+            <label class="control-label col-sm-3" for="user_old_pass"><?=$lang['user']['password_now'];?></label>
+            <div class="col-sm-5">
+            <input type="password" class="form-control" name="user_old_pass" autocomplete="off" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+              <button class="btn btn-default" data-action="edit_selected" data-id="pwchange" data-item="null" data-api-url='edit/self' data-api-attr='{}' href="#"><?=$lang['user']['change_password'];?></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div><!-- pw change modal -->
 <!-- sieve filter modal -->
 <div class="modal fade" id="userFilterModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">

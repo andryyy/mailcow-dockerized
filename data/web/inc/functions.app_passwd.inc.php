@@ -23,9 +23,9 @@ function app_passwd($_action, $_data = null) {
   }
   switch ($_action) {
     case 'add':
-      $app_name = trim($_data['app_name']);
-      $password     = $_data['app_passwd'];
-      $password2    = $_data['app_passwd2'];
+      $app_name = htmlspecialchars(trim($_data['app_name']));
+      $password = $_data['app_passwd'];
+      $password2 = $_data['app_passwd2'];
       $active = intval($_data['active']);
       $domain = mailbox('get', 'mailbox_details', $username)['domain'];
       if (empty($domain)) {
@@ -94,7 +94,7 @@ function app_passwd($_action, $_data = null) {
           );
           continue;
         }
-        $app_name = trim($app_name);
+        $app_name = htmlspecialchars(trim($app_name));
         if (!empty($password) && !empty($password2)) {
           if (!preg_match('/' . $GLOBALS['PASSWD_REGEP'] . '/', $password)) {
             $_SESSION['return'][] = array(
@@ -198,6 +198,7 @@ function app_passwd($_action, $_data = null) {
         $app_passwd_data = array();
         return false;
       }
+      $app_passwd_data['name'] = htmlspecialchars(trim($app_passwd_data['name']));
       return $app_passwd_data;
     break;
   }

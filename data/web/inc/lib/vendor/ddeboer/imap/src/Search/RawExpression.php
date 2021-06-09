@@ -11,10 +11,8 @@ final class RawExpression implements ConditionInterface
 {
     /**
      * Text to be used for the condition.
-     *
-     * @var string
      */
-    private $expression;
+    private string $expression;
 
     /**
      * @param string $expression text for the condition

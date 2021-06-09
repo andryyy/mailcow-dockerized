@@ -3,17 +3,22 @@
   <head>
     <title>Preparing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   </head>
-  <body style='background-color:#fff;color:#333;text-align:center;font-family: Verdana, "Lucida Sans Unicode", sans-serif'>
-    <p>🐄 - we are on our way.</p>
-    <h1 style="color:#333;font-size:48px">502</h1>
-    <p>Please do not stop the stack, while we are initializing the database or do other preparations.</p>
-    <p style="font-size:small"><b>What is happening?</b> - Nginx cannot connect to an upstream server.<br>
-    This is fine, if mailcow was just
+  <body style='background-color:#fff;color:#333;width: 60%;margin: 0 auto;text-align:left;font-family: Verdana, "Lucida Sans Unicode", sans-serif'>
+    <h1 style="color:#333;font-size:48px">What is happening?</h1>
+    <p style="color:green;font-weight:bold;">Please do not stop the stack while we are initializing the database or do other preparations.</p>
+    <p style="font-size:small"><b>What is happening?</b> - Nginx cannot connect to an upstream server or other services are not ready yet.<br>
+    This is fine if mailcow was just
     installed or updated and can take a few minutes to complete.<br>
-    Please check the logs or contact support, if the error persists.</p>
-    <pre>docker-compose logs --tail=200 php-fpm-mailcow</pre>
-    <br><a style="color:#555;text-decoration:none;" href="https://mailcow.github.io/mailcow-dockerized-docs/#get-support" target="_blank">Need support?</a>
+    Please check the logs or contact support if the error persists.</p>
+    <h2>Quick debugging</h2>
+    <p>Check Nginx and PHP logs:</p>
+    <pre>docker-compose logs --tail=200 php-fpm-mailcow nginx-mailcow</pre>
+    <p>Make sure your SQL credentials in mailcow.conf (a link to .env) do fit your initialized SQL volume. If you see an access denied, you might have the wrong mailcow.conf:</p>
+    <pre>source mailcow.conf ; docker-compose exec mysql-mailcow mysql -u${DBUSER} -p${DBPASS} ${DBNAME}</pre>
+    <p>In case of a previous failed installation, remove all volumes and start over (<b>NEVER</b> do this with a production system, it will remove <b>ALL</b> data):</p>
+    <pre>docker-compose down -v ; docker-compose up -d</pre>
+    <p>Make sure your timezone is correct. Use "America/New_York" for example, do not use spaces. Check <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">here</a> for a list.</p>
+    <br>Click to learn more about <a style="color:red;text-decoration:none;" href="https://mailcow.github.io/mailcow-dockerized-docs/#get-support" target="_blank">getting support.</a>
   </body>
 </html>

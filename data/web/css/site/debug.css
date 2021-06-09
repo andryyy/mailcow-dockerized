@@ -1,7 +1,3 @@
-table.footable>tbody>tr.footable-empty>td {
-  font-size:15px !important;
-  font-style:italic;
-}
 .pagination a {
   text-decoration: none !important;
 }
@@ -38,10 +34,4 @@ table.footable>tbody>tr.footable-empty>td {
 .table-lines {
   vertical-align: inherit;
 }
-tbody {
-  font-size:14px;
-}
-.status-indicator {
-  width: 15px;
-  height: 15px;
-}
+

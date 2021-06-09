@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd"
+         backupGlobals="true"
+         bootstrap="vendor/autoload.php"
+         verbose="true"
+         colors="true"
+         forceCoversAnnotation="false"
+    >
+    <testsuites>
+        <testsuite name="PHPMailerTests">
+            <directory>./test/</directory>
+        </testsuite>
+    </testsuites>
+    <listeners>
+        <listener class="PHPMailer\Test\DebugLogTestListener" />
+    </listeners>
+    <groups>
+        <exclude>
+            <group>languages</group>
+            <group>pop3</group>
+        </exclude>
+    </groups>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+        <log type="junit" target="build/logs/junit.xml"/>
+    </logging>
+</phpunit>

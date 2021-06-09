@@ -41,7 +41,7 @@ try:
       break
 
   time_now = int(time.time())
-  mailcow_hostname = '__MAILCOW_HOSTNAME__'
+  mailcow_hostname = os.environ.get('MAILCOW_HOSTNAME')
 
   max_score = float(r.get('Q_MAX_SCORE') or "9999.0")
   if max_score == "":
@@ -50,7 +50,7 @@ try:
   def query_mysql(query, headers = True, update = False):
     while True:
       try:
-        cnx = mysql.connector.connect(unix_socket = '/var/run/mysqld/mysqld.sock', user='__DBUSER__', passwd='__DBPASS__', database='__DBNAME__', charset="utf8")
+        cnx = mysql.connector.connect(unix_socket = '/var/run/mysqld/mysqld.sock', user=os.environ.get('DBUSER'), passwd=os.environ.get('DBPASS'), database=os.environ.get('DBNAME'), charset="utf8")
       except Exception as ex:
         print('%s - trying again...'  % (ex))
         time.sleep(3)

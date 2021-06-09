@@ -3,45 +3,67 @@
 namespace RobThree\Auth\Providers\Qr;
 
 // http://qrickit.com/qrickit_apps/qrickit_api.php
-class QRicketProvider extends BaseHTTPQRCodeProvider 
+class QRicketProvider extends BaseHTTPQRCodeProvider
 {
+    /** @var string */
     public $errorcorrectionlevel;
-    public $margin;
-    public $qzone;
+
+    /** @var string */
     public $bgcolor;
+
+    /** @var string */
     public $color;
+
+    /** @var string */
     public $format;
 
-    function __construct($errorcorrectionlevel = 'L', $bgcolor = 'ffffff', $color = '000000', $format = 'p') 
+    /**
+     * @param string $errorcorrectionlevel
+     * @param string $bgcolor
+     * @param string $color
+     * @param string $format
+     */
+    public function __construct($errorcorrectionlevel = 'L', $bgcolor = 'ffffff', $color = '000000', $format = 'p')
     {
         $this->verifyssl = false;
-        
+
         $this->errorcorrectionlevel = $errorcorrectionlevel;
         $this->bgcolor = $bgcolor;
         $this->color = $color;
         $this->format = $format;
     }
-    
-    public function getMimeType() 
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMimeType()
     {
-        switch (strtolower($this->format))
-        {
-        	case 'p':
+        switch (strtolower($this->format)) {
+            case 'p':
                 return 'image/png';
-        	case 'g':
+            case 'g':
                 return 'image/gif';
-        	case 'j':
+            case 'j':
                 return 'image/jpeg';
         }
-        throw new \QRException(sprintf('Unknown MIME-type: %s', $this->format));
+        throw new QRException(sprintf('Unknown MIME-type: %s', $this->format));
     }
-    
-    public function getQRCodeImage($qrtext, $size) 
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQRCodeImage($qrtext, $size)
     {
         return $this->getContent($this->getUrl($qrtext, $size));
     }
-    
-    public function getUrl($qrtext, $size) 
+
+    /**
+     * @param string $qrtext the value to encode in the QR code
+     * @param int|string $size the desired size of the QR code
+     *
+     * @return string file contents of the QR code
+     */
+    public function getUrl($qrtext, $size)
     {
         return 'http://qrickit.com/api/qr'
             . '?qrsize=' . $size

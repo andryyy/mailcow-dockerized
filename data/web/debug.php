@@ -29,6 +29,7 @@ $xmpp_status = xmpp_control('status');
         <li role="presentation"><a href="#tab-rspamd-history" aria-controls="tab-rspamd-history" role="tab" data-toggle="tab">Rspamd</a></li>
         <li role="presentation"><span class="dropdown-desc"><?=$lang['debug']['static_logs'];?></span></li>
         <li role="presentation"><a href="#tab-ui" aria-controls="tab-ui" role="tab" data-toggle="tab">mailcow UI</a></li>
+        <li role="presentation"><a href="#tab-sasl" aria-controls="tab-sasl" role="tab" data-toggle="tab">SASL</a></li>
       </ul>
     </li>
   </ul>
@@ -49,7 +50,7 @@ $xmpp_status = xmpp_control('status');
             <div class="panel-body">
               <div class="row">
                 <div class="col-sm-3">
-                  <p>Mail disk space via <?=$vmail_df[0];?></p>
+                  <p><i class="bi bi-hdd-fill"></i> <?=$vmail_df[0];?></p>
                   <p><?=$vmail_df[2];?> / <?=$vmail_df[1];?> (<?=$vmail_df[4];?>)</p>
                 </div>
                 <div class="col-sm-9">
@@ -83,7 +84,7 @@ $xmpp_status = xmpp_control('status');
                   <p><?=$lang['debug']['started_at'];?>: <span class="parse_date"><?=$solr_status['status']['dovecot-fts']['startTime'];?></span></p>
                   <p><?=$lang['debug']['last_modified'];?>: <span class="parse_date"><?=$solr_status['status']['dovecot-fts']['index']['lastModified'];?></span></p>
                   <p><?=$lang['debug']['size'];?>: <?=$solr_status['status']['dovecot-fts']['index']['size'];?></p>
-                  <p><?=$lang['debug']['docs'];?>: <?=$solr_status['status']['dovecot-fts']['index']['numDocs'];?></p>
+                  <p><i class="bi bi-file-text"></i> <?=$lang['debug']['docs'];?>: <?=$solr_status['status']['dovecot-fts']['index']['numDocs'];?></p>
                   <?php
                   else:
                   ?>
@@ -173,7 +174,7 @@ $xmpp_status = xmpp_control('status');
               ?>
               <small>(<?=$lang['debug']['started_on'];?> <span class="parse_date"><?=$started;?></span>),
               <a href data-toggle="modal" data-container="<?=$container;?>" data-target="#RestartContainer"><?=$lang['debug']['restart_container'];?></a></small>
-              <span class="pull-right status-indicator label label-<?=($container_info['State'] !== false && !empty($container_info['State'])) ? (($container_info['State']['Running'] == 1) ? 'success' : 'danger') : 'default'; ?>">&nbsp;</span>
+              <i class="pull-right bi <?=($container_info['State'] !== false && !empty($container_info['State'])) ? (($container_info['State']['Running'] == 1) ? 'bi-app-indicator text-success' : 'bi-app text-danger') : 'default'; ?>"></i>
               </li>
               <?php
               }
@@ -212,6 +213,23 @@ $xmpp_status = xmpp_control('status');
             <div class="panel-body">
               <div class="table-responsive">
                 <table class="table table-striped table-condensed" id="ui_logs"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="tab-sasl">
+          <div class="panel panel-default">
+            <div class="panel-heading">SASL <span class="badge badge-info table-lines"></span>
+              <div class="btn-group pull-right">
+                <button class="btn btn-xs btn-default add_log_lines" data-post-process="sasl_log_table" data-table="sasl_logs" data-log-url="ui" data-nrows="1000">+ 1000</button>
+                <button class="btn btn-xs btn-default add_log_lines" data-post-process="sasl_log_table" data-table="sasl_logs" data-log-url="ui" data-nrows="10000">+ 10000</button>
+                <button class="btn btn-xs btn-default refresh_table" data-draw="draw_sasl_logs" data-table="sasl_logs"><?=$lang['admin']['refresh'];?></button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="table table-striped table-condensed" id="sasl_logs"></table>
               </div>
             </div>
           </div>

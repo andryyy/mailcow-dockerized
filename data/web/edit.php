@@ -106,13 +106,14 @@ if (isset($_SESSION['mailcow_cc_role'])) {
         <div class="form-group">
           <label class="control-label col-sm-2" for="username_new"><?=$lang['edit']['username'];?></label>
           <div class="col-sm-10">
-            <input class="form-control" type="text" name="username_new" value="<?=htmlspecialchars($domain_admin);?>" />
+            <input class="form-control" type="text" name="username_new" value="<?=htmlspecialchars($domain_admin);?>" required onkeyup="this.value = this.value.toLowerCase();" />
+            &rdsh; <kbd>a-z - _ .</kbd>
           </div>
         </div>
         <div class="form-group">
           <label class="control-label col-sm-2" for="domains"><?=$lang['edit']['domains'];?></label>
           <div class="col-sm-10">
-            <select data-live-search="true" class="full-width-select" name="domains" multiple required>
+            <select data-live-search="true" data-container="body" class="full-width-select" name="domains" multiple required>
             <?php
             foreach ($result['selected_domains'] as $domain):
             ?>
@@ -167,7 +168,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
           </div>
           <div class="col-sm-10">
             <div class="form-group">
-              <select id="da_acl" name="da_acl" size="10" multiple>
+              <select id="da_acl" name="da_acl" size="10" data-container="body" multiple>
               <?php
               $da_acls = acl('get', 'domainadmin', $domain_admin);
               foreach ($da_acls as $acl => $val):
@@ -197,14 +198,15 @@ if (isset($_SESSION['mailcow_cc_role'])) {
       $result = admin('details', $admin);
       if (!empty($result)) {
       ?>
-      <h4><?=$lang['edit']['domain_admin'];?></h4>
+      <h4><?=$lang['edit']['admin'];?></h4>
       <br>
       <form class="form-horizontal" data-id="editadmin" role="form" method="post" autocomplete="off">
         <input type="hidden" value="0" name="active">
         <div class="form-group">
           <label class="control-label col-sm-2" for="username_new"><?=$lang['edit']['username'];?></label>
           <div class="col-sm-10">
-            <input class="form-control" type="text" name="username_new" value="<?=htmlspecialchars($admin);?>" />
+            <input class="form-control" type="text" name="username_new" onkeyup="this.value = this.value.toLowerCase();" required value="<?=htmlspecialchars($admin);?>" />
+            &rdsh; <kbd>a-z - _ .</kbd>
           </div>
         </div>
         <div class="form-group">
@@ -252,14 +254,16 @@ if (isset($_SESSION['mailcow_cc_role'])) {
       !empty($_GET["domain"])) {
         $domain = $_GET["domain"];
         $result = mailbox('get', 'domain_details', $domain);
+        $quota_notification_bcc = quota_notification_bcc('get', $domain);
         $rl = ratelimit('get', 'domain', $domain);
         $rlyhosts = relayhost('get');
         if (!empty($result)) {
         ?>
-          <ul class="nav nav-tabs">
+          <ul class="nav nav-tabs" role="tablist">
             <li class="active"><a data-toggle="tab" href="#dedit"><?=$lang['edit']['domain'];?></a></li>
             <li><a data-toggle="tab" href="#dratelimit"><?=$lang['edit']['ratelimit'];?></a></li>
             <li><a data-toggle="tab" href="#dspamfilter"><?=$lang['edit']['spam_filter'];?></a></li>
+            <li><a data-toggle="tab" href="#dqwbcc"><?=$lang['edit']['quota_warning_bcc'];?></a></li>
           </ul>
           <hr>
           <div class="tab-content">
@@ -275,6 +279,21 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                 <label class="control-label col-sm-2" for="description"><?=$lang['edit']['description'];?></label>
                 <div class="col-sm-10">
                   <input type="text" class="form-control" name="description" value="<?=htmlspecialchars($result['description']);?>">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-sm-2" for="relayhost"><?=$lang['edit']['relayhost'];?></label>
+                <div class="col-sm-10">
+                  <select data-acl="<?=$_SESSION['acl']['domain_relayhost'];?>" data-live-search="true" id="relayhost" name="relayhost" class="form-control">
+                    <?php
+                    foreach ($rlyhosts as $rlyhost) {
+                    ?>
+                    <option class="<?=($rlyhost['active'] == 1) ? '' : 'background: #ff4136; color: #fff';?>" value="<?=$rlyhost['id'];?>" <?=($result['relayhost'] == $rlyhost['id']) ? 'selected' : null;?>>ID <?=$rlyhost['id'];?>: <?=$rlyhost['hostname'];?> (<?=$rlyhost['username'];?>)</option>
+                    <?php
+                    }
+                    ?>
+                    <option value="" <?=($result['relayhost'] == "0") ? 'selected' : null;?>>None</option>
+                  </select>
                 </div>
               </div>
               <?php
@@ -311,21 +330,6 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                 </div>
               </div>
               <div class="form-group">
-                <label class="control-label col-sm-2" for="quota"><?=$lang['edit']['relayhost'];?></label>
-                <div class="col-sm-10">
-                  <select data-live-search="true" name="relayhost" class="form-control">
-                    <?php
-                    foreach ($rlyhosts as $rlyhost) {
-                    ?>
-                    <option value="<?=$rlyhost['id'];?>" <?=($result['relayhost'] == $rlyhost['id']) ? 'selected' : null;?>>ID <?=$rlyhost['id'];?>: <?=$rlyhost['hostname'];?> (<?=$rlyhost['username'];?>)</option>
-                    <?php
-                    }
-                    ?>
-                    <option value="" <?=($result['relayhost'] == "0") ? 'selected' : null;?>>None</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
                 <label class="control-label col-sm-2"><?=$lang['edit']['backup_mx_options'];?></label>
                 <div class="col-sm-10">
                   <div class="checkbox">
@@ -356,7 +360,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                 <label class="control-label col-sm-2" for="xmpp_prefix"><?=$lang['edit']['xmpp_prefix'];?></label>
                 <div class="col-md-10">
                   <div class="input-group">
-                    <input type="text" class="form-control" id="xmpp-prefix" name="xmpp_prefix" value="<?=htmlspecialchars($result['xmpp_prefix'], ENT_QUOTES, 'UTF-8');?>" required>
+                    <input type="text" class="form-control" id="xmpp-prefix" name="xmpp_prefix" value="<?=(!empty($result['xmpp_prefix'])) ? htmlspecialchars($result['xmpp_prefix'], ENT_QUOTES, 'UTF-8') : 'im';?>" required>
                     <span class="input-group-addon">.<?=htmlspecialchars($domain, ENT_QUOTES, 'UTF-8');?></span>
                   </div>
                   <small class="help-block"><?=sprintf($lang['edit']['xmpp_prefix_info'], getenv('MAILCOW_HOSTNAME'));?></small>
@@ -427,7 +431,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                   <p><?=$lang['user']['spamfilter_wl_desc'];?></p>
                   <div class="mass-actions-user">
                     <div class="btn-group" data-acl="<?=$_SESSION['acl']['spam_policy'];?>">
-                      <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="policy_wl_domain" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
+                      <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="policy_wl_domain" href="#"><i class="bi bi-check-all"></i> <?=$lang['mailbox']['toggle_all'];?></a>
                       <a class="btn btn-sm btn-danger" data-action="delete_selected" data-id="policy_wl_domain" data-api-url='delete/domain-policy' href="#"><?=$lang['mailbox']['remove'];?></a></li>
                     </div>
                   </div>
@@ -448,7 +452,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                   <p><?=$lang['user']['spamfilter_bl_desc'];?></p>
                   <div class="mass-actions-user">
                     <div class="btn-group" data-acl="<?=$_SESSION['acl']['spam_policy'];?>">
-                      <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="policy_bl_domain" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['mailbox']['toggle_all'];?></a>
+                      <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="policy_bl_domain" href="#"><i class="bi bi-check-all"></i> <?=$lang['mailbox']['toggle_all'];?></a>
                       <a class="btn btn-sm btn-danger" data-action="delete_selected" data-id="policy_bl_domain" data-api-url='delete/domain-policy' href="#"><?=$lang['mailbox']['remove'];?></a></li>
                     </div>
                   </div>
@@ -463,6 +467,35 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                   <div class="table-responsive">
                     <table class="table table-striped table-condensed" id="bl_policy_domain_table"></table>
                   </div>
+                </div>
+              </div>
+            </div>
+            <div id="dqwbcc" class="tab-pane">
+              <div class="row">
+                <div class="col-sm-12">
+                  <h4><?=$lang['edit']['quota_warning_bcc'];?></h4>
+                  <p><?=$lang['edit']['quota_warning_bcc_info'];?></p>
+                  <form class="form-horizontal" data-id="quota_bcc">
+                    <input type="hidden" value="0" name="active">
+                    <div class="form-group">
+                      <label class="control-label col-sm-2" for="script_data"><?=$lang['edit']['target_address'];?>:</label>
+                      <div class="col-sm-10">
+                        <textarea spellcheck="false" autocorrect="off" autocapitalize="none" class="form-control" rows="10" id="bcc_rcpt" name="bcc_rcpt"><?=implode(PHP_EOL, $quota_notification_bcc['bcc_rcpts']);?></textarea>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                        <label><input type="checkbox" value="1" name="active" <?=($quota_notification_bcc['active']=="1") ? "checked" : "";?>> <?=$lang['edit']['active'];?></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-offset-2 col-sm-10">
+                        <button class="btn btn-success" data-action="edit_selected" data-id="quota_bcc" data-item="quota_bcc" data-api-url='edit/quota_notification_bcc' data-api-attr='{"domain":"<?=$domain;?>"}' href="#"><?=$lang['edit']['save'];?></button>
+                      </div>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
@@ -607,6 +640,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
       $quarantine_notification = mailbox('get', 'quarantine_notification', $mailbox);
       $quarantine_category = mailbox('get', 'quarantine_category', $mailbox);
       $get_tls_policy = mailbox('get', 'tls_policy', $mailbox);
+      $rlyhosts = relayhost('get');
       if (!empty($result)) {
         ?>
         <h4><?=$lang['edit']['mailbox'];?></h4>
@@ -691,8 +725,24 @@ if (isset($_SESSION['mailcow_cc_role'])) {
 
               ?>
               </select>
-              <div style="display:none" id="sender_acl_disabled"><?=$lang['edit']['sender_acl_disabled'];?></div>
+              <div id="sender_acl_disabled"><i class="bi bi-shield-exclamation"></i> <?=$lang['edit']['sender_acl_disabled'];?></div>
               <small class="help-block"><?=$lang['edit']['sender_acl_info'];?></small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="relayhost"><?=$lang['edit']['relayhost'];?></label>
+            <div class="col-sm-10">
+              <select data-acl="<?=$_SESSION['acl']['mailbox_relayhost'];?>" data-live-search="true" id="relayhost" name="relayhost" class="form-control">
+                <?php
+                foreach ($rlyhosts as $rlyhost) {
+                ?>
+                    <option style="<?=($rlyhost['active'] == 1) ? '' : 'background: #ff4136; color: #fff';?>" value="<?=$rlyhost['id'];?>" <?=($result['attributes']['relayhost'] == $rlyhost['id']) ? 'selected' : null;?>>ID <?=$rlyhost['id'];?>: <?=$rlyhost['hostname'];?> (<?=$rlyhost['username'];?>)</option>
+                <?php
+                }
+                ?>
+                <option value="" <?=($result['attributes']['relayhost'] == "0") ? 'selected' : null;?>>None</option>
+              </select>
+              <small class="help-block"><?=$lang['edit']['mailbox_relayhost_info'];?></small>
             </div>
           </div>
           <div class="form-group">
@@ -909,8 +959,8 @@ if (isset($_SESSION['mailcow_cc_role'])) {
                     </div>
                   </div>
                   <div class="col-sm-12">
-                    <legend style="cursor:pointer;margin-top:10px" data-target="#po_advanced" class="arrow-toggle" unselectable="on" data-toggle="collapse">
-                      <span style="font-size:12px" class="arrow rotate glyphicon glyphicon-menu-down"></span> <?=$lang['edit']['advanced_settings'];?>
+                    <legend style="cursor:pointer;margin-top:10px" data-target="#po_advanced" unselectable="on" data-toggle="collapse">
+                      <i class="bi bi-plus"></i> <?=$lang['edit']['advanced_settings'];?>
                     </legend>
                   </div>
                   <div class="col-sm-12">
@@ -931,8 +981,8 @@ if (isset($_SESSION['mailcow_cc_role'])) {
               </div>
               <div class="btn-group" data-acl="<?=$_SESSION['acl']['pushover'];?>">
                   <a class="btn btn-sm btn-default" data-action="edit_selected" data-id="pushover" data-item="<?=htmlspecialchars($mailbox);?>" data-api-url='edit/pushover' data-api-attr='{}' href="#"><?=$lang['edit']['save'];?></a>
-                  <a class="btn btn-sm btn-default" data-action="edit_selected" data-id="pushover-test" data-item="<?=htmlspecialchars($mailbox);?>" data-api-url='edit/pushover-test' data-api-attr='{}' href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['edit']['pushover_verify'];?></a>
-                  <a id="pushover_delete" class="btn btn-sm btn-danger" data-action="edit_selected" data-id="pushover-delete" data-item="<?=htmlspecialchars($mailbox);?>" data-api-url='edit/pushover' data-api-attr='{"delete":"true"}' href="#"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> <?=$lang['edit']['remove'];?></a>
+                  <a class="btn btn-sm btn-default" data-action="edit_selected" data-id="pushover-test" data-item="<?=htmlspecialchars($mailbox);?>" data-api-url='edit/pushover-test' data-api-attr='{}' href="#"><i class="bi bi-check-lg"></i> <?=$lang['edit']['pushover_verify'];?></a>
+                  <a id="pushover_delete" class="btn btn-sm btn-danger" data-action="edit_selected" data-id="pushover-delete" data-item="<?=htmlspecialchars($mailbox);?>" data-api-url='edit/pushover' data-api-attr='{"delete":"true"}' href="#"><i class="bi bi-trash"></i> <?=$lang['edit']['remove'];?></a>
               </div>
             </div>
           </div>
@@ -1045,6 +1095,7 @@ if (isset($_SESSION['mailcow_cc_role'])) {
           <h4><?=$lang['edit']['resource'];?></h4>
           <form class="form-horizontal" role="form" method="post" data-id="edittransport">
             <input type="hidden" value="0" name="active">
+            <input type="hidden" value="0" name="is_mx_based">
             <div class="form-group">
               <label class="control-label col-sm-2" for="destination"><?=$lang['add']['destination'];?></label>
               <div class="col-sm-10">
@@ -1067,6 +1118,13 @@ if (isset($_SESSION['mailcow_cc_role'])) {
               <label class="control-label col-sm-2" for="password"><?=$lang['add']['password'];?></label>
               <div class="col-sm-10">
                 <input type="text" data-hibp="true" class="form-control" name="password" value="<?=htmlspecialchars($result['password'], ENT_QUOTES, 'UTF-8');?>">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                <label><input type="checkbox" value="1" name="is_mx_based" <?=($result['is_mx_based']=="1") ? "checked" : null;?>> <?=$lang['edit']['lookup_mx'];?></label>
+                </div>
               </div>
             </div>
             <div class="form-group">

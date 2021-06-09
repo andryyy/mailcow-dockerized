@@ -1,8 +1,3 @@
-table.footable>tbody>tr.footable-empty>td {
-  font-size: 15px !important;
-  font-style: italic;
-}
-
 .pagination a {
   text-decoration: none !important;
 }
@@ -100,3 +95,4 @@ table tbody tr td input[type="checkbox"] {
   font-size:110%;
   margin:20px;
 }
+

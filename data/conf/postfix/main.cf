@@ -17,7 +17,7 @@ smtpd_relay_restrictions = permit_mynetworks,
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 relayhost =
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 [fe80::]/10 [fc00::]/7
+mynetworks_style = subnet
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
@@ -79,7 +79,7 @@ postscreen_greet_wait = 3s
 postscreen_non_smtp_command_enable = no
 postscreen_pipelining_enable = no
 proxy_read_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_sasl_passwd_maps_transport_maps.cf,
-  proxy:mysql:/opt/postfix/conf/sql/mysql_sasl_access_maps.cf,
+  proxy:mysql:/opt/postfix/conf/sql/mysql_mbr_access_maps.cf,
   proxy:mysql:/opt/postfix/conf/sql/mysql_tls_enforce_in_policy.cf,
   $sender_dependent_default_transport_maps,
   $smtp_tls_policy_maps,
@@ -117,7 +117,7 @@ smtpd_error_sleep_time = 10s
 smtpd_hard_error_limit = ${stress?1}${stress:5}
 smtpd_helo_required = yes
 smtpd_proxy_timeout = 600s
-smtpd_recipient_restrictions = check_sasl_access proxy:mysql:/opt/postfix/conf/sql/mysql_sasl_access_maps.cf,
+smtpd_recipient_restrictions = check_recipient_mx_access proxy:mysql:/opt/postfix/conf/sql/mysql_mbr_access_maps.cf,
   permit_sasl_authenticated,
   permit_mynetworks,
   check_recipient_access proxy:mysql:/opt/postfix/conf/sql/mysql_tls_enforce_in_policy.cf,
@@ -161,8 +161,9 @@ virtual_alias_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_virtual_alias_maps.
 virtual_gid_maps = static:5000
 virtual_mailbox_base = /var/vmail/
 virtual_mailbox_domains = proxy:mysql:/opt/postfix/conf/sql/mysql_virtual_domains_maps.cf
-recipient_bcc_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_recipient_bcc_maps.cf
-sender_bcc_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_sender_bcc_maps.cf
+# -- moved to rspamd on 2021-06-01
+#recipient_bcc_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_recipient_bcc_maps.cf
+#sender_bcc_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_sender_bcc_maps.cf
 recipient_canonical_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_recipient_canonical_maps.cf
 recipient_canonical_classes = envelope_recipient
 virtual_mailbox_maps = proxy:mysql:/opt/postfix/conf/sql/mysql_virtual_mailbox_maps.cf
@@ -192,7 +193,6 @@ smtp_sasl_auth_soft_bounce = no
 postscreen_discard_ehlo_keywords = silent-discard, dsn
 compatibility_level = 2
 smtputf8_enable = no
-smtpd_last_auth = check_policy_service inet:127.0.0.1:10028
 # Define protocols for SMTPS and submission service
 submission_smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
 smtps_smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
@@ -200,4 +200,3 @@ parent_domain_matches_subdomains = debug_peer_list,fast_flush_domains,mynetworks
 
 # DO NOT EDIT ANYTHING BELOW #
 # User overrides #
-

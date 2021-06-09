@@ -133,14 +133,6 @@ function fail2ban($_action, $_data = null) {
               $redis->Set('F2B_REGEX', json_encode($regex_array, JSON_UNESCAPED_SLASHES));
             }
           }
-          else {
-            $_SESSION['return'][] = array(
-              'type' => 'success',
-              'log' => array(__FUNCTION__, $_action, $_data_log),
-              'msg' => print_r($_data, true)
-            );
-            return false;
-          }
           $_SESSION['return'][] = array(
             'type' => 'success',
             'log' => array(__FUNCTION__, $_action, $_data_log),

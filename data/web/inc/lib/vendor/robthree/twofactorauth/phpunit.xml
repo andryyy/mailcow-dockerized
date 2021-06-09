@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
          colors="true"
@@ -6,15 +6,21 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          stopOnFailure="false">
   <testsuites>
     <testsuite name="Unit">
       <directory suffix="Test.php">./tests</directory>
     </testsuite>
   </testsuites>
-  <filter>
-    <whitelist processUncoveredFilesFromWhitelist="true">
+  <coverage processUncoveredFiles="true">
+    <include>
       <directory suffix=".php">./lib</directory>
-    </whitelist>
-  </filter>
+    </include>
+    <report>
+      <html outputDirectory="build/coverage"/>
+      <text outputFile="php://stdout"/>
+    </report>
+  </coverage>
 </phpunit>

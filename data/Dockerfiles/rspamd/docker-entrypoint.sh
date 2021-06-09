@@ -104,7 +104,8 @@ touch /etc/rspamd/custom/global_mime_from_blacklist.map \
   /etc/rspamd/custom/bad_words.map \
   /etc/rspamd/custom/bad_asn.map \
   /etc/rspamd/custom/bad_words_de.map \
-  /etc/rspamd/custom/bulk_header.map
+  /etc/rspamd/custom/bulk_header.map \
+  /etc/rspamd/custom/bad_header.map
 
 # www-data (82) group needs to write to these files
 chown _rspamd:_rspamd /etc/rspamd/custom/

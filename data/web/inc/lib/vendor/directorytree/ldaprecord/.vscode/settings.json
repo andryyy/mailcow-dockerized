@@ -1,0 +1,4 @@
+{
+    "php-cs-fixer.onsave": true,
+    "php-cs-fixer.allowRisky": true,
+}

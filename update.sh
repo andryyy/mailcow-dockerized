@@ -123,7 +123,7 @@ while (($#)); do
         exit 99
       fi
       if [[ -z $(git log HEAD --pretty=format:"%H" | grep "${LATEST_REV}") ]]; then
-        echo "Updated code is available."
+        echo -e "Updated code is available.\nThe changes can be found here: https://github.com/mailcow/mailcow-dockerized/commits/master"
         git log --date=short --pretty=format:"%ad - %s" $(git rev-parse --short HEAD)..origin/master
         exit 0
       else
@@ -191,6 +191,7 @@ CONFIG_ARRAY=(
   "WATCHDOG_NOTIFY_EMAIL"
   "WATCHDOG_NOTIFY_BAN"
   "WATCHDOG_EXTERNAL_CHECKS"
+  "WATCHDOG_SUBJECT"
   "SKIP_CLAMD"
   "SKIP_IP_CHECK"
   "ADDITIONAL_SAN"
@@ -223,6 +224,7 @@ CONFIG_ARRAY=(
   "XMPP_S2S_PORT"
   "XMPP_HTTPS_PORT"
   "ADDITIONAL_SERVER_NAMES"
+  "ACME_CONTACT"
 )
 
 sed -i --follow-symlinks '$a\' mailcow.conf
@@ -372,6 +374,12 @@ for option in ${CONFIG_ARRAY[@]}; do
       echo '# Notify about banned IP. Includes whois lookup.' >> mailcow.conf
       echo "WATCHDOG_NOTIFY_BAN=y" >> mailcow.conf
     fi
+  elif [[ ${option} == "WATCHDOG_SUBJECT" ]]; then
+    if ! grep -q ${option} mailcow.conf; then
+      echo "Adding new option \"${option}\" to mailcow.conf"
+      echo '# Subject for watchdog mails. Defaults to "Watchdog ALERT" followed by the error message.' >> mailcow.conf
+      echo "#WATCHDOG_SUBJECT=" >> mailcow.conf
+    fi
   elif [[ ${option} == "WATCHDOG_EXTERNAL_CHECKS" ]]; then
     if ! grep -q ${option} mailcow.conf; then
       echo "Adding new option \"${option}\" to mailcow.conf"
@@ -437,6 +445,15 @@ for option in ${CONFIG_ARRAY[@]}; do
     if ! grep -q ${option} mailcow.conf; then
       echo "XMPP_HTTPS_PORT=5443" >> mailcow.conf
     fi
+  elif [[ ${option} == "ACME_CONTACT" ]]; then
+    if ! grep -q ${option} mailcow.conf; then
+      echo '# Lets Encrypt registration contact information' >> mailcow.conf
+      echo '# Optional: Leave empty for none' >> mailcow.conf
+      echo '# This value is only used on first order!' >> mailcow.conf
+      echo '# Setting it at a later point will require the following steps:' >> mailcow.conf
+      echo '# https://mailcow.github.io/mailcow-dockerized-docs/debug-reset-tls/' >> mailcow.conf
+      echo 'ACME_CONTACT=' >> mailcow.conf
+  fi
   elif ! grep -q ${option} mailcow.conf; then
     echo "Adding new option \"${option}\" to mailcow.conf"
     echo "${option}=n" >> mailcow.conf

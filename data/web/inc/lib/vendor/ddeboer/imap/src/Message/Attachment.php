@@ -11,43 +11,33 @@ use Ddeboer\Imap\Exception\NotEmbeddedMessageException;
  */
 final class Attachment extends AbstractPart implements AttachmentInterface
 {
-    /**
-     * Get attachment filename.
-     */
     public function getFilename(): ?string
     {
-        return $this->getParameters()->get('filename')
-            ?: $this->getParameters()->get('name');
+        $filename = $this->getParameters()->get('filename');
+        if (null === $filename || '' === $filename) {
+            $filename = $this->getParameters()->get('name');
+        }
+        \assert(null === $filename || \is_string($filename));
+
+        return $filename;
     }
 
-    /**
-     * Get attachment file size.
-     *
-     * @return null|int Number of bytes
-     */
     public function getSize()
     {
         $size = $this->getParameters()->get('size');
         if (\is_numeric($size)) {
             $size = (int) $size;
         }
+        \assert(null === $size || \is_int($size));
 
         return $size;
     }
 
-    /**
-     * Is this attachment also an Embedded Message?
-     */
     public function isEmbeddedMessage(): bool
     {
         return self::TYPE_MESSAGE === $this->getType();
     }
 
-    /**
-     * Return embedded message.
-     *
-     * @throws NotEmbeddedMessageException
-     */
     public function getEmbeddedMessage(): EmbeddedMessageInterface
     {
         if (!$this->isEmbeddedMessage()) {

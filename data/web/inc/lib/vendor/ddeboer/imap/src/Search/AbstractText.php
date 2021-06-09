@@ -12,10 +12,8 @@ abstract class AbstractText implements ConditionInterface
 {
     /**
      * Text to be used for the condition.
-     *
-     * @var string
      */
-    private $text;
+    private string $text;
 
     /**
      * Constructor.

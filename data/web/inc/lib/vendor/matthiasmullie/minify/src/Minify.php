@@ -105,7 +105,7 @@ abstract class Minify
      * @param string|string[] $data
      *
      * @return static
-     * 
+     *
      * @throws IOException
      */
     public function addFile($data /* $data = null, ... */)
@@ -472,7 +472,7 @@ abstract class Minify
      */
     protected function openFileForWriting($path)
     {
-        if (($handler = @fopen($path, 'w')) === false) {
+        if ($path === '' || ($handler = @fopen($path, 'w')) === false) {
             throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
         }
 
@@ -490,7 +490,11 @@ abstract class Minify
      */
     protected function writeToFile($handler, $content, $path = '')
     {
-        if (($result = @fwrite($handler, $content)) === false || ($result < strlen($content))) {
+        if (
+            !is_resource($handler) ||
+            ($result = @fwrite($handler, $content)) === false ||
+            ($result < strlen($content))
+        ) {
             throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
         }
     }

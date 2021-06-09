@@ -2,8 +2,8 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/prerequisites.inc.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/inc/spf.inc.php';
 
-define('state_good', '<span class="glyphicon glyphicon-ok text-success"></span>');
-define('state_missing', '<span class="glyphicon glyphicon-remove text-danger"></span>');
+define('state_good', '<i class="bi bi-check-lg text-success"></i>');
+define('state_missing', '<i class="bi bi-x-lg text-danger"></i>');
 define('state_nomatch', "?");
 define('state_optional', " <sup>2</sup>");
 

@@ -1,37 +1,15 @@
-# IMAP library
+# PHP IMAP library
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/ddeboer/imap.svg)](https://packagist.org/packages/ddeboer/imap)
 [![Downloads](https://img.shields.io/packagist/dt/ddeboer/imap.svg)](https://packagist.org/packages/ddeboer/imap)
 [![Integrate](https://github.com/ddeboer/imap/workflows/Integrate/badge.svg?branch=master)](https://github.com/ddeboer/imap/actions)
 [![Code Coverage](https://codecov.io/gh/ddeboer/imap/coverage.svg?branch=master)](https://codecov.io/gh/ddeboer/imap?branch=master)
 
-A PHP 7.3+ library to read and process e-mails over IMAP.
+A PHP IMAP library to read and process e-mails over IMAP protocol, built with robust Object-Oriented architecture.
 
-This library requires [IMAP](https://secure.php.net/manual/en/book.imap.php),
-[iconv](https://secure.php.net/manual/en/book.iconv.php) and
-[Multibyte String](https://secure.php.net/manual/en/book.mbstring.php) extensions installed.
-
-## Table of Contents
-
-1. [Feature Requests](#feature-requests)
-1. [Installation](#installation)
-1. [Usage](#usage)
-    1. [Connect and Authenticate](#connect-and-authenticate)
-    1. [Mailboxes](#mailboxes)
-    1. [Messages](#messages)
-        1. [Searching for Messages](#searching-for-messages)
-        1. [Unknown search criterion: OR](#unknown-search-criterion-or)
-        1. [Message Properties and Operations](#message-properties-and-operations)
-    1. [Message Attachments](#message-attachments)
-    1. [Embedded Messages](#embedded-messages)
-    1. [Timeouts](#timeouts)
-1. [Mock the library](#mock-the-library)
-1. [Running the Tests](#running-the-tests)
-    1. [Running Tests using Docker](#running-tests-using-docker)
-
-## Feature Requests
-
-[![Feature Requests](https://feathub.com/ddeboer/imap?format=svg)](https://feathub.com/ddeboer/imap)
+This library requires PHP >= 7.4 with [IMAP](https://www.php.net/manual/en/book.imap.php),
+[iconv](https://www.php.net/manual/en/book.iconv.php) and
+[Multibyte String](https://www.php.net/manual/en/book.mbstring.php) extensions installed.
 
 ## Installation
 
@@ -236,7 +214,6 @@ Move a message to another mailbox:
 ```php
 $mailbox = $connection->getMailbox('another-mailbox');
 $message->move($mailbox);
-$connection->expunge();
 ```
 
 Deleting messages:
@@ -321,39 +298,9 @@ $ IMAP_SERVER_NAME="my.imap.server.com" IMAP_SERVER_PORT="60993" IMAP_USERNAME="
 ```
 
 You can also copy `phpunit.xml.dist` file to a custom `phpunit.xml` and put
-these environment variables in it:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<phpunit
-    bootstrap="./vendor/autoload.php"
-    colors="true"
-    verbose="true"
->
-    <testsuites>
-        <testsuite name="ddeboer/imap">
-            <directory>./tests/</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./src</directory>
-        </whitelist>
-    </filter>
-    <php>
-        <env name="IMAP_SERVER_NAME" value="my.imap.server.com" />
-        <env name="IMAP_SERVER_PORT" value="60993" />
-        <env name="IMAP_USERNAME" value="johndoe" />
-        <env name="IMAP_PASSWORD" value="p4ssword" />
-    </php>
-</phpunit>
-```
+these environment variables in it.
 
 **WARNING** Tests create new mailboxes without removing them.
-
-### Running Tests using Docker
-
-If you have Docker installed you can run the tests locally with the following command:
 
 ```
 $ docker-compose run tests

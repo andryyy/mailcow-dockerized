@@ -1,0 +1,47 @@
+{
+    "name": "tightenco/collect",
+    "description": "Collect - Illuminate Collections as a separate package.",
+    "keywords": ["laravel", "collection"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Taylor Otwell",
+            "email": "taylorotwell@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2|^8.0",
+        "symfony/var-dumper": "^3.4 || ^4.0 || ^5.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^8.3",
+        "nesbot/carbon": "^2.23.0"
+    },
+    "autoload": {
+        "files": [
+            "src/Collect/Support/helpers.php",
+            "src/Collect/Support/alias.php"
+        ],
+        "psr-4": {
+            "Tightenco\\Collect\\": "src/Collect"
+        }
+    },
+    "autoload-dev": {
+        "files": [
+            "tests/files/Support/Carbon.php",
+            "tests/files/Support/HtmlString.php",
+            "tests/files/Support/HigherOrderTapProxy.php",
+            "tests/files/Support/Str.php",
+            "tests/files/Support/Stringable.php"
+        ]
+    },
+    "scripts": {
+        "test": [
+            "@composer install",
+            "phpunit"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -321,6 +321,112 @@ rspamd_config:register_symbol({
 })
 
 rspamd_config:register_symbol({
+  name = 'BCC',
+  type = 'postfilter',
+  callback = function(task)
+    local util = require("rspamd_util")
+    local rspamd_http = require "rspamd_http"
+    local rspamd_logger = require "rspamd_logger"
+
+    local from_table = {}
+    local rcpt_table = {}
+
+    local send_mail = function(task, bcc_dest)
+      local lua_smtp = require "lua_smtp"
+      local function sendmail_cb(ret, err)
+        if not ret then
+          rspamd_logger.errx(task, 'BCC SMTP ERROR: %s', err)
+        else
+          rspamd_logger.infox(rspamd_config, "BCC SMTP SUCCESS TO %s", bcc_dest)
+        end
+      end
+      if not bcc_dest then
+        return -- stop
+      end
+      lua_smtp.sendmail({
+        task = task,
+        host = 'postfix',
+        port = 591,
+        from = task:get_from(stp)[1].addr,
+        recipients = bcc_dest,
+        helo = 'bcc',
+        timeout = 10,
+      }, task:get_content(), sendmail_cb)
+    end
+
+    -- determine from
+    local from = task:get_from('smtp')
+    if from then
+      for _, a in ipairs(from) do
+        table.insert(from_table, a['addr']) -- add this rcpt to table
+        table.insert(from_table, '@' .. a['domain']) -- add this rcpts domain to table
+      end
+    else
+      return -- stop
+    end
+
+    -- determine rcpts
+    local rcpts = task:get_recipients('smtp')
+    if rcpts then
+      for _, a in ipairs(rcpts) do
+        table.insert(rcpt_table, a['addr']) -- add this rcpt to table
+        table.insert(rcpt_table, '@' .. a['domain']) -- add this rcpts domain to table
+      end
+    else
+      return -- stop
+    end
+
+    local action = task:get_metric_action('default')
+    rspamd_logger.infox("metric action now: %s", action)
+
+    local function rcpt_callback(err_message, code, body, headers)
+      if err_message == nil and code == 201 and body ~= nil then
+        if action == 'no action' or action == 'add header' or action == 'rewrite subject' then
+          send_mail(task, body)
+        end
+      end
+    end
+
+    local function from_callback(err_message, code, body, headers)
+      if err_message == nil and code == 201 and body ~= nil then
+        if action == 'no action' or action == 'add header' or action == 'rewrite subject' then
+          send_mail(task, body)
+        end
+      end
+    end
+
+    if rcpt_table then
+      for _,e in ipairs(rcpt_table) do
+        rspamd_logger.infox(rspamd_config, "checking bcc for rcpt address %s", e)
+        rspamd_http.request({
+          task=task,
+          url='http://nginx:8081/bcc.php',
+          body='',
+          callback=rcpt_callback,
+          headers={Rcpt=e}
+        })
+      end
+    end
+
+    if from_table then
+      for _,e in ipairs(from_table) do
+        rspamd_logger.infox(rspamd_config, "checking bcc for from address %s", e)
+        rspamd_http.request({
+          task=task,
+          url='http://nginx:8081/bcc.php',
+          body='',
+          callback=from_callback,
+          headers={From=e}
+        })
+      end
+    end
+
+    return true
+  end,
+  priority = 20
+})
+
+rspamd_config:register_symbol({
   name = 'DYN_RL_CHECK',
   type = 'prefilter',
   callback = function(task)

@@ -1,7 +1,3 @@
-table.footable>tbody>tr.footable-empty>td {
-  font-size:15px !important;
-  font-style:italic;
-}
 .pagination a {
   text-decoration: none !important;
 }
@@ -47,17 +43,6 @@ table tbody tr {
 table tbody tr td input[type="checkbox"] {
   cursor: pointer;
 }
-.rotate {
-  -moz-transition: all 0.3s linear;
-  -webkit-transition: all 0.3s linear;
-  transition: all 0.3s linear;
-}
-.rotate.animation {
-  -ms-transform:rotateX(180deg);
-  -moz-transform:rotateX(180deg);
-  -webkit-transform:rotateX(180deg);
-  transform:rotateX(180deg);
-}
 .label-keys {
   font-size:100%;
   margin: 0px !important;
@@ -66,4 +51,82 @@ table tbody tr td input[type="checkbox"] {
 .key-action {
   font-weight:bold;
   color:white !important;
+}
+svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+.c-1-color, .label-ham {
+  background: #28b62c;
+  background: -webkit-linear-gradient(to right, #28b62c, #fff233);
+  background: linear-gradient(to right, #28b62c, #fff233);
+  color: #000;
+}
+.c-2-color, .label-spam {
+  background: #fff233;
+  background: -webkit-linear-gradient(to right, #fff233, #ff4136);
+  background: linear-gradient(to right, #fff233, #ff4136);
+  color: #000;
+}
+.c-3-color, .label-reject{
+  background: #ff4136;
+  color: #fff;
+}
+#spam_score {
+  margin-bottom: 10px;
+}
+.noUi-handle {
+  border: 1px solid #e2e2e2;
+  border-radius: 0px;
+  background: #eee;
+  cursor: default;
+  box-shadow: none;
+  border-top-width: 0px;
+  border-right-width: 1px;
+  border-bottom-width: 4px;
+  border-left-width: 1px;
+}
+.noUi-handle:hover {
+  background-color: #eee;
+  border-color: #e2e2e2;
+  margin-top: 1px;
+border-bottom-width: 3px;
+}
+.noUi-handle::after, .noUi-handle::before {
+  background: #c6c6c6;
+  width: 2px;
+}
+.noUi-target {
+  background: transparent;
+  border-radius: 0px;
+  border: 1px solid #D3D3D3;
+  box-shadow: none;
+}
+.noUi-connects {
+  border-radius: 0px;
+}
+.label-ham,
+.label-spam,
+.label-reject {
+  padding: .1em .5em .1em;
+  font-size: inherit;
+  font-weight: 400;
+}
+.clear-last-logins {
+  cursor: pointer;
+  font-size:90%;
+  font-style: italic;
+  color: #158cba;
+  user-select:none;
+}
+.ip-location-flag {
+  border-radius: 4px;
+  top: 3px;
+}
+.xmpp-logo-user {
+  width:64px;
+}
+.recent-login-success {
+  margin-top:2px;
+  margin-right:10px;
 }

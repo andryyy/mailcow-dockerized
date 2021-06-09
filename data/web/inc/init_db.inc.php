@@ -3,7 +3,7 @@ function init_db_schema() {
   try {
     global $pdo;
 
-    $db_version = "08022021_1000";
+    $db_version = "07062021_2320";
 
     $stmt = $pdo->query("SHOW TABLES LIKE 'versions'");
     $num_results = count($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -152,9 +152,9 @@ function init_db_schema() {
           "id" => "INT NOT NULL AUTO_INCREMENT",
           "destination" => "VARCHAR(255) NOT NULL",
           "nexthop" => "VARCHAR(255) NOT NULL",
-          "username" => "VARCHAR(255) NOT NULL",
-          "password" => "VARCHAR(255) NOT NULL",
-          "lookup_mx" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "username" => "VARCHAR(255) NOT NULL DEFAULT ''",
+          "password" => "VARCHAR(255) NOT NULL DEFAULT ''",
+          "is_mx_based" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "active" => "TINYINT(1) NOT NULL DEFAULT '1'"
         ),
         "keys" => array(
@@ -321,7 +321,8 @@ function init_db_schema() {
             "" => array("username")
           ),
           "key" => array(
-            "domain" => array("domain")
+            "domain" => array("domain"),
+            "kind" => array("kind")
           )
         ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
@@ -444,7 +445,9 @@ function init_db_schema() {
         "cols" => array(
           "address" => "VARCHAR(255) NOT NULL",
           "goto" => "TEXT NOT NULL",
-          "validity" => "INT(11) NOT NULL"
+          "created" => "DATETIME(0) NOT NULL DEFAULT NOW(0)",
+          "modified" => "DATETIME ON UPDATE CURRENT_TIMESTAMP",
+          "validity" => "INT(11)"
         ),
         "keys" => array(
           "primary" => array(
@@ -503,6 +506,30 @@ function init_db_schema() {
         "keys" => array(
           "primary" => array(
             "" => array("id")
+          )
+        ),
+        "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
+      ),
+      "sasl_logs" => array(
+        "cols" => array(
+          "id" => "INT NOT NULL AUTO_INCREMENT",
+          "success" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "service" => "VARCHAR(32) NOT NULL DEFAULT ''",
+          "app_password" => "INT",
+          "username" => "VARCHAR(255) NOT NULL",
+          "real_rip" => "VARCHAR(64) NOT NULL",
+          "datetime" => "DATETIME(0) NOT NULL DEFAULT NOW(0)"
+        ),
+        "keys" => array(
+          "primary" => array(
+            "" => array("id")
+          ),
+          "key" => array(
+            "username" => array("username"),
+            "service" => array("service"),
+            "success" => array("success"),
+            "datetime" => array("datetime"),
+            "real_rip" => array("real_rip")
           )
         ),
         "attr" => "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC"
@@ -569,6 +596,8 @@ function init_db_schema() {
           "protocol_access" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "smtp_ip_access" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "alias_domains" => "TINYINT(1) NOT NULL DEFAULT '0'",
+          "mailbox_relayhost" => "TINYINT(1) NOT NULL DEFAULT '1'",
+          "domain_relayhost" => "TINYINT(1) NOT NULL DEFAULT '1'",
           "xmpp_prefix" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "xmpp_domain_access" => "TINYINT(1) NOT NULL DEFAULT '0'",
           "xmpp_mailbox_access" => "TINYINT(1) NOT NULL DEFAULT '0'",
@@ -1185,6 +1214,8 @@ function init_db_schema() {
     $pdo->query("UPDATE `pushover` SET `attributes` =  JSON_SET(`attributes`, '$.only_x_prio', \"0\") WHERE JSON_VALUE(`attributes`, '$.only_x_prio') IS NULL;");
     // mailbox
     $pdo->query("UPDATE `mailbox` SET `attributes` = '{}' WHERE `attributes` = '' OR `attributes` IS NULL;");
+    $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.passwd_update', \"0\") WHERE JSON_VALUE(`attributes`, '$.passwd_update') IS NULL;");
+    $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.relayhost', \"0\") WHERE JSON_VALUE(`attributes`, '$.relayhost') IS NULL;");
     $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.xmpp_access', \"1\") WHERE JSON_VALUE(`attributes`, '$.xmpp_access') IS NULL;");
     $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.xmpp_admin', \"0\") WHERE JSON_VALUE(`attributes`, '$.xmpp_admin') IS NULL;");
     $pdo->query("UPDATE `mailbox` SET `attributes` =  JSON_SET(`attributes`, '$.force_pw_update', \"0\") WHERE JSON_VALUE(`attributes`, '$.force_pw_update') IS NULL;");

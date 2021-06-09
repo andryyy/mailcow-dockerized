@@ -79,9 +79,29 @@ $DETECT_LANGUAGE = true;
 $DEFAULT_LANG = 'en';
 
 // Available languages
-// Use (ISO 639-1) Code standard 
-// See https://www.loc.gov/standards/iso639-2/php/code_list.php
-$AVAILABLE_LANGUAGES = array('ca', 'cs', 'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ko', 'lv', 'nl', 'pl', 'pt', 'ro', 'ru', 'sk', 'sv', 'zh');
+// https://www.iso.org/obp/ui/#search
+// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+$AVAILABLE_LANGUAGES = array(
+  'cs' => 'Čeština (Czech)',
+  'da' => 'Danish (Dansk)',
+  'de' => 'Deutsch (German)',
+  'en' => 'English',
+  'es' => 'Español (Spanish)',
+  'fi' => 'Suomi (Finish)',
+  'fr' => 'Français (French)',
+  'hu' => 'Magyar (Hungarian)',
+  'it' => 'Italiano (Italian)',
+  'ko' => '한국어 (Korean)',
+  'lv' => 'latviešu (Latvian)',
+  'nl' => 'Nederlands (Dutch)',
+  'pl' => 'Język Polski (Polish)',
+  'pt' => 'Português (Portuguese)',
+  'ro' => 'Română (Romanian)',
+  'ru' => 'Pусский (Russian)',
+  'sk' => 'Slovenčina (Slovak)',
+  'sv' => 'Svenska (Swedish)',
+  'zh' => '中文 (Chinese)'
+);
 
 // Change theme (default: lumen)
 // Needs to be one of those: cerulean, cosmo, cyborg, darkly, flatly, journal, lumen, paper, readable, sandstone,
@@ -89,14 +109,6 @@ $AVAILABLE_LANGUAGES = array('ca', 'cs', 'da', 'de', 'en', 'es', 'fi', 'fr', 'hu
 // See https://bootswatch.com/
 // WARNING: Only lumen is loaded locally. Enabling any other theme, will download external sources.
 $DEFAULT_THEME = 'lumen';
-
-// Password complexity as regular expression
-// Min. 6 characters
-$PASSWD_REGEP = '.{6,}';
-// Min. 6 characters, which must include at least one uppercase letter, one lowercase letter and one number
-// $PASSWD_REGEP = '^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$';
-// Min. 6 characters, which must include at least one letter and one number
-// $PASSWD_REGEP = '^(?=.*[0-9])(?=.*[A-Za-z]).{6,}$';
 
 // Show DKIM private keys - false by default
 $SHOW_DKIM_PRIV_KEYS = false;
@@ -124,14 +136,8 @@ $SESSION_LIFETIME = 10800;
 // Label for OTP devices
 $OTP_LABEL = "mailcow UI";
 
-// Default "to" address in relay test tool
-$RELAY_TO = "null@hosted.mailcow.de";
-
 // How long to wait (in s) for cURL Docker requests
 $DOCKER_TIMEOUT = 60;
-
-// Anonymize IPs logged via UI
-$ANONYMIZE_IPS = true;
 
 // Split DKIM key notation (bind format)
 $SPLIT_DKIM_255 = false;
@@ -211,6 +217,7 @@ $RSPAMD_MAPS = array(
     'Bad Words DE (only fired in combination with fishy TLDs)' => 'bad_words_de.map',
     'Bad Languages' => 'bad_languages.map',
     'Bulk Mail Headers' => 'bulk_header.map',
+    'Bad (Junk) Mail Headers' => 'bad_header.map',
     'Monitoring Hosts' => 'monitoring_nolog.map'
   )
 );

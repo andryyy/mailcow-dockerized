@@ -7,6 +7,7 @@
 data/assets/ejabberd/sqlite/sqlite.db
 data/assets/ssl-example/*
 data/assets/ssl/*
+data/conf/borgmatic/
 data/conf/clamav/whitelist.ign2
 data/conf/dovecot/acl_anyone
 data/conf/dovecot/dovecot-master.passwd
@@ -39,12 +40,17 @@ data/conf/postfix/sql
 data/conf/rspamd/custom/*
 data/conf/rspamd/local.d/*
 data/conf/rspamd/override.d/*
+data/conf/sogo/custom-theme.js
 data/conf/sogo/plist_ldap
 data/conf/sogo/sieve.creds
 data/conf/sogo/sogo-full.svg
 data/gitea/
 data/gogs/
-data/hooks/
+data/hooks/dovecot
+data/hooks/phpfpm
+data/hooks/postfix
+data/hooks/rspamd
+data/hooks/unbound
 data/web/.well-known/acme-challenge
 data/web/css/build/0081-custom-mailcow.css
 data/web/inc/vars.local.inc.php

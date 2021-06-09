@@ -47,7 +47,7 @@ $quarantine_settings = quarantine('settings');
         </div>
         <div class="mass-actions-quarantine">
           <div class="btn-group" data-acl="<?=$_SESSION['acl']['quarantine'];?>">
-            <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="qitems" href="#"><span class="glyphicon glyphicon-check" aria-hidden="true"></span> <?=$lang['quarantine']['toggle_all'];?></a>
+            <a class="btn btn-sm btn-default" id="toggle_multi_select_all" data-id="qitems" href="#"><i class="bi bi-check-all"></i> <?=$lang['quarantine']['toggle_all'];?></a>
             <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" href="#"><?=$lang['quarantine']['quick_actions'];?> <span class="caret"></span></a>
             <ul class="dropdown-menu">
               <li><a data-action="edit_selected" data-id="qitems" data-api-url='edit/qitem' data-api-attr='{"action":"release"}' href="#"><?=$lang['quarantine']['deliver_inbox'];?></a></li>

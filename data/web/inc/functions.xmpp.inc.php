@@ -183,6 +183,8 @@ server {
   include /etc/nginx/conf.d/listen_ssl.active;
   include /etc/nginx/conf.d/listen_plain.active;
 
+  ssl_protocols TLSv1.2 TLSv1.3;
+
   ssl_certificate /etc/ssl/mail/cert.pem;
   ssl_certificate_key /etc/ssl/mail/key.pem;
 

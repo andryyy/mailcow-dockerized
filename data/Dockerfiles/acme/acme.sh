@@ -195,6 +195,18 @@ while true; do
   fi
   if [[ ! -f ${ACME_BASE}/acme/account.pem ]]; then
     log_f "Generating missing Lets Encrypt account key..."
+    if [[ ! -z ${ACME_CONTACT} ]]; then
+      if ! verify_email "${ACME_CONTACT}"; then
+        log_f "Invalid email address, will not start registration!"
+        sleep 365d
+        exec $(readlink -f "$0")
+      else
+        ACME_CONTACT_PARAMETER="--contact mailto:${ACME_CONTACT}"
+        log_f "Valid email address, using ${ACME_CONTACT} for registration"
+      fi
+    else
+      ACME_CONTACT_PARAMETER=""
+    fi
     openssl genrsa 4096 > ${ACME_BASE}/acme/account.pem
   else
     log_f "Using existing Lets Encrypt account key ${ACME_BASE}/acme/account.pem"
@@ -248,22 +260,9 @@ while true; do
   IPV6=$(get_ipv6)
   log_f "OK: ${IPV4}, ${IPV6:-"0000:0000:0000:0000:0000:0000:0000:0000"}"
 
-  # Hard-fail on CAA errors for MAILCOW_HOSTNAME
-  MH_PARENT_DOMAIN=$(echo ${MAILCOW_HOSTNAME} | cut -d. -f2-)
-  MH_CAAS=( $(dig CAA ${MH_PARENT_DOMAIN} +short | sed -n 's/\d issue "\(.*\)"/\1/p') )
-  if [[ ! -z ${MH_CAAS} ]]; then
-    if [[ ${MH_CAAS[@]} =~ "letsencrypt.org" ]]; then
-      log_f "Validated CAA for parent domain ${MH_PARENT_DOMAIN}"
-    else
-      log_f "Skipping ACME validation: Lets Encrypt disallowed for ${MAILCOW_HOSTNAME} by CAA record, retrying in 1h..."
-      sleep 1h
-      exec $(readlink -f "$0")
-    fi
-  fi
-
   #########################################
   # IP and webroot challenge verification #
-  SQL_DOMAINS=$(mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT domain FROM domain WHERE backupmx=0" -Bs)
+  SQL_DOMAINS=$(mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT domain FROM domain WHERE backupmx=0 and active=1" -Bs)
   if [[ ! $? -eq 0 ]]; then
     log_f "Failed to read SQL domains, retrying in 1 minute..."
     sleep 1m
@@ -331,7 +330,7 @@ while true; do
     VALIDATED_CERTIFICATES+=("${CERT_NAME}")
 
     # obtain server certificate if required
-    DOMAINS=${SERVER_SAN_VALIDATED[@]} /srv/obtain-certificate.sh rsa
+    ACME_CONTACT_PARAMETER=${ACME_CONTACT_PARAMETER} DOMAINS=${SERVER_SAN_VALIDATED[@]} /srv/obtain-certificate.sh rsa
     RETURN="$?"
     if [[ "$RETURN" == "0" ]]; then # 0 = cert created successfully
       CERT_AMOUNT_CHANGED=1

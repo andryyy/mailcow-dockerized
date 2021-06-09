@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Ddeboer\Imap;
 
+use Ddeboer\Imap\Exception\InvalidResourceException;
+
 interface ImapResourceInterface
 {
     /**
      * Get IMAP resource stream.
+     *
+     * @throws InvalidResourceException
      *
      * @return resource
      */

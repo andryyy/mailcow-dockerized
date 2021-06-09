@@ -8,7 +8,7 @@ use LeeSherwood\Ejabberd\CommandExecutors\mailcowCommandExecutor;
 
 $logger = new Logger('ejabberdAuth');
 
-$stdoutHandler = new Monolog\Handler\StreamHandler('/var/www/authentication/auth.log', Logger::DEBUG);
+$stdoutHandler = new Monolog\Handler\StreamHandler('/var/www/authentication/auth.log', Logger::INFO);
 
 $logger->pushHandler($stdoutHandler);
 

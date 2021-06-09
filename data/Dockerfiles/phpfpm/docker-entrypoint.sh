@@ -90,6 +90,15 @@ if [[ "${MASTER}" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
     ${REDIS_CMDLINE} --raw SET Q_MAX_AGE 365
   fi
 
+  # Set default password policy - if unset
+  if [[ -z $(${REDIS_CMDLINE} --raw HGET PASSWD_POLICY length) ]]; then
+    ${REDIS_CMDLINE} --raw HSET PASSWD_POLICY length 6
+    ${REDIS_CMDLINE} --raw HSET PASSWD_POLICY chars 0
+    ${REDIS_CMDLINE} --raw HSET PASSWD_POLICY special_chars 0
+    ${REDIS_CMDLINE} --raw HSET PASSWD_POLICY lowerupper 0
+    ${REDIS_CMDLINE} --raw HSET PASSWD_POLICY numbers 0
+  fi
+
   # Trigger db init
   echo "Running DB init..."
   php -c /usr/local/etc/php -f /web/inc/init_db.inc.php

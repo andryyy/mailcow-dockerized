@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - 7.1
+  - 7.2
+  - 7.3
+  - 7.4
+
+before_script:
+  - travis_retry composer self-update
+  - travis_retry composer install --prefer-source --no-interaction
+
+script: ./vendor/bin/phpunit
+
+branches:
+  only:
+    - master
+    - v9.0
+    - v8.0

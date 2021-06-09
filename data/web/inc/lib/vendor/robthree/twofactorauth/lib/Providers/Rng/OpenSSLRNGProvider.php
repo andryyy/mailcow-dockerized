@@ -4,22 +4,37 @@ namespace RobThree\Auth\Providers\Rng;
 
 class OpenSSLRNGProvider implements IRNGProvider
 {
+    /** @var bool */
     private $requirestrong;
-    
-    function __construct($requirestrong = true) {
+
+    /**
+     * @param bool $requirestrong
+     */
+    public function __construct($requirestrong = true)
+    {
         $this->requirestrong = $requirestrong;
     }
-    
-    public function getRandomBytes($bytecount) {
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRandomBytes($bytecount)
+    {
         $result = openssl_random_pseudo_bytes($bytecount, $crypto_strong);
-        if ($this->requirestrong && ($crypto_strong === false))
-            throw new \RNGException('openssl_random_pseudo_bytes returned non-cryptographically strong value');
-        if ($result === false)
-            throw new \RNGException('openssl_random_pseudo_bytes returned an invalid value');
+        if ($this->requirestrong && ($crypto_strong === false)) {
+            throw new RNGException('openssl_random_pseudo_bytes returned non-cryptographically strong value');
+        }
+        if ($result === false) {
+            throw new RNGException('openssl_random_pseudo_bytes returned an invalid value');
+        }
         return $result;
     }
-    
-    public function isCryptographicallySecure() {
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isCryptographicallySecure()
+    {
         return $this->requirestrong;
     }
 }

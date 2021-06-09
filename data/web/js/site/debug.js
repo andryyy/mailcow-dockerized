@@ -271,7 +271,7 @@ jQuery(function($){
         {"name":"role","title":"Role"},
         {"name":"remote","title":"IP"},
         {"name":"msg","title":lang.message,"style":{"word-break":"break-all"}},
-        {"name":"call","title":"Call","breakpoints": "all"},
+        {"name":"call","title":"Call","breakpoints": "all"}
       ],
       "rows": $.ajax({
         dataType: 'json',
@@ -297,6 +297,43 @@ jQuery(function($){
         },
         "after.ft.paging": function(e, ft){
           table_log_paging(ft, 'ui_logs');
+        }
+      }
+    });
+  }
+  function draw_sasl_logs() {
+    ft_api_logs = FooTable.init('#sasl_logs', {
+      "columns": [
+        {"name":"success","title":lang.success,"filterable": false,"style":{"width":"30px"}},
+        {"name":"username","title":lang.username},
+        {"name":"service","title":lang.service},
+        {"name":"real_rip","title":"IP"},
+        {"sorted": true,"sortValue": function(value){res = new Date(value);return res.getTime();},"direction":"DESC","name":"datetime","formatter":function date_format(datetime) { var date = new Date(datetime.replace(/-/g, "/")); return date.toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit"});},"title":lang.login_time,"style":{"width":"170px"}},
+      ],
+      "rows": $.ajax({
+        dataType: 'json',
+        url: '/api/v1/get/logs/sasl',
+        jsonp: false,
+        error: function () {
+          console.log('Cannot draw sasl log table');
+        },
+        success: function (data) {
+          return process_table_data(data, 'sasl_log_table');
+        }
+      }),
+      "empty": lang.empty,
+      "paging": {"enabled": true,"limit": 5,"size": log_pagination_size},
+      "filtering": {"enabled": true,"delay": 1200,"position": "left","connectors": false,"placeholder": lang.filter_table,"connectors": false},
+      "sorting": {"enabled": true},
+      "on": {
+        "destroy.ft.table": function(e, ft){
+          $('.refresh_table').attr('disabled', 'true');
+        },
+        "ready.ft.table": function(e, ft){
+          table_log_ready(ft, 'sasl_logs');
+        },
+        "after.ft.paging": function(e, ft){
+          table_log_paging(ft, 'sasl_logs');
         }
       }
     });
@@ -644,13 +681,13 @@ jQuery(function($){
         if (item.message == null) {
           item.message = 'Health level: ' + item.lvl + '% (' + item.hpnow + '/' + item.hptotal + ')';
           if (item.hpdiff < 0) {
-            item.trend = '<span class="label label-danger"><span class="glyphicon glyphicon-arrow-down"></span> ' + item.hpdiff + '</span>';
+            item.trend = '<span class="label label-danger"><i class="bi bi-caret-down-fill"></i> ' + item.hpdiff + '</span>';
           }
           else if (item.hpdiff == 0) {
-            item.trend = '<span class="label label-info"><span class="glyphicon glyphicon-arrow-right"></span> ' + item.hpdiff + '</span>';
+            item.trend = '<span class="label label-info"><i class="bi bi-caret-right-fill"></i> ' + item.hpdiff + '</span>';
           }
           else {
-            item.trend = '<span class="label label-success"><span class="glyphicon glyphicon-arrow-up"></span> ' + item.hpdiff + '</span>';
+            item.trend = '<span class="label label-success"><i class="bi bi-caret-up-fill"></i> ' + item.hpdiff + '</span>';
           }
         }
         else {
@@ -666,6 +703,20 @@ jQuery(function($){
         item.task = '<code>' + item.task + '</code>';
         item.type = '<span class="label label-' + item.type + '">' + item.type + '</span>';
       });
+    } else if (table == 'sasl_log_table') {
+      $.each(data, function (i, item) {
+        if (item === null) { return true; }
+        item.username = escapeHtml(item.username);
+        if (item.service == "smtp") { item.service = '<div class="label label-default">' + item.service.toUpperCase() + '<i class="bi bi-chevron-compact-right"></i></div>'; }
+        else if (item.service == "imap") { item.service = '<div class="label label-default"><i class="bi bi-chevron-compact-left"></i> ' + item.service.toUpperCase() + '</div>'; }
+        else { item.service = '<div class="label label-default">' + item.service.toUpperCase() + '</div>'; }
+        if (item.success == 0) {
+          item.success = '<span class="label label-danger"><i class="bi bi-person-x-fill"></i></span>';
+        }
+        else {
+          item.success = '<span class="label label-success"><i class="bi bi-person-check-fill"></i></span>';
+        }
+    });
     } else if (table == 'general_syslog') {
       $.each(data, function (i, item) {
         if (item === null) { return true; }
@@ -710,7 +761,7 @@ jQuery(function($){
         }
         item.indicator = '<span style="border-right:6px solid #' + intToRGB(hashCode(item.rl_hash)) + ';padding-left:5px;">&nbsp;</span>';
         if (item.rl_hash != 'err') {
-          item.action = '<a href="#" data-action="delete_selected" data-id="single-hash" data-api-url="delete/rlhash" data-item="' + encodeURI(item.rl_hash) + '" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> ' + lang.reset_limit + '</a>';
+          item.action = '<a href="#" data-action="delete_selected" data-id="single-hash" data-api-url="delete/rlhash" data-item="' + encodeURI(item.rl_hash) + '" class="btn btn-xs btn-danger"><i class="bi bi-trash"></i> ' + lang.reset_limit + '</a>';
         }
       });
     }
@@ -750,6 +801,7 @@ jQuery(function($){
   draw_api_logs();
   draw_rl_logs();
   draw_ui_logs();
+  draw_sasl_logs();
   draw_netfilter_logs();
   draw_rspamd_history();
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {

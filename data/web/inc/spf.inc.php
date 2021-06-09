@@ -24,7 +24,7 @@ function get_spf_allowed_hosts($check_domain, $expand_ipv6 = false) {
 				$mod = explode('=', $mech);
 				if ($mod[0] == 'redirect') // handle a redirect
 				{
-					$hosts = get_spf_allowed_hosts($mod[1]);
+					$hosts = get_spf_allowed_hosts($mod[1],true);
 					return $hosts;
 				}
 			}
@@ -79,13 +79,13 @@ function get_spf_allowed_hosts($check_domain, $expand_ipv6 = false) {
 	}
 	foreach ($hosts as &$host) {
 		if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-      if ($expand_ipv6 === true) {
-        $hex = unpack("H*hex", inet_pton($host));
-        $host = substr(preg_replace("/([A-f0-9]{4})/", "$1:", $hex['hex']), 0, -1);
-      }
-      else {
-        $host = $host;
-      }
+			if ($expand_ipv6 === true) {
+				$hex = unpack("H*hex", inet_pton($host));
+				$host = substr(preg_replace("/([A-f0-9]{4})/", "$1:", $hex['hex']), 0, -1);
+			}
+			else {
+				$host = $host;
+			}
 		}
 	}
 	return $hosts;

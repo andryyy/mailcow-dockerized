@@ -468,7 +468,7 @@
         "save": "Tallenna muutokset",
         "scope": "Laajuus",
         "sender_acl": "Salli lähettää nimellä",
-        "sender_acl_disabled": "↳ <span class=\"label label-danger\">Lähettäjän tarkistus on poistettu käytöstä</span>",
+        "sender_acl_disabled": "<span class=\"label label-danger\">Lähettäjän tarkistus on poistettu käytöstä</span>",
         "sender_acl_info": "Jos postilaatikon käyttäjän A sallitaan lähettävän postilaatikon käyttäjäksi B, lähettäjän osoitetta ei näytetä automaattisesti valittavana \"alkaen\" -kentässä SOGossa.<br>\r\nSähkö postilaatikon käyttäjän A on luotava valtuutus SOGoon, jotta sähkö postilaatikon käyttäjä b voi valita osoitteen lähettäjäksi. Tämä käyttäytyminen ei koske alias-osoitteita",
         "sieve_desc": "Lyhyt kuvaus",
         "sieve_type": "Suodattimen tyyppi",

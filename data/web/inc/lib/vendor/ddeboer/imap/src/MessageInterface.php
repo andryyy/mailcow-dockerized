@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Ddeboer\Imap;
 
+use Ddeboer\Imap\Exception\MessageCopyException;
+use Ddeboer\Imap\Exception\MessageDeleteException;
+use Ddeboer\Imap\Exception\MessageMoveException;
+use Ddeboer\Imap\Exception\MessageUndeleteException;
+
 /**
  * An IMAP message (e-mail).
  */
@@ -63,21 +68,29 @@ interface MessageInterface extends Message\BasicMessageInterface
 
     /**
      * Move message to another mailbox.
+     *
+     * @throws MessageCopyException
      */
     public function copy(MailboxInterface $mailbox): void;
 
     /**
      * Move message to another mailbox.
+     *
+     * @throws MessageMoveException
      */
     public function move(MailboxInterface $mailbox): void;
 
     /**
      * Delete message.
+     *
+     * @throws MessageDeleteException
      */
     public function delete(): void;
 
     /**
      * Undelete message.
+     *
+     * @throws MessageUndeleteException
      */
     public function undelete(): void;
 

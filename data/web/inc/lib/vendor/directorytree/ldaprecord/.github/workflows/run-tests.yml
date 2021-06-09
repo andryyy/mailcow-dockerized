@@ -1,0 +1,40 @@
+name: run-tests
+
+on:
+    push:
+    pull_request:
+    schedule:
+        - cron: '0 0 * * *'
+
+jobs:
+    run-tests:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php: [8.0, 7.4, 7.3, 7.2]
+
+        name: P${{ matrix.php }}
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Cache dependencies
+              uses: actions/cache@v2
+              with:
+                  path: ~/.composer/cache/files
+                  key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: ldap, json
+                  coverage: none
+
+            - name: Install dependencies
+              run: composer update --prefer-dist --no-interaction --no-suggest
+              
+            - name: Execute tests
+              run: vendor/bin/phpunit

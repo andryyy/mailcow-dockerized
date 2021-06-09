@@ -45,7 +45,6 @@ COPY postfix.sh /opt/postfix.sh
 COPY rspamd-pipe-ham /usr/local/bin/rspamd-pipe-ham
 COPY rspamd-pipe-spam /usr/local/bin/rspamd-pipe-spam
 COPY whitelist_forwardinghosts.sh /usr/local/bin/whitelist_forwardinghosts.sh
-COPY smtpd_last_login.sh /usr/local/bin/smtpd_last_login.sh
 COPY stop-supervisor.sh /usr/local/sbin/stop-supervisor.sh
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
@@ -53,7 +52,6 @@ RUN chmod +x /opt/postfix.sh \
   /usr/local/bin/rspamd-pipe-ham \
   /usr/local/bin/rspamd-pipe-spam \
   /usr/local/bin/whitelist_forwardinghosts.sh \
-  /usr/local/bin/smtpd_last_login.sh \
   /usr/local/sbin/stop-supervisor.sh
 RUN rm -rf /tmp/* /var/tmp/*
 

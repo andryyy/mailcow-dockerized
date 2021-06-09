@@ -4,14 +4,13 @@ LABEL maintainer "Andre Peters <andre.peters@servercow.de>"
 ARG DEBIAN_FRONTEND=noninteractive
 ARG SOGO_DEBIAN_REPOSITORY=http://packages.inverse.ca/SOGo/nightly/5/debian/
 ENV LC_ALL C
-ENV GOSU_VERSION 1.11
+ENV GOSU_VERSION 1.12
 
 # Prerequisites
 RUN echo "Building from repository $SOGO_DEBIAN_REPOSITORY" \
   && apt-get update && apt-get install -y --no-install-recommends \
   apt-transport-https \
   ca-certificates \
-  cron \
   gettext \
   gnupg \
   mariadb-client \

@@ -1,0 +1,9 @@
+filter:
+    excluded_paths:
+        - tests/*
+build:
+    nodes:
+        analysis:
+            tests:
+                override:
+                    - command: php-scrutinizer-run

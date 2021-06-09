@@ -12,7 +12,7 @@ if (preg_match("/^([a-f0-9]{64})$/", $_POST['quick_release']) || preg_match("/^(
   <div class="row">
     <div class="col-md-offset-2 col-md-8">
       <div class="panel panel-default">
-        <div class="panel-heading"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <?= $lang['header']['quarantine']; ?></div>
+        <div class="panel-heading"><i class="bi bi-patch-exclamation-fill"></i> <?= $lang['header']['quarantine']; ?></div>
         <div class="panel-body">
           <legend><?=(isset($_POST['quick_release'])) ? $lang['quarantine']['release'] : $lang['quarantine']['remove'];?></legend>
             <p><?=$lang['quarantine']['qhandler_success'];?></p>
@@ -30,7 +30,7 @@ elseif (in_array($_GET['action'], array('release', 'delete'))) {
   <div class="row">
     <div class="col-md-offset-2 col-md-8">
       <div class="panel panel-default">
-        <div class="panel-heading"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <?= $lang['header']['quarantine']; ?></div>
+        <div class="panel-heading"><i class="bi bi-patch-exclamation-fill"></i> <?= $lang['header']['quarantine']; ?></div>
         <div class="panel-body">
 <?php
 if ($_GET['action'] == "release") {

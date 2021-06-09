@@ -95,8 +95,15 @@ $(document).ready(function() {
   // selectpicker
   $('select').selectpicker();
 
-  // haveibeenpwned?
-  $('[data-hibp]').after('<p class="small haveibeenpwned">↪ Check against haveibeenpwned.com</p><span class="hibp-out"></span>');
+  // haveibeenpwned and passwd policy
+  $.ajax({
+    url: '/api/v1/get/passwordpolicy/html',
+    type: 'GET',
+    success: function(res) {
+      $(".hibp-out").after(res);
+    }
+  });
+  $('[data-hibp]').after('<p class="small haveibeenpwned"><i class="bi bi-shield-fill-exclamation"></i> Check against haveibeenpwned.com</p><span class="hibp-out"></span>');
   $('[data-hibp]').on('input', function() {
     out_field = $(this).next('.haveibeenpwned').next('.hibp-out').text('').attr('class', 'hibp-out');
   });
@@ -188,7 +195,7 @@ $(document).ready(function() {
     } else if ($(this).hasClass('btn')) {
       $(this).attr("disabled", true);
     } else if ($(this).attr('data-provide') == 'slider') {
-      $(this).slider("disable");
+      $(this).attr('disabled', true);
     } else if ($(this).is(':checkbox')) {
       $(this).attr("disabled", true);
     }
@@ -216,7 +223,7 @@ $(document).ready(function() {
     $('#containerName').text(container);
     $('#triggerRestartContainer').click(function(){
       $(this).prop("disabled",true);
-      $(this).html('<span class="glyphicon glyphicon-refresh glyphicon-spin"></span> ');
+      $(this).html('<i class="bi bi-arrow-repeat icon-spin"></i> ');
       $('#statusTriggerRestartContainer').html(lang_footer.restarting_container);
       $.ajax({
         method: 'get',
@@ -231,13 +238,13 @@ $(document).ready(function() {
         $('#statusTriggerRestartContainer').append(data);
         var htmlResponse = $.parseHTML(data)
         if ($(htmlResponse).find('span').hasClass('text-success')) {
-          $('#triggerRestartContainer').html('<span class="glyphicon glyphicon-ok"></span> ');
+          $('#triggerRestartContainer').html('<i class="bi bi-check-lg"></i> ');
           setTimeout(function(){
             $('#RestartContainer').modal('toggle'); 
             window.location = window.location.href.split("#")[0];
           }, 1200);
         } else {
-          $('#triggerRestartContainer').html('<span class="glyphicon glyphicon-remove"></span> ');
+          $('#triggerRestartContainer').html('<i class="bi bi-slash-lg"></i> ');
         }
       })
     });

@@ -15,10 +15,13 @@ final class OrConditions implements ConditionInterface
     /**
      * The conditions that together represent the expression.
      *
-     * @var array
+     * @var ConditionInterface[]
      */
-    private $conditions = [];
+    private array $conditions = [];
 
+    /**
+     * @param ConditionInterface[] $conditions
+     */
     public function __construct(array $conditions)
     {
         foreach ($conditions as $condition) {
@@ -30,6 +33,8 @@ final class OrConditions implements ConditionInterface
      * Adds a new condition to the expression.
      *
      * @param ConditionInterface $condition the condition to be added
+     *
+     * @return void
      */
     private function addCondition(ConditionInterface $condition)
     {

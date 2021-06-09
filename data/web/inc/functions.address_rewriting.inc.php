@@ -48,7 +48,8 @@ function bcc($_action, $_data = null, $attr = null) {
         $local_dest_sane = '@' . idn_to_ascii($local_dest, 0, INTL_IDNA_VARIANT_UTS46);
       }
       elseif (filter_var($local_dest, FILTER_VALIDATE_EMAIL)) {
-        if (!hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $local_dest)) {
+        $mailbox = mailbox('get', 'mailbox_details', $local_dest);
+        if ($mailbox === false && array_key_exists($local_dest, array_merge($direct_aliases, $shared_aliases)) === false) {
           $_SESSION['return'][] = array(
             'type' => 'danger',
             'log' => array(__FUNCTION__, $_action, $_data, $_attr),
@@ -56,10 +57,16 @@ function bcc($_action, $_data = null, $attr = null) {
           );
           return false;
         }
-        $domain = mailbox('get', 'mailbox_details', $local_dest)['domain'];
-        if (empty($domain)) {
-          return false;
+        if (!hasMailboxObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $local_dest) &&
+          !hasAliasObjectAccess($_SESSION['mailcow_cc_username'], $_SESSION['mailcow_cc_role'], $local_dest)) {
+            $_SESSION['return'][] = array(
+              'type' => 'danger',
+              'log' => array(__FUNCTION__, $_action, $_data, $_attr),
+              'msg' => 'access_denied'
+            );
+            return false;
         }
+        $domain = idn_to_ascii(substr(strstr($local_dest, '@'), 1), 0, INTL_IDNA_VARIANT_UTS46);
         $local_dest_sane = $local_dest;
       }
       else {
