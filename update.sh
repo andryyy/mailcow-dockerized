@@ -213,6 +213,7 @@ CONFIG_ARRAY=(
   "SOLR_HEAP"
   "SKIP_SOLR"
   "ENABLE_SSL_SNI"
+  "SKIP_ECDSA_CERT"
   "ALLOW_ADMIN_EMAIL_LOGIN"
   "SKIP_HTTP_VERIFICATION"
   "SOGO_EXPIRE_SESSION"
@@ -344,6 +345,16 @@ for option in ${CONFIG_ARRAY[@]}; do
       echo '# this will allow adding more than 100 domains, but some email clients will not be able to connect with alternative hostnames' >> mailcow.conf
       echo '# see https://wiki.dovecot.org/SSL/SNIClientSupport' >> mailcow.conf
       echo "ENABLE_SSL_SNI=n" >> mailcow.conf
+    fi
+  elif [[ ${option} == "SKIP_ECDSA_CERT" ]]; then
+    if ! grep -q ${option} mailcow.conf; then
+      echo "Adding new option \"${option}\" to mailcow.conf"
+      echo "# Skip issuing Let's Encrypt ECDSA certificates - y/n" >> mailcow.conf
+      echo "# ECDSA certificates are disabled by default after upgrading." >> mailcow.conf
+      echo "# This should only be enabled if either" >> mailcow.conf
+      echo "# * you haven't set any TLSA DNS records or" >> mailcow.conf
+      echo "# * you will add additional TLSA DNS records for the ECDSA certificate. (See domain's DNS config in Mailcow UI after enabling.)" >> mailcow.conf
+      echo "SKIP_ECDSA_CERT=y" >> mailcow.conf
     fi
   elif [[ ${option} == "SKIP_SOGO" ]]; then
     if ! grep -q ${option} mailcow.conf; then

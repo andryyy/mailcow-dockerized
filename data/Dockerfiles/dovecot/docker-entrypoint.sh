@@ -263,6 +263,13 @@ for cert_dir in /etc/ssl/mail/*/ ; do
     echo 'local_name '${domain}' {' >> /etc/dovecot/sni.conf;
     echo '  ssl_cert = <'${cert_dir}'cert.pem' >> /etc/dovecot/sni.conf;
     echo '  ssl_key = <'${cert_dir}'key.pem' >> /etc/dovecot/sni.conf;
+    if [[ -f ${cert_dir}ecdsa-cert.pem && -f ${cert_dir}ecdsa-key.pem ]]; then
+      echo '  ssl_alt_cert = <'${cert_dir}'ecdsa-cert.pem' >> /etc/dovecot/sni.conf;
+      echo '  ssl_alt_key = <'${cert_dir}'ecdsa-key.pem' >> /etc/dovecot/sni.conf;
+    else
+      echo '  ssl_alt_cert = <'${cert_dir}'cert.pem' >> /etc/dovecot/sni.conf;
+      echo '  ssl_alt_key = <'${cert_dir}'key.pem' >> /etc/dovecot/sni.conf;
+    fi
     echo '}' >> /etc/dovecot/sni.conf;
   done
 done

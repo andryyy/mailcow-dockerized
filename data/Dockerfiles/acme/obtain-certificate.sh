@@ -15,8 +15,9 @@ ACME_BASE=/var/lib/acme
 
 TYPE=${1}
 PREFIX=""
-# only support rsa certificates for now
-if [[ "${TYPE}" != "rsa" ]]; then
+if [[ "${TYPE}" == "ecdsa" ]]; then
+  PREFIX="ecdsa-"
+elif [[ "${TYPE}" != "rsa" ]]; then
   log_f "Unknown certificate type '${TYPE}' requested"
   exit 5
 fi

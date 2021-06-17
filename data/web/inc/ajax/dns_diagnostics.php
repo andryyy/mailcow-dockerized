@@ -97,11 +97,22 @@ if (isset($_SESSION['mailcow_cc_role']) && ($_SESSION['mailcow_cc_role'] == "adm
         $mailcow_hostname
       );
     }
-    $records[] = array(
-      '_25._tcp.' . $autodiscover_config['smtp']['server'],
-      'TLSA',
-      generate_tlsa_digest($autodiscover_config['smtp']['server'], 25, 1)
-    );
+    $digest = generate_tlsa_digest($autodiscover_config['smtp']['server'], 25, 1, 'aRSA');
+    if($digest !== false) {
+      $records[] = array(
+        '_25._tcp.' . $autodiscover_config['smtp']['server'],
+        'TLSA',
+        $digest
+      );
+    }
+    $digest = generate_tlsa_digest($autodiscover_config['smtp']['server'], 25, 1, 'aECDSA');
+    if($digest !== false) {
+      $records[] = array(
+        '_25._tcp.' . $autodiscover_config['smtp']['server'],
+        'TLSA',
+        $digest
+      );
+    }
   }
 
   $records[] = array(
@@ -362,7 +373,7 @@ if (isset($_SESSION['mailcow_cc_role']) && ($_SESSION['mailcow_cc_role'] == "adm
           }
         }
 
-        foreach ($currents as &$current) {
+        foreach ($currents as $i => &$current) {
           if ($current['type'] == 'TXT' &&
           stripos($current['txt'], 'v=dmarc') === 0 &&
           $record[2] == $dmarc_link) {
@@ -390,6 +401,21 @@ if (isset($_SESSION['mailcow_cc_role']) && ($_SESSION['mailcow_cc_role'] == "adm
           }
           elseif ($current['type'] != 'TXT' &&
           isset($data_field[$current['type']]) && $state != state_good) {
+            // Ignore $current TLSA record if it already matches another one in $records.
+            // E.g. hide found TLSA records for an RSA certificate in the status column
+            // of missing TLSA records for an ECDSA certificate.
+            if($current['type'] == 'TLSA' && $record[1] == 'TLSA') {
+              foreach($records as $other_record) {
+                if($record != $other_record &&
+                  $other_record[1] == 'TLSA' &&
+                  $other_record[0] == $current['host'] &&
+                  $other_record[2] == $current[$data_field[$current['type']]]) {
+                  unset($currents[$i]);
+                  continue 2;
+                }
+              }
+            }
+            
             $state = state_nomatch;
             if ($current[$data_field[$current['type']]] == $record[2]) {
               $state = state_good;

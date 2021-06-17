@@ -233,6 +233,10 @@ SKIP_LETS_ENCRYPT=n
 # see https://wiki.dovecot.org/SSL/SNIClientSupport
 ENABLE_SSL_SNI=n
 
+# Skip issuing Let's Encrypt ECDSA certificates - y/n
+
+SKIP_ECDSA_CERT=n
+
 # Skip IPv4 check in ACME container - y/n
 
 SKIP_IP_CHECK=n

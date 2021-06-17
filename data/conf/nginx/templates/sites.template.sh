@@ -6,6 +6,8 @@ server {
 
   ssl_certificate /etc/ssl/mail/cert.pem;
   ssl_certificate_key /etc/ssl/mail/key.pem;
+  ssl_certificate /etc/ssl/mail/ecdsa-cert.pem;
+  ssl_certificate_key /etc/ssl/mail/ecdsa-key.pem;
 
   include /etc/nginx/conf.d/server_name.active;
 
@@ -29,6 +31,12 @@ server {
   ssl_certificate '${cert_dir}'cert.pem;
   ssl_certificate_key '${cert_dir}'key.pem;
 ';
+  if [[ -f ${cert_dir}ecdsa-cert.pem && -f ${cert_dir}ecdsa-key.pem ]]; then
+    echo -n '
+  ssl_certificate '${cert_dir}'ecdsa-cert.pem;
+  ssl_certificate_key '${cert_dir}'ecdsa-key.pem;
+';
+  fi
   echo -n '
   server_name '${domains}';
 
