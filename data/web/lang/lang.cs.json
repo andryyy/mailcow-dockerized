@@ -864,6 +864,13 @@
         "toggle_all": "Označit vše",
         "type": "Typ"
     },
+    "ratelimit": {
+	    "disabled": "Vypnuto",
+	    "second": "zpráv za sekundu",
+	    "minute": "zpráv za minutu",
+	    "hour": "zpráv za hodinu",
+	    "day": "zpráv za den"
+    },
     "start": {
         "help": "Zobrazit/skrýt panel nápovědy",
         "imap_smtp_server_auth_info": "Použijte celou e-mailovou adresu a zvolte způsob ověření PLAIN.<br>\r\nPřihlašovací údaje budou zašifrovány na straně serveru.",

@@ -888,6 +888,13 @@
         "toggle_all": "Toggle all",
         "type": "Type"
     },
+    "ratelimit": {
+	    "disabled": "Disabled",
+	    "second": "msgs / second",
+	    "minute": "msgs / minute",
+	    "hour": "msgs / hour",
+	    "day": "msgs / day"
+    },
     "start": {
         "help": "Show/Hide help panel",
         "imap_smtp_server_auth_info": "Please use your full email address and the PLAIN authentication mechanism.<br>\r\nYour login data will be encrypted by the server-side mandatory encryption.",

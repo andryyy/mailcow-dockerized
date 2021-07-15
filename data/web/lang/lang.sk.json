@@ -888,6 +888,13 @@
         "toggle_all": "Označiť všetky",
         "type": "Typ"
     },
+    "ratelimit": {
+	    "disabled": "Vypnuté",
+	    "second": "správ za sekundu",
+	    "minute": "správ za minútu",
+	    "hour": "správ za hodinu",
+	    "day": "správ za deň"
+    },
     "start": {
         "help": "Zobraziť/Skryť panel nápoveď",
         "imap_smtp_server_auth_info": "Prosím použite celú vašu emailovú adresu a metódu overenia PLAIN.<br>\r\n Vaše prihlasovacie údaje budú zašifrované na strane servera.",
