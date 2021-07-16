@@ -41,11 +41,6 @@ if [[ ! -d ${BACKUP_LOCATION} ]]; then
     mkdir -p ${BACKUP_LOCATION}
     chmod 755 ${BACKUP_LOCATION}
   fi
-else
-  if [[ ${1} == "backup" ]] && [[ -z $(echo $(stat -Lc %a ${BACKUP_LOCATION}) | grep -oE '[0-9][0-9][5-7]') ]]; then
-    echo "${BACKUP_LOCATION} is not write-able for others, that's required for a backup."
-    exit 1
-  fi
 fi
 
 BACKUP_LOCATION=$(echo ${BACKUP_LOCATION} | sed 's#/$##')
