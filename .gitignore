@@ -1,6 +1,7 @@
 !data/conf/nginx/dynmaps.conf
 !data/conf/nginx/meta_exporter.conf
 !data/conf/nginx/site.conf
+!/**/.gitkeep
 *.iml
 .idea
 .vscode/*
@@ -44,11 +45,12 @@ data/conf/sogo/sieve.creds
 data/conf/sogo/sogo-full.svg
 data/gitea/
 data/gogs/
-data/hooks/dovecot
-data/hooks/phpfpm
-data/hooks/postfix
-data/hooks/rspamd
-data/hooks/unbound
+data/hooks/dovecot/*
+data/hooks/phpfpm/*
+data/hooks/postfix/*
+data/hooks/rspamd/*
+data/hooks/sogo/*
+data/hooks/unbound/*
 data/web/.well-known/acme-challenge
 data/web/css/build/0081-custom-mailcow.css
 data/web/inc/vars.local.inc.php

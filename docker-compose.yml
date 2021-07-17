@@ -181,6 +181,7 @@ services:
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       volumes:
+        - ./data/hooks/sogo:/hooks:Z
         - ./data/conf/sogo/:/etc/sogo/:z
         - ./data/web/inc/init_db.inc.php:/init_db.inc.php:Z
         - ./data/conf/sogo/custom-favicon.ico:/usr/lib/GNUstep/SOGo/WebServerResources/img/sogo.ico:z
