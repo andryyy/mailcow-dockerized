@@ -49,6 +49,8 @@ services:
         - "${REDIS_PORT:-127.0.0.1:7654}:6379"
       environment:
         - TZ=${TZ}
+      sysctls:
+        - net.core.somaxconn=511
       networks:
         mailcow-network:
           ipv4_address: ${IPV4_NETWORK:-172.22.1}.249
