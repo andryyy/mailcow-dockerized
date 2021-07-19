@@ -132,8 +132,8 @@ $clamd_status = (preg_match("/^([yY][eE][sS]|[yY])+$/", $_ENV["SKIP_CLAMD"])) ? 
               ?>
               <br class="visible-xs" />
               <small>(<?=$lang['debug']['started_on'];?> <span class="parse_date"><?=$started;?></span>)</small>
-              <i class="pull-right bi <?=($container_info['State'] !== false && !empty($container_info['State'])) ? (($container_info['State']['Running'] == 1) ? 'bi-app-indicator text-success' : 'bi-app text-danger') : 'default'; ?>"></i>
-              <a href data-toggle="modal" data-container="<?=$container;?>" data-target="#RestartContainer" class="btn btn-sm btn-text pull-right"><?=$lang['debug']['restart_container'];?></a>
+              <a href data-toggle="modal" data-container="<?=$container;?>" data-target="#RestartContainer" class="pull-right btn btn-xs btn-default"><?=$lang['debug']['restart_container'];?>
+              <i class="pull-right bi <?=($container_info['State'] !== false && !empty($container_info['State'])) ? (($container_info['State']['Running'] == 1) ? 'bi-record-fill text-success' : 'bi-record-fill text-danger') : 'default'; ?>"></i></a>
               </li>
               <?php
               }
